@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>LoopCast: looping slides and video for event screens</title>
+<meta property="og:image:alt" content="A conference ballroom with a full audience facing a large stage screen.">
 <meta name="description" content="LoopCast plays a folder of slides and videos on the projector, on repeat, without internet. For Windows and Mac. Built for conferences, churches, trade-show booths, schools and lobbies.">
 <meta property="og:title" content="LoopCast">
 <meta property="og:description" content="Looping slides and video for event screens. Drop in files, press play, get back to your event.">
@@ -49,7 +50,7 @@ nav{display:flex;align-items:center;gap:32px;height:68px}
 .navlinks a:hover{color:var(--text)}
 
 /* hero */
-.hero{background:radial-gradient(1200px 520px at 50% 100%,#25211b 0%,transparent 70%),var(--night);padding-top:72px;overflow:hidden}
+.hero{background:var(--night);padding-top:72px;overflow:hidden}
 .hero-copy{display:block}
 .hero-sub{display:flex;justify-content:space-between;align-items:flex-end;gap:40px 64px;flex-wrap:wrap;margin-top:32px}
 .hero-sub .lede{margin:0;flex:1 1 420px}
@@ -60,21 +61,13 @@ nav{display:flex;align-items:center;gap:32px;height:68px}
 .meta{font-size:15px;color:var(--muted);margin:16px 0 0}
 .meta a,.notes a{color:var(--text);text-underline-offset:3px}
 
-/* the room */
-.room{position:relative;margin-top:72px;aspect-ratio:2.6/1;min-height:340px;max-height:760px;width:100%}
-.room::before{content:"";position:absolute;left:50%;top:4%;width:70%;height:80%;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(244,233,201,.16),transparent);filter:blur(30px)}
-.screen{position:absolute;left:50%;top:5%;width:min(52%,1060px);aspect-ratio:16/9;transform:translateX(-50%);background:#000;border-radius:6px;overflow:hidden;box-shadow:0 0 0 6px #0b0c0e,0 0 0 7px #2a2c31,0 40px 120px rgba(0,0,0,.6)}
-.screen img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;animation:loop 25s infinite}
-.screen img:nth-child(1){animation-delay:0s}
-.screen img:nth-child(2){animation-delay:5s}
-.screen img:nth-child(3){animation-delay:10s}
-.screen img:nth-child(4){animation-delay:15s}
-.screen img:nth-child(5){animation-delay:20s}
-@keyframes loop{0%{opacity:0}3%{opacity:1}20%{opacity:1}23%{opacity:0}100%{opacity:0}}
-.livebadge{position:absolute;left:calc(50% - min(26%,530px));top:calc(5% - 34px);display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
+/* hero photo */
+.hero-photo{position:relative;margin:64px 0 0}
+.hero-photo img{width:100%;height:auto;aspect-ratio:2.4/1;object-fit:cover;display:block}
+.hero-photo::before{content:"";position:absolute;left:0;right:0;top:0;height:22%;background:linear-gradient(var(--night),transparent);z-index:1;pointer-events:none}
+.hero-photo::after{content:"";position:absolute;left:0;right:0;bottom:0;height:18%;background:linear-gradient(transparent,rgba(35,37,42,.85));pointer-events:none}
+
 .dot{width:9px;height:9px;border-radius:50%;background:var(--tally);box-shadow:0 0 0 4px rgba(232,65,44,.22);flex:none}
-.floor{position:absolute;left:0;right:0;bottom:0;height:34%;background:linear-gradient(to bottom,transparent,rgba(0,0,0,.35))}
-.audience{position:absolute;left:-2%;right:-2%;bottom:0;width:104%;height:auto}
 
 /* facts strip */
 .facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--base)}
@@ -124,6 +117,9 @@ kbd{font:inherit;font-stretch:80%;font-weight:650;font-size:15px;color:var(--tex
 .uses{background:var(--paper);color:var(--ink)}
 .uses .sub{color:var(--ink-muted)}
 .usegrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(20px,2.4vw,36px);margin-top:56px}
+.photogrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(20px,2.4vw,36px);margin-top:56px}
+.use.photo img{border-radius:12px;aspect-ratio:16/9;object-fit:cover;box-shadow:0 18px 40px rgba(31,35,41,.18)}
+.photogrid+.usegrid{margin-top:clamp(40px,4vw,64px)}
 .use .tv{background:#14151a;border-radius:10px;padding:8px;box-shadow:0 18px 40px rgba(31,35,41,.18)}
 .use .tv img{border-radius:4px;aspect-ratio:16/9;object-fit:cover}
 .use h3{font-size:21px;font-weight:720;margin:22px 0 6px}
@@ -160,9 +156,8 @@ footer .row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;b
 }
 @media (max-width:900px){
   .navlinks{display:none}
-  .room{aspect-ratio:4/3;min-height:0}
-  .screen{width:86%}
-  .livebadge{left:7%}
+  .hero-photo{margin-top:40px}
+  .hero-photo img{aspect-ratio:4/3}
   .steps{grid-template-columns:1fr;gap:28px}
   .feature,.feature.flip{grid-template-columns:1fr;gap:28px}
   .feature.flip .copy{order:0}
@@ -173,6 +168,7 @@ footer .row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;b
   .control img{outline-offset:4px}
 }
 @media (max-width:560px){
+  .photogrid{grid-template-columns:1fr}
   .usegrid{grid-template-columns:1fr}
   .facts{grid-template-columns:1fr}
   .facts div,.facts div+div{padding-left:0;border-left:0}
@@ -181,8 +177,7 @@ footer .row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;b
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   *{transition:none!important}
-  .screen img{animation:none}
-  .screen img:first-child{opacity:1}
+
 }
 </style>
 </head>
@@ -212,18 +207,12 @@ footer .row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;b
         </div>
       </div>
     </div>
-    <div>
-      <div class="room" role="img" aria-label="A big screen with LoopCast looping welcome, agenda, Wi-Fi, photo and sponsor slides.">
-        <div class="livebadge"><span class="dot"></span>Looping on the big screen</div>
-        <div class="screen" aria-hidden="true">
-          <img src="assets/slide-welcome.webp" alt="" width="1280" height="720">
-          <img src="assets/slide-agenda.webp" alt="" width="1280" height="720">
-          <img src="assets/slide-wifi.webp" alt="" width="1280" height="720" loading="lazy">
-          <img src="assets/slide-photos.webp" alt="" width="1280" height="720" loading="lazy">
-          <img src="assets/slide-sponsors.webp" alt="" width="1280" height="720" loading="lazy">
-        </div>
-      </div>
-    </div>
+    <figure class="hero-photo">
+      <picture>
+        <source media="(max-width: 700px)" srcset="assets/photo-hero-phone.webp" width="1200" height="900">
+        <img src="assets/photo-hero-wide.webp" width="1920" height="800" alt="A conference ballroom with a full audience facing a large stage screen showing a welcome message and the day’s schedule.">
+      </picture>
+    </figure>
   </div>
 
   <div class="wrap">
@@ -321,6 +310,18 @@ footer .row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;b
     <div class="wrap">
       <h2>Made for any room with a screen.</h2>
       <p class="sub">If you need slides or video on a loop, LoopCast keeps them going while you take care of everything else.</p>
+      <div class="photogrid">
+        <div class="use photo">
+          <img src="assets/photo-workshop.webp" width="1600" height="900" loading="lazy" alt="A presenter leading a workshop in front of a large wall screen showing the session time, room and format.">
+          <h3>Training rooms and workshops</h3>
+          <p>Session details on the wall screen before and between sessions, so people know they’re in the right room.</p>
+        </div>
+        <div class="use photo">
+          <img src="assets/photo-meeting.webp" width="1600" height="900" loading="lazy" alt="A team around a conference table facing a wall display showing the meeting agenda.">
+          <h3>Meeting rooms</h3>
+          <p>The agenda up on the display as people arrive, with no one fumbling for the right slide.</p>
+        </div>
+      </div>
       <div class="usegrid">
         <div class="use">
           <div class="tv"><img src="assets/use-church.webp" width="960" height="540" loading="lazy" alt="A church welcome slide: coffee in the lobby, service starts at 10:30."></div>
