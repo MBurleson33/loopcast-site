@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>LoopCast: looping slides and video for conference screens</title>
-<meta name="description" content="LoopCast plays a folder of slides and videos on the projector, on repeat, without internet. Built for conference walk-in loops, sponsor slides and breaks.">
+<meta name="description" content="LoopCast plays a folder of slides and videos on the projector, on repeat, without internet. For Windows and Mac. Built for conference walk-in loops, sponsor slides and breaks.">
 <meta property="og:title" content="LoopCast">
 <meta property="og:description" content="Looping slides and video for conference screens. Drop in files, press play, get back to your event.">
 <meta property="og:image" content="https://mburleson33.github.io/loopcast-site/assets/og.jpg">
@@ -97,6 +97,7 @@ kbd{font:inherit;font-stretch:80%;font-weight:650;font-size:15px;color:var(--tex
 .dlbox h2{margin-bottom:10px}
 .notes{margin:28px 0 0;padding:0;list-style:none;color:var(--muted);font-size:16px}
 .notes li{padding:6px 0 6px 22px;position:relative}
+.notes b{color:var(--text);font-weight:650}
 .notes a,.meta a{color:var(--text);text-underline-offset:3px}
 .notes li::before{content:"";position:absolute;left:0;top:15px;width:8px;height:8px;border-radius:2px;background:var(--line)}
 .dlbox .icon{width:180px;height:180px}
@@ -130,13 +131,13 @@ footer .row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;b
     <h1>The conference screens, handled.</h1>
     <p class="lede">LoopCast plays a folder of slides and videos on the projector, on repeat, without internet. Drop in your files, press play, and get back to running the event.</p>
     <div class="ctas">
-      <a class="btn solid" href="#download">
+      <a class="btn solid" href="#download" id="heroDl">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
-        Download for Windows
+        <span id="heroDlLabel">Download for Windows</span>
       </a>
       <a class="btn line" href="#how">See how it works</a>
     </div>
-    <p class="meta">Version 1.3.0 for Windows 10 and 11. Or <a href="app/" target="_blank" rel="noopener">open it in your browser</a> in Chrome or Edge.</p>
+    <p class="meta">Version 1.4.0 for Windows and Mac. Or <a href="app/" target="_blank" rel="noopener">open it in your browser</a> in Chrome or Edge.</p>
 
     <figure class="monitor">
       <figcaption class="state"><span class="dot"></span>On the projector now</figcaption>
@@ -226,17 +227,21 @@ footer .row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;b
       <div class="dlbox">
         <div>
           <h2>Get LoopCast</h2>
-          <p class="sub">Version 1.3.0 for Windows 10 and 11.</p>
+          <p class="sub">Version 1.4.0 for Windows 10 and 11, and macOS 12 or later on Intel and Apple Silicon.</p>
           <div class="ctas" style="margin-top:28px">
             <a class="btn solid" href="https://github.com/MBurleson33/loopcast-site/releases/latest/download/LoopCast-Setup.exe">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
               Download for Windows
             </a>
+            <a class="btn solid" href="https://github.com/MBurleson33/loopcast-site/releases/latest/download/LoopCast-Mac.dmg">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+              Download for Mac
+            </a>
             <a class="btn line" href="app/" target="_blank" rel="noopener">Open in your browser</a>
           </div>
           <ul class="notes">
-            <li>Installs without administrator rights and adds Start menu and desktop shortcuts.</li>
-            <li>Windows may say the app is unrecognized the first time. Choose More info, then Run anyway.</li>
+            <li><b>Windows:</b> installs without administrator rights and adds Start menu and desktop shortcuts. Windows may say the app is unrecognized the first time. Choose More info, then Run anyway.</li>
+            <li><b>Mac:</b> open the disk image and drag LoopCast to Applications. The first time you open it, macOS blocks it because it isn’t from an identified developer yet. Go to <b>System Settings → Privacy &amp; Security</b>, scroll down, click <b>Open Anyway</b> and confirm. You only do this once.</li>
             <li>Open in your browser runs LoopCast right here in Chrome or Edge, with nothing to install. Prefer a file for offline use? <a href="https://github.com/MBurleson33/loopcast-site/releases/latest/download/LoopCast.html">Download the browser version</a>.</li>
           </ul>
         </div>
@@ -252,5 +257,9 @@ footer .row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;b
     <span>© 2026 Treetop Business Solutions</span>
   </div></div>
 </footer>
+<script>
+  // Label the hero download for the visitor's computer; the download section has both.
+  if (/Mac/i.test(navigator.userAgentData?.platform || navigator.platform || '')) document.getElementById('heroDlLabel').textContent = 'Download for Mac';
+</script>
 </body>
 </html>

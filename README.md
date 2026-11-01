@@ -4,7 +4,7 @@ Product page for [LoopCast](https://mburleson33.github.io/loopcast-site/), an of
 
 - `index.html` is the product page; images, font and icons are in `assets/`.
 - `app/index.html` is the browser version of LoopCast itself, opened by the page's "Open in your browser" button. The release workflow replaces it with the new build on every release; don't edit it here.
-- Downloads come from this repo's **Releases**. The LoopCast release workflow (in the private app repo) publishes each new version here as `LoopCast-Setup.exe` and `LoopCast.html`, so the page's download links always point at the latest release.
+- Downloads come from this repo's **Releases**. The LoopCast release workflow (in the private app repo) publishes each new version here as `LoopCast-Setup.exe`, `LoopCast-Mac.dmg` and `LoopCast.html`, so the page's download links always point at the latest release.
 - Hosted with GitHub Pages from the `main` branch.
 
 The Archivo font is used under the SIL Open Font License (`assets/ARCHIVO-OFL.txt`).
