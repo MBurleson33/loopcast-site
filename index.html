@@ -76,13 +76,13 @@ nav{display:flex;align-items:center;gap:32px;height:68px}
 .facts svg{flex:none;color:var(--lit)}
 
 /* sections */
-section{padding:clamp(80px,9vw,140px) 0}
+section{padding:clamp(64px,7vw,110px) 0}
 .band{background:var(--well)}
 h2{font-size:clamp(34px,4.2vw,60px);line-height:1.04;font-weight:780;font-stretch:110%;letter-spacing:-.02em;margin:0 0 18px;max-width:20ch}
 .sub{color:var(--muted);max-width:56ch;margin:0;font-size:19px}
 
 /* steps */
-.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(28px,4vw,64px);margin-top:56px;counter-reset:s}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(28px,4vw,64px);margin-top:40px;counter-reset:s}
 .step{counter-increment:s;border-top:1px solid var(--line);padding-top:22px}
 .step::before{content:counter(s);display:block;font-size:56px;font-weight:800;font-stretch:120%;line-height:1;color:var(--lit);margin-bottom:18px}
 .step h3{font-size:22px;margin:0 0 8px;font-weight:700}
@@ -93,7 +93,7 @@ h2{font-size:clamp(34px,4.2vw,60px);line-height:1.04;font-weight:780;font-stretc
 .tree em{font-style:normal;color:var(--muted);font-stretch:85%}
 
 /* control window */
-.control{margin-top:56px}
+.control{margin:40px 0 0}
 .control .state{display:flex;align-items:center;gap:9px;font-size:15px;color:var(--muted);margin:0 0 14px}
 .control img{border-radius:14px;outline:2px solid var(--tally);outline-offset:7px;box-shadow:0 30px 80px rgba(0,0,0,.45)}
 
@@ -105,7 +105,7 @@ h2{font-size:clamp(34px,4.2vw,60px);line-height:1.04;font-weight:780;font-stretc
 .feature p{color:var(--muted);margin:0 0 12px}
 .shot{border-radius:12px;border:1px solid var(--line);overflow:hidden;background:#000}
 .shot.tall{max-width:360px;justify-self:center}
-.more{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 48px;margin:clamp(64px,7vw,110px) 0 0;padding:0}
+.more{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 48px;margin:48px 0 0;padding:0}
 .more div{border-top:1px solid var(--line);padding:22px 0}
 .more dt{font-weight:700;font-size:19px}
 .more dd{margin:4px 0 0;color:var(--muted)}
@@ -117,7 +117,7 @@ kbd{font:inherit;font-stretch:80%;font-weight:650;font-size:15px;color:var(--tex
 .uses{background:var(--paper);color:var(--ink)}
 .uses .sub{color:var(--ink-muted)}
 .usegrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(20px,2.4vw,36px);margin-top:56px}
-.photogrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(20px,2.4vw,36px);margin-top:56px}
+.photogrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(20px,2.4vw,36px);margin-top:40px}
 .use.photo img{border-radius:12px;aspect-ratio:16/9;object-fit:cover;box-shadow:0 18px 40px rgba(31,35,41,.18)}
 .photogrid+.usegrid{margin-top:clamp(40px,4vw,64px)}
 .use .tv{background:#14151a;border-radius:10px;padding:8px;box-shadow:0 18px 40px rgba(31,35,41,.18)}
@@ -186,7 +186,7 @@ footer .row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;b
   <div class="wrap">
     <nav aria-label="Main">
       <a class="brand" href="#top" aria-label="LoopCast home"><img src="assets/mark.svg" width="33" height="28" alt=""><span>LoopCast</span></a>
-      <div class="navlinks"><a href="#how">How it works</a><a href="#features">Features</a><a href="#uses">Where it’s used</a><a href="#faq">FAQ</a></div>
+      <div class="navlinks"><a href="#features">Features</a><a href="#uses">Where it’s used</a><a href="#faq">FAQ</a></div>
       <a class="btn solid sm" href="#download">Download</a>
     </nav>
   </div>
@@ -227,121 +227,54 @@ footer .row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;b
   <section id="how">
     <div class="wrap">
       <h2>Set up in the time it takes to find the HDMI cable.</h2>
-      <p class="sub">No slide software to wrangle and no accounts. LoopCast works from folders you already know how to make.</p>
       <div class="steps">
         <div class="step">
           <h3>Put your files in folders</h3>
-          <p>Each folder becomes a playlist. Name files 01, 02, 03 to set the order. Add a logo for the in-between moments.</p>
-          <div class="tree" aria-label="Example folder layout">
-            <div><span>Fall Summit</span></div>
-            <div class="in"><span>logo.png</span><em>Logo screen</em></div>
-            <div class="in"><span>Walk-in</span><em>Playlist</em></div>
-            <div class="in"><span>Sponsors</span><em>Playlist</em></div>
-            <div class="in"><span>Break</span><em>Playlist</em></div>
-          </div>
+          <p>Each folder becomes a playlist. Add a logo.png for the in-between moments.</p>
         </div>
         <div class="step">
           <h3>Show on the projector</h3>
-          <p>One button opens the output fullscreen on the second display, at the projector’s own resolution. Your laptop keeps the controls.</p>
+          <p>One button opens the output fullscreen on the second display.</p>
         </div>
         <div class="step">
           <h3>Press play</h3>
-          <p>Slides hold for as long as you choose, videos play to the end, and the whole thing loops until you stop it.</p>
+          <p>Slides and videos loop until you stop them. Your laptop keeps the controls.</p>
         </div>
       </div>
-      <figure class="control" style="margin-inline:0">
-        <figcaption class="state"><span class="dot"></span>Your laptop runs the show</figcaption>
-        <img src="assets/operator.webp" width="2880" height="1720" loading="lazy" alt="LoopCast's control window: a large preview of the agenda slide that's on the projector, play controls, Logo and Black buttons, and a filmstrip of the Walk-in playlist with the live and next slides marked.">
-      </figure>
     </div>
   </section>
 
   <section id="features" class="band">
     <div class="wrap">
       <h2>Built for the AV table, not the boardroom.</h2>
-      <p class="sub">Everything you need to keep a room’s screens right all day, and nothing you’ll have to learn on the spot.</p>
-
-      <div class="feature">
-        <div class="copy">
-          <h3>Always know what the room is seeing.</h3>
-          <p>The preview on your laptop matches the projector. A red outline means it’s live, and the next slide is marked in green so there are no surprises.</p>
-        </div>
-        <div class="shot"><img src="assets/projector.webp" width="2560" height="1440" loading="lazy" alt="The projector output: a full-screen agenda slide for the Fall Leadership Summit."></div>
-      </div>
-
-      <div class="feature flip">
-        <div class="copy">
-          <h3>Make a lunch version without touching the original.</h3>
-          <p>Duplicate a playlist, hide the slides that don’t fit, and give it its own ending. The original stays exactly as it was.</p>
-          <p>Need one slide or video to stay up? Set it to repeat until you press Next.</p>
-        </div>
-        <div class="shot"><img src="assets/copy.webp" width="2416" height="380" loading="lazy" alt="A copied playlist named Lunch loop with two slides hidden, one set to repeat, and its ending set to show the logo."></div>
-      </div>
-
-      <div class="feature">
-        <div class="copy">
-          <h3>Set it once, then leave it alone.</h3>
-          <p>Choose how long slides stay up, crossfade or cut, fit or fill the screen, and whether videos play sound. LoopCast remembers your folder and settings for next time.</p>
-        </div>
-        <div class="shot tall"><img src="assets/settings.webp" width="720" height="1720" loading="lazy" alt="LoopCast's settings panel: projector display, seconds per image, transition, sizing, shuffle, video sound and picking up new files."></div>
-      </div>
-
+      <figure class="control">
+        <figcaption class="state"><span class="dot"></span>Your laptop runs the show</figcaption>
+        <img src="assets/operator.webp" width="2880" height="1720" loading="lazy" alt="LoopCast's control window: a large preview of the agenda slide that's on the projector, play controls, Logo and Black buttons, and a filmstrip of the Walk-in playlist with the live and next slides marked.">
+      </figure>
       <dl class="more">
-        <div><dt>Logo screen and fade to black</dt><dd>Cover the screen with your event logo or go black with one key. The playlist keeps its place underneath.</dd></div>
-        <div><dt>Loop, stop or end on the logo</dt><dd>Each playlist decides what happens when it reaches the end.</dd></div>
-        <div><dt>Drop in slides mid-event</dt><dd>New files in the folder show up the next time the playlist comes around.</dd></div>
-        <div><dt>Works without internet</dt><dd>Everything runs on your computer, so a ballroom with bad Wi-Fi doesn’t matter.</dd></div>
-        <div><dt>Keeps the screens awake</dt><dd>No sleeping laptop or screensaver in the middle of a session.</dd></div>
-        <div><dt>Live inputs</dt><dd>Plug in an HDMI capture stick or camera and put a guest laptop, camera or Apple TV on the screen. Press Play to go back to the loop.</dd></div>
-        <div><dt>Images and video</dt><dd>JPG, PNG, GIF, WebP, SVG, MP4 and WebM. MP4 (H.264) is the safest choice for video.</dd></div>
+        <div><dt>See what the room sees</dt><dd>A live preview with a red outline when it’s on screen.</dd></div>
+        <div><dt>Logo and black</dt><dd>Cover the screen with one key. The loop keeps its place.</dd></div>
+        <div><dt>Loop, repeat or stop</dt><dd>Each playlist, and each slide, can do its own thing.</dd></div>
+        <div><dt>Drop in slides mid-event</dt><dd>New files show up the next time around.</dd></div>
+        <div><dt>Live inputs</dt><dd>Put a guest laptop or camera on screen with a capture stick.</dd></div>
+        <div><dt>No internet needed</dt><dd>Runs on your computer, so venue Wi-Fi doesn’t matter.</dd></div>
       </dl>
-
-      <div class="keys" aria-label="Keyboard shortcuts">
-        <span><kbd>Space</kbd>Play or pause</span>
-        <span><kbd>←</kbd><kbd>→</kbd>Previous or next</span>
-        <span><kbd>H</kbd>Logo screen</span>
-        <span><kbd>B</kbd>Black</span>
-        <span><kbd>R</kbd>Repeat this one</span>
-      </div>
     </div>
   </section>
 
   <section id="uses" class="uses">
     <div class="wrap">
       <h2>Made for any room with a screen.</h2>
-      <p class="sub">If you need slides or video on a loop, LoopCast keeps them going while you take care of everything else.</p>
       <div class="photogrid">
         <div class="use photo">
           <img src="assets/photo-workshop.webp" width="1600" height="900" loading="lazy" alt="A presenter leading a workshop in front of a large wall screen showing the session time, room and format.">
           <h3>Training rooms and workshops</h3>
-          <p>Session details on the wall screen before and between sessions, so people know they’re in the right room.</p>
+          <p>Session details on the wall between sessions.</p>
         </div>
         <div class="use photo">
           <img src="assets/photo-meeting.webp" width="1600" height="900" loading="lazy" alt="A team around a conference table facing a wall display showing the meeting agenda.">
-          <h3>Meeting rooms</h3>
-          <p>The agenda up on the display as people arrive, with no one fumbling for the right slide.</p>
-        </div>
-      </div>
-      <div class="usegrid">
-        <div class="use">
-          <div class="tv"><img src="assets/use-church.webp" width="960" height="540" loading="lazy" alt="A church welcome slide: coffee in the lobby, service starts at 10:30."></div>
-          <h3>Churches</h3>
-          <p>Welcome and announcement loops before the service, without tying up the presentation computer.</p>
-        </div>
-        <div class="use">
-          <div class="tv"><img src="assets/use-booth.webp" width="960" height="540" loading="lazy" alt="A trade-show booth slide: demos every half hour."></div>
-          <h3>Trade-show booths</h3>
-          <p>A product loop on the booth TV that runs all day, even when the show floor Wi-Fi doesn’t.</p>
-        </div>
-        <div class="use">
-          <div class="tv"><img src="assets/use-school.webp" width="960" height="540" loading="lazy" alt="A school slide: Spirit Week, Friday is blue and gold."></div>
-          <h3>Schools</h3>
-          <p>Hallway and cafeteria screens with this week’s news. Drop a new slide in the folder and it shows up.</p>
-        </div>
-        <div class="use">
-          <div class="tv"><img src="assets/use-lobby.webp" width="960" height="540" loading="lazy" alt="A lobby slide listing today's events and rooms."></div>
-          <h3>Offices and lobbies</h3>
-          <p>Today’s events, welcome messages and wayfinding on the lobby display, set once and left alone.</p>
+          <h3>Meeting rooms, churches and lobbies</h3>
+          <p>Agendas, announcements and welcome loops, set once and left alone.</p>
         </div>
       </div>
     </div>
@@ -349,19 +282,12 @@ footer .row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;b
 
   <section id="faq">
     <div class="wrap faq">
-      <div>
-        <h2>Questions, answered.</h2>
-        <p class="sub">Anything else? The browser version is the fastest way to see it for yourself.</p>
-      </div>
+      <h2>Questions, answered.</h2>
       <div class="qs">
-        <details open><summary>Does it need internet?</summary><p>No. LoopCast runs entirely on your computer and plays files from a folder on it. Internet is only needed to download it.</p></details>
-        <details><summary>Will it work with our projector or TV?</summary><p>Yes, if your computer sees it as a second display. LoopCast opens the output fullscreen on that display at its own resolution, whether it’s a projector, a TV or an LED wall processor.</p></details>
-        <details><summary>What kinds of files can I use?</summary><p>Images (JPG, PNG, GIF, WebP, SVG) and video (MP4 and WebM). Export slides from PowerPoint, Keynote or Canva as images and drop them in a folder.</p></details>
-        <details><summary>Can I change slides during the event?</summary><p>Yes. Add or remove files in the folder and LoopCast picks up the changes the next time the playlist comes around, or right away if you press Rescan.</p></details>
-        <details><summary>Can I show a presenter’s laptop or a camera?</summary><p>Yes. Plug it into an inexpensive USB HDMI capture stick and it shows up under Inputs. Preview it, then put it on screen with one click. Your playlist waits underneath, and Logo and Black still work.</p></details>
-        <details><summary>Does it work on a Mac?</summary><p>Yes, on macOS 12 or later, on Intel and Apple Silicon. The first time you open it, allow it in System Settings → Privacy &amp; Security.</p></details>
-        <details><summary>Can I use it without installing anything?</summary><p>Yes. Open in your browser runs the full player in Chrome or Edge. The desktop app adds a few conveniences: it opens the projector window fullscreen on its own, where the browser needs one click or the F key.</p></details>
-        <details><summary>Why does my computer warn me when I install it?</summary><p>LoopCast isn’t signed with a paid developer certificate yet, so Windows and macOS ask you to confirm the first time. On Windows choose More info, then Run anyway. On a Mac use Open Anyway in Privacy &amp; Security.</p></details>
+        <details><summary>Will it work with our projector or TV?</summary><p>Yes, if your computer sees it as a second display. LoopCast opens the output fullscreen on it at its own resolution.</p></details>
+        <details><summary>What kinds of files can I use?</summary><p>Images (JPG, PNG, GIF, WebP, SVG) and video (MP4, WebM). Export slides from PowerPoint, Keynote or Canva as images.</p></details>
+        <details><summary>Can I use it without installing anything?</summary><p>Yes. Open in your browser runs the full player in Chrome or Edge. The desktop app also opens the projector window fullscreen on its own.</p></details>
+        <details><summary>Why does my computer warn me when I install it?</summary><p>LoopCast isn’t signed with a paid developer certificate yet, so Windows and macOS ask you to confirm the first time. On Windows choose More info, then Run anyway. On a Mac use Open Anyway in System Settings → Privacy &amp; Security.</p></details>
       </div>
     </div>
   </section>
@@ -378,9 +304,8 @@ footer .row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;b
             <a class="btn line" href="app/" target="_blank" rel="noopener">Open in your browser</a>
           </div>
           <ul class="notes">
-            <li><b>Windows:</b> installs without administrator rights and adds Start menu and desktop shortcuts. Windows may say the app is unrecognized the first time. Choose More info, then Run anyway.</li>
-            <li><b>Mac:</b> open the disk image and drag LoopCast to Applications. The first time you open it, macOS blocks it because it isn’t from an identified developer yet. Go to <b>System Settings → Privacy &amp; Security</b>, scroll down, click <b>Open Anyway</b> and confirm. You only do this once.</li>
-            <li><b>Browser:</b> runs right here in Chrome or Edge, with nothing to install. Prefer a file for offline use? <a href="https://github.com/MBurleson33/loopcast-site/releases/latest/download/LoopCast.html">Download the browser version</a>.</li>
+            <li><b>Windows:</b> if Windows says the app is unrecognized, choose More info, then Run anyway.</li>
+            <li><b>Mac:</b> drag LoopCast to Applications. The first time, allow it in <b>System Settings → Privacy &amp; Security → Open Anyway</b>.</li>
           </ul>
         </div>
         <img class="icon" src="assets/icon-512.png" width="512" height="512" alt="">
