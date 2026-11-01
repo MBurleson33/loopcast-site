@@ -8,4 +8,4 @@ Product page for [LoopCast](https://mburleson33.github.io/loopcast-site/), an of
 
 The Archivo font is used under the SIL Open Font License (`assets/ARCHIVO-OFL.txt`).
 
-© 2026 Treetop Business Solutions
+© 2026 MBurleson
