@@ -69,6 +69,16 @@ main{display:grid;grid-template-columns:232px 1fr;height:calc(100% - 60px)}
 .pl b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
 .pl small{color:var(--muted);font-size:12.5px}
 .pl.onair::before{content:"";position:absolute;left:4px;top:10px;bottom:10px;width:3px;border-radius:2px;background:var(--tally)}
+.rail h2.inputs-h{margin-top:24px}
+#inputs .find{margin:0 10px;width:calc(100% - 20px)}
+#inputs .hint{color:var(--faint);font-size:12.5px;margin:8px 10px 0;line-height:1.4}
+.pl.input b{display:flex;align-items:center;gap:7px}
+.pl.input b svg{flex:none;color:var(--muted)}
+.inputprev{position:relative;flex:none;width:min(100%,400px);aspect-ratio:16/9;background:#000;border-radius:var(--r-sm);overflow:hidden;outline:2px solid var(--line);outline-offset:2px}
+.inputprev.live{outline-color:var(--tally)}
+.inputprev video{width:100%;height:100%;object-fit:contain;display:block}
+.inputprev .tag{position:absolute;left:8px;top:8px;font-size:11.5px;font-weight:650;font-stretch:80%;padding:2px 7px;border-radius:4px;color:#fff;background:#55585f}
+.inputprev.live .tag{background:var(--tally)}
 .rail .none{color:var(--faint);font-size:13.5px;margin:0 10px}
 
 .desk{display:grid;grid-template-rows:auto minmax(0,1fr) auto auto;min-width:0;min-height:0}
@@ -222,6 +232,8 @@ kbd{font:inherit;font-stretch:80%;font-weight:600;font-size:12.5px;color:var(--t
   <nav class="rail" aria-label="Playlists">
     <h2>Playlists</h2>
     <div id="playlists"><p class="none">Your folders will show up here.</p></div>
+    <h2 class="inputs-h">Inputs</h2>
+    <div id="inputs"></div>
   </nav>
 
   <section class="desk">
@@ -406,7 +418,7 @@ class Stage {
     } catch {}
   }
   clearLayer(layer){
-    for (const el of layer.querySelectorAll('video')) { try { el.pause(); el.removeAttribute('src'); el.load(); } catch {} }
+    for (const el of layer.querySelectorAll('video')) { try { el.pause(); if (el.srcObject) el.srcObject = null; else { el.removeAttribute('src'); el.load(); } } catch {} }
     for (const el of layer.children) if (el._url) this.win.URL.revokeObjectURL(el._url);
     layer.replaceChildren();
   }
@@ -418,7 +430,14 @@ class Stage {
     if (src.file) { url = el._url = this.win.URL.createObjectURL(src.file); }
     const drop = () => { if (el._url) this.win.URL.revokeObjectURL(el._url); };
     try {
-      if (isVid) {
+      if (src.stream) {
+        // A live input (HDMI capture stick or camera). The stream is shared, so it's never stopped here.
+        el.muted = true; el.playsInline = true; el.srcObject = src.stream;
+        await new Promise((res, rej) => {
+          el.addEventListener('loadeddata', res, { once:true });
+          el.addEventListener('error', () => rej(new Error('input')), { once:true });
+        });
+      } else if (isVid) {
         el.muted = muted; el.playsInline = true; el.loop = !!loop; el.preload = 'auto';
         await new Promise((res, rej) => {
           el.addEventListener('canplay', res, { once:true });
@@ -500,7 +519,7 @@ function extractHold(pls){
 
 /* ---------- state ---------- */
 const native = window.loopcastNative || null;
-const S = { hold:null, holding:false, dir:null, dirPath:null, folderName:'', lib:[], plIndex:0, view:0, order:[], pos:-1, playing:false, black:false,
+const S = { hold:null, holding:false, dir:null, dirPath:null, folderName:'', lib:[], plIndex:0, view:0, inputs:[], inputsAllowed:false, viewInput:null, liveInput:null, order:[], pos:-1, playing:false, black:false,
             timer:null, timerWin:null, gen:0, curEl:null, mirrorEl:null, itemStart:0, imgDur:0, pausedElapsed:0 };
 const pl = () => S.lib[S.plIndex];   // the playlist going to the projector
 const vpl = () => S.lib[S.view];     // the playlist open in the filmstrip
@@ -528,6 +547,7 @@ function armTimer(ms, gen){
 
 async function goTo(pos, { user = false } = {}){
   let p = pl(); if (!p || !p.items.length) return;
+  S.liveInput = null; // showing a playlist item takes the projector back from a live input
   if (!S.order.length) { clearTimer(); S.playing = false; renderTransport(); renderPlaylists(); toast(`Every item in ${p.name} is hidden. Show at least one to play it.`); return; }
   S.ended = false;
   if (pos >= S.order.length) {
@@ -580,6 +600,7 @@ function finishPlaylist(end){
 }
 // Apply a repeat toggle to the item that's on screen right now.
 function applyRepToCurrent(){
+  if (S.liveInput) return;
   const p = pl(), item = current(); if (!item || !S.curEl) return;
   const holdHere = isRep(p, item) || (p.items.length === 1 && opts(p).end === 'loop');
   if (item.kind === 'video') { S.curEl.loop = holdHere; }
@@ -610,7 +631,7 @@ function toggleHide(idx){
     const live = current();
     const curIdx = S.pos >= 0 ? S.order[S.pos] : -1;
     buildOrder();
-    if (hiding && live === it) {
+    if (hiding && live === it && !S.liveInput) {
       // Hiding what's on screen moves on to the next visible item.
       if (!S.order.length) { clearTimer(); S.playing = false; S.pos = -1; renderTransport(); toast(`Every item in ${p.name} is hidden.`); }
       else { const nextPos = settings.shuffle ? 0 : Math.max(0, S.order.findIndex(i => i > curIdx)); goTo(nextPos, { user:true }); }
@@ -626,6 +647,11 @@ document.addEventListener('visibilitychange', () => { if (document.visibilitySta
 
 function setPlaying(on){
   if (!pl() || !pl().items.length) return;
+  if (S.liveInput) {
+    if (!on) return;
+    S.liveInput = null; S.playing = true; keepAwake(); renderTransport(); renderPlaylists(); renderInputs();
+    goTo(Math.max(0, S.pos), { user:true }); return;
+  }
   if (on && S.ended) { S.ended = false; if (S.holding) setHold(false); S.playing = true; renderTransport(); renderPlaylists(); keepAwake(); goTo(0, { user:true }); return; }
   S.playing = on; renderTransport(); renderPlaylists();
   if (on) keepAwake();
@@ -695,13 +721,14 @@ function loadLibrary(lib, folderName){
 
 // Open a playlist in the filmstrip. Nothing changes on the projector unless nothing has started yet.
 function viewPlaylist(i){
-  S.view = i;
+  S.view = i; S.viewInput = null;
   if (S.pos < 0 && !S.playing) { S.plIndex = i; settings.playlist = vpl().key; save(); buildOrder(); }
   renderPlaylists(); renderGrid(); renderNowNext(); renderTransport();
 }
 // Put a playlist on the projector, optionally starting at a given item.
 function playPlaylist(i, startIdx = null){
-  const same = i === S.plIndex && S.pos >= 0;
+  S.viewInput = null;
+  const same = i === S.plIndex && S.pos >= 0 && !S.liveInput;
   S.plIndex = S.view = i; settings.playlist = pl().key; save();
   if (S.holding && S.ended) setHold(false);
   if (same && startIdx == null) { if (!S.playing) setPlaying(true); renderPlaylists(); renderGrid(); return; }
@@ -798,17 +825,24 @@ function chosenScreen(){
 const OUTPUT_HTML = `<!doctype html><html><head><meta charset="utf-8"><title>LoopCast projector</title><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20120%20120%22%3E%3Crect%20x%3D%222%22%20y%3D%222%22%20width%3D%22116%22%20height%3D%22116%22%20rx%3D%2226%22%20fill%3D%22%2323252a%22/%3E%3Cg%20transform%3D%22translate%2860%2060%29%20scale%280.9186666666666667%29%20translate%28-60%20-60%29%22%3E%3Cdefs%3E%3CclipPath%20id%3D%22k%22%3E%3Crect%20x%3D%2231.5%22%20y%3D%2219.5%22%20width%3D%2277%22%20height%3D%2253%22%20rx%3D%2212.5%22/%3E%3C/clipPath%3E%3C/defs%3E%0A%3Crect%20x%3D%2234%22%20y%3D%2222%22%20width%3D%2272%22%20height%3D%2248%22%20rx%3D%2210%22%20fill%3D%22none%22%20stroke%3D%22%23f4e9c9%22%20stroke-width%3D%225%22/%3E%0A%3Crect%20x%3D%2214%22%20y%3D%2250%22%20width%3D%2272%22%20height%3D%2248%22%20rx%3D%2210%22%20fill%3D%22%23f4e9c9%22/%3E%0A%3Crect%20x%3D%2214%22%20y%3D%2250%22%20width%3D%2272%22%20height%3D%2248%22%20rx%3D%2210%22%20fill%3D%22%23e8412c%22%20clip-path%3D%22url%28%23k%29%22/%3E%3C/g%3E%3C/svg%3E"><style>${$('#stage-css').textContent}
 html,body{margin:0;height:100%;background:#000;overflow:hidden;cursor:none}
 body.cur{cursor:default}
-#hint{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:50;background:rgba(30,30,30,.88);color:#eee;font:15px system-ui,sans-serif;padding:10px 18px;border-radius:8px;transition:opacity .8s;pointer-events:none}
+#hint{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:50;background:rgba(20,20,22,.9);color:#f4e9c9;font:600 clamp(18px,2.4vw,34px)/1.3 system-ui,sans-serif;text-align:center;padding:.9em 1.4em;border-radius:14px;border:1px solid rgba(244,233,201,.25);transition:opacity .4s;pointer-events:none}
+#hint small{display:block;font-weight:400;font-size:.55em;color:#bbb;margin-top:.4em}
+body.full #hint{opacity:0}
+body.app #hint{display:none}
 #hint.gone{opacity:0}
-</style></head><body><div class="stage" id="stage"></div><div id="hint">Double-click or press F for fullscreen</div>
+</style></head><body><div class="stage" id="stage"></div><div id="hint">Click anywhere or press F for fullscreen<small>Browsers need this one click before a page can go fullscreen. The desktop app does it for you.</small></div>
 <script>
 const fs=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{});
-addEventListener('dblclick',fs);
+const sync=()=>document.body.classList.toggle('full',!!document.fullscreenElement);
+document.addEventListener('fullscreenchange',sync); addEventListener('resize',sync); sync();
+// One click goes fullscreen; when already fullscreen, a double-click leaves it.
+addEventListener('click',()=>{ if(!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{}); });
+addEventListener('dblclick',()=>{ if(document.fullscreenElement) document.exitFullscreen(); });
 addEventListener('keydown',e=>{ if(e.key==='f'||e.key==='F'){fs();return;} if(e.key===' ')e.preventDefault(); if(opener&&!opener.closed) opener.postMessage({lc:'key',key:e.key},'*'); });
 let t; addEventListener('mousemove',()=>{document.body.classList.add('cur');clearTimeout(t);t=setTimeout(()=>document.body.classList.remove('cur'),2000);});
 async function lock(){try{await navigator.wakeLock.request('screen')}catch(e){}} lock();
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')lock()});
-setTimeout(()=>document.getElementById('hint').classList.add('gone'),6000);
+focus();
 <\/script></body></html>`;
 
 async function openOutput(){
@@ -818,22 +852,129 @@ async function openOutput(){
     try { const st = await navigator.permissions.query({ name:'window-management' }); if (st.state !== 'denied') await detectScreens(true); } catch { await detectScreens(true); }
   }
   const s = native ? null : chosenScreen();
-  const features = s ? `popup,left=${s.availLeft},top=${s.availTop},width=${s.availWidth},height=${s.availHeight}` : 'popup,width=1280,height=720';
+  let features = s ? `popup,left=${s.availLeft},top=${s.availTop},width=${s.availWidth},height=${s.availHeight}` : 'popup,width=1280,height=720';
+  // Chrome can open a pop-up already fullscreen once window management is allowed; browsers that don't support it ignore this.
+  if (!native && screenDetails) features += ',fullscreen';
   const w = window.open('', 'loopcast_output', features);
   if (!w) { toast('The projector window was blocked. Allow pop-ups for this page and try again.'); return; }
   const d = w.document; d.open(); d.write(OUTPUT_HTML); d.close();
+  if (native) d.body.classList.add('app'); // the desktop app already opens this window fullscreen
   outWin = w; outStage = new Stage(d.getElementById('stage'));
+  try { w.focus(); } catch {}
   outStage.setBlack(S.black); outStage.setHold(S.holding); outStage.setHoldSource(S.hold);
   renderOutputState();
-  if (S.pos >= 0) goTo(S.pos, { user:true });
+  if (S.liveInput) goLiveInput(S.liveInput);
+  else if (S.pos >= 0) goTo(S.pos, { user:true });
 }
 function closeOutput(){ if (outputOpen()) outWin.close(); }
 setInterval(() => {
-  if (outWin && outWin.closed) { outWin = null; outStage = null; renderOutputState(); if (S.pos >= 0) goTo(S.pos, { user:true }); }
+  if (outWin && outWin.closed) { outWin = null; outStage = null; renderOutputState(); if (S.liveInput) goLiveInput(S.liveInput); else if (S.pos >= 0) goTo(S.pos, { user:true }); }
 }, 1000);
 window.addEventListener('message', e => { if (outWin && e.source === outWin && e.data && e.data.lc === 'key') handleKey(e.data.key); });
 window.addEventListener('beforeunload', e => { if (outputOpen()) { e.preventDefault(); e.returnValue = ''; } });
 window.addEventListener('pagehide', () => { try { outWin && outWin.close(); } catch {} });
+
+/* ---------- live inputs: HDMI capture sticks and cameras ---------- */
+const ICON_INPUT = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 10l5-3v10l-5-3z"/><rect x="3" y="6" width="12" height="12" rx="2"/></svg>';
+const streams = new Map();
+const inputLabel = id => S.inputs.find(d => d.id === id)?.label || 'Input';
+async function getStream(id){
+  const have = streams.get(id);
+  if (have && have.active) return have;
+  const s = await navigator.mediaDevices.getUserMedia({ audio:false, video:{ deviceId:{ exact:id }, width:{ ideal:1920 }, height:{ ideal:1080 }, frameRate:{ ideal:30 } } });
+  streams.set(id, s);
+  s.getVideoTracks()[0]?.addEventListener('ended', () => {
+    streams.delete(id);
+    if (S.liveInput === id) { toast(`${inputLabel(id)} was disconnected.`); returnFromInput(); }
+    refreshInputs(false);
+  });
+  return s;
+}
+async function refreshInputs(ask){
+  if (!navigator.mediaDevices?.enumerateDevices) { renderInputs(); return; }
+  if (ask) {
+    try { const s = await navigator.mediaDevices.getUserMedia({ video:true, audio:false }); s.getTracks().forEach(t => t.stop()); }
+    catch { toast('LoopCast wasn’t allowed to use cameras or capture devices. Allow camera access for it and try again.'); }
+  }
+  let devs = [];
+  try { devs = (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === 'videoinput'); } catch {}
+  S.inputsAllowed = devs.some(d => d.label);
+  S.inputs = devs.map((d, i) => ({ id: d.deviceId, label: d.label || `Input ${i + 1}` }));
+  if (S.viewInput && !S.inputs.some(d => d.id === S.viewInput)) { S.viewInput = null; renderGrid(); }
+  renderInputs();
+  if (ask && S.inputsAllowed && !S.inputs.length) toast('No cameras or capture devices found. Plug one in and it will show up here.');
+}
+navigator.mediaDevices?.addEventListener?.('devicechange', () => refreshInputs(false));
+function renderInputs(){
+  const box = $('#inputs');
+  if (!S.inputsAllowed) {
+    box.innerHTML = '<button class="key sm find" id="findInputs">Find inputs</button><p class="hint">HDMI capture sticks and cameras. Show a guest laptop, camera or Apple TV on the projector.</p>';
+    $('#findInputs').onclick = () => refreshInputs(true);
+    return;
+  }
+  if (!S.inputs.length) { box.innerHTML = '<p class="none">Plug in a capture stick or camera.</p>'; return; }
+  const rows = S.inputs.map(d => {
+    const live = S.liveInput === d.id, sel = S.viewInput === d.id;
+    return { id:d.id, cls:`pl input${sel?' sel':''}${live?' onair':''}`, cur:sel, inner:`<b>${ICON_INPUT}<span>${esc(d.label)}</span></b><small>${live ? 'On screen' : 'Live input'}</small>` };
+  });
+  const old = [...box.querySelectorAll('.pl')];
+  if (old.length === rows.length && old.every((b,i) => b.dataset.id === rows[i].id)) {
+    old.forEach((b,i) => { const r = rows[i]; if (b.className !== r.cls) b.className = r.cls; if (b.innerHTML !== r.inner) b.innerHTML = r.inner; r.cur ? b.setAttribute('aria-current','true') : b.removeAttribute('aria-current'); });
+    return;
+  }
+  box.innerHTML = rows.map(r => `<button class="${r.cls}" data-id="${esc(r.id)}" ${r.cur?'aria-current="true"':''} title="Click to preview. Double-click to show on screen.">${r.inner}</button>`).join('');
+}
+function viewInput(id){
+  S.viewInput = id;
+  renderPlaylists(); renderInputs(); renderGrid();
+}
+function renderInputView(gen){
+  const id = S.viewInput, live = S.liveInput === id, grid = $('#grid');
+  $('#stripName').textContent = inputLabel(id);
+  $('#stripCount').textContent = live ? 'On screen now' : 'Preview. Nothing changes on the projector until you show it.';
+  $('#endCtl').hidden = true; $('#stripActions').hidden = false;
+  $('#renameBtn').hidden = $('#deleteBtn').hidden = true;
+  grid.innerHTML = `<div class="inputprev${live?' live':''}"><video muted playsinline autoplay></video><span class="tag">${live ? 'Live' : 'Preview'}</span></div>`;
+  highlightCards();
+  getStream(id).then(st => {
+    if (gen !== gridGen) return;
+    const v = grid.querySelector('video'); if (!v) return;
+    v.srcObject = st; v.play().catch(()=>{});
+  }).catch(() => {
+    if (gen !== gridGen) return;
+    grid.innerHTML = '<p class="emptystrip">Couldn’t open this input. Check that it’s plugged in and not being used by another app.</p>';
+  });
+}
+// Put a live input on the projector. The playlist pauses and picks up again when you press Play.
+async function goLiveInput(id){
+  let stream;
+  try { stream = await getStream(id); }
+  catch { toast('Couldn’t open that input. Check that it’s plugged in and not being used by another app.'); return; }
+  clearTimer();
+  const gen = ++S.gen;
+  if (S.curEl && S.curEl.tagName === 'VIDEO') S.curEl.pause();
+  S.mirrorEl?.pause?.();
+  S.liveInput = id; S.viewInput = id; S.playing = false; S.ended = false;
+  const item = { kind:'video', name: inputLabel(id) };
+  const primary = outStage || prevStage, mirror = outStage ? prevStage : null;
+  $('#welcome').hidden = true;
+  let el;
+  try { el = await primary.show(item, { stream }, { fade: fadeLen(), muted:true }); }
+  catch { toast('That input isn’t sending a picture yet.'); return; }
+  if (!el || gen !== S.gen) return;
+  S.curEl = el; S.mirrorEl = null;
+  if (mirror) mirror.show(item, { stream }, { fade: fadeLen(), muted:true }).then(m => { if (gen === S.gen) S.mirrorEl = m; }).catch(()=>{});
+  keepAwake();
+  renderTransport(); renderPlaylists(); renderInputs(); renderGrid(); renderNowNext();
+}
+function returnFromInput(){
+  if (!S.liveInput) return;
+  S.liveInput = null;
+  if (pl() && pl().items.length && S.order.length) { S.playing = true; goTo(Math.max(0, S.pos), { user:true }); }
+  renderTransport(); renderPlaylists(); renderInputs(); renderGrid(); renderNowNext();
+}
+$('#inputs').addEventListener('click', e => { const b = e.target.closest('.pl.input'); if (b) viewInput(b.dataset.id); });
+$('#inputs').addEventListener('dblclick', e => { const b = e.target.closest('.pl.input'); if (b) goLiveInput(b.dataset.id); });
 
 /* ---------- rendering ---------- */
 function renderOutputState(){
@@ -851,6 +992,7 @@ function renderOutputState(){
 function renderTransport(){
   const has = !!(pl() && pl().items.length);
   for (const id of ['#prevBtn','#playBtn','#nextBtn','#blackBtn','#holdBtn']) $(id).disabled = !has;
+  if (S.liveInput) { $('#blackBtn').disabled = false; $('#holdBtn').disabled = false; }
   $('#playBtn').innerHTML = S.playing ? ICON_PAUSE : ICON_PLAY;
   $('#playBtn').setAttribute('aria-label', S.playing ? 'Pause' : 'Play');
   $('#blackBtn').setAttribute('aria-pressed', S.black);
@@ -860,11 +1002,12 @@ function renderPlaylists(){
   const box = $('#playlists');
   if (!S.lib.length) { box.innerHTML = '<p class="none">Your folders will show up here.</p>'; return; }
   const rows = S.lib.map((p,i) => {
-    const onair = i === S.plIndex && (S.playing || S.pos >= 0);
+    const onair = i === S.plIndex && (S.playing || S.pos >= 0) && !S.liveInput;
     const n = p.items.length, vis = visibleCount(p);
     const count = vis === n ? `${n} item${n===1?'':'s'}` : `${vis} of ${n} items`;
     const status = onair ? (S.playing ? 'Playing, ' : S.ended ? 'Finished, ' : 'Paused, ') : '';
-    return { key:p.key, cls:`pl${i===S.view?' sel':''}${onair?' onair':''}${p.copyOf?' copy':''}`, cur:i===S.view,
+    const sel = i === S.view && !S.viewInput;
+    return { key:p.key, cls:`pl${sel?' sel':''}${onair?' onair':''}${p.copyOf?' copy':''}`, cur:sel,
       inner:`<b>${esc(p.name)}</b><small>${status}${count}${({loop:'', stop:', plays once', logo:', ends on logo'})[opts(p).end]}</small>` };
   });
   // Update rows in place when the list is unchanged, so a double-click still lands on the same button.
@@ -879,10 +1022,14 @@ let thumbObserver = null, thumbUrls = [], gridGen = 0;
 function renderGrid(){
   // Detach old thumbnails from their files before releasing them, so a loading video can't read a released file.
   thumbObserver?.disconnect();
-  document.querySelectorAll('#grid video, #grid img').forEach(el => { el.removeAttribute('src'); if (el.tagName === 'VIDEO') el.load(); });
+  document.querySelectorAll('#grid video, #grid img').forEach(el => { if (el.srcObject) { el.srcObject = null; return; } el.removeAttribute('src'); if (el.tagName === 'VIDEO') el.load(); });
   thumbUrls.forEach(u => URL.revokeObjectURL(u)); thumbUrls = [];
   const gen = ++gridGen;
-  const p = vpl(), grid = $('#grid');
+  const grid = $('#grid');
+  $('#dupBtn').hidden = !!S.viewInput;
+  $('#goLive').textContent = S.viewInput ? 'Show on screen' : 'Play this playlist';
+  if (S.viewInput) { renderInputView(gen); return; }
+  const p = vpl();
   const n = p ? p.items.length : 0, vis = visibleCount(p);
   $('#stripName').textContent = p ? p.name : 'Playlist';
   $('#stripCount').textContent = p ? `${p.copyOf ? `Copy of ${p.copyOf}, ` : ''}${n} item${n===1?'':'s'}${vis < n ? `, ${n - vis} hidden` : ''}${settings.shuffle ? ', shuffled' : ''}` : '';
@@ -913,6 +1060,7 @@ function renderGrid(){
 }
 let curCard = null;
 function highlightCards(){
+  if (S.viewInput) { $('#goLive').hidden = S.liveInput === S.viewInput; $('#goLive').disabled = false; curCard = null; return; }
   const p = vpl(), isLive = S.view === S.plIndex;
   $('#goLive').hidden = !p || (isLive && S.pos >= 0 && !S.ended);
   $('#goLive').disabled = !visibleCount(p);
@@ -948,6 +1096,11 @@ function nextInfo(){
   return { item, text: item.name };
 }
 function renderNowNext(){
+  if (S.liveInput) {
+    $('#nowName').textContent = `Live input: ${inputLabel(S.liveInput)}`;
+    $('#nextLine').hidden = !pl(); $('#nextName').textContent = pl() ? `Back to ${pl().name} when you press play` : '';
+    highlightCards(); return;
+  }
   const p = pl(), cur = current();
   $('#nowName').textContent = S.ended ? `Finished: ${p.name}` : cur ? cur.name : (p && p.items.length ? 'Ready. Press play to start.' : 'Nothing playing');
   const nx = nextInfo();
@@ -961,6 +1114,7 @@ function paintEnd(){
   document.querySelectorAll('#endSeg button').forEach(b => b.setAttribute('aria-checked', b.dataset.v === end));
 }
 function tick(){
+  if (S.liveInput) { $('#bar').style.width = '0%'; $('#time').textContent = 'Live'; requestAnimationFrame(tick); return; }
   const it = current(); let f = 0, label = '';
   if (it && S.curEl) {
     if (it.kind === 'video') {
@@ -1044,7 +1198,7 @@ document.addEventListener('keydown', e => {
 });
 $('#playlists').addEventListener('click', e => { const b = e.target.closest('.pl'); if (b) viewPlaylist(+b.dataset.i); });
 $('#playlists').addEventListener('dblclick', e => { const b = e.target.closest('.pl'); if (b) playPlaylist(+b.dataset.i); });
-$('#goLive').onclick = () => playPlaylist(S.view);
+$('#goLive').onclick = () => S.viewInput ? goLiveInput(S.viewInput) : playPlaylist(S.view);
 $('#dupBtn').onclick = duplicatePlaylist;
 $('#renameBtn').onclick = startRename;
 $('#deleteBtn').onclick = deletePlaylist;
@@ -1102,7 +1256,7 @@ $('#reconnectBtn').onclick = async () => {
   catch { toast('Couldn’t reopen the folder. Choose it again.'); }
 };
 
-renderTransport(); renderOutputState();
+renderTransport(); renderOutputState(); refreshInputs(false);
 (async () => {
   if (native) {
     detectScreens(true);
