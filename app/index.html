@@ -84,6 +84,9 @@ main{display:grid;grid-template-columns:232px 1fr;height:calc(100% - 60px)}
 #inputs .find{margin:0 10px;width:calc(100% - 20px)}
 #inputs .hint{color:var(--faint);font-size:12.5px;margin:8px 10px 0;line-height:1.4}
 .pl.input b{display:flex;align-items:center;gap:7px}
+.hidden-inputs{margin:4px 10px 0;padding-left:6px}
+.hidden-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 10px 6px 16px;color:var(--muted);font-size:13px}
+.hidden-row span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pl.input b svg{flex:none;color:var(--muted)}
 .inputprev{position:relative;flex:none;width:min(100%,400px);aspect-ratio:16/9;background:#000;border-radius:var(--r-sm);overflow:hidden;outline:2px solid var(--line);outline-offset:2px}
 .inputprev.live{outline-color:var(--tally)}
@@ -217,6 +220,10 @@ kbd{font:inherit;font-stretch:80%;font-weight:600;font-size:12.5px;color:var(--t
 .webth{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:#1d2026;color:var(--muted);font-size:11.5px;padding:6px;text-align:center}
 .webth small{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .webchip{position:absolute;left:50%;top:10px;transform:translateX(-50%);z-index:20;background:rgba(17,18,21,.88);color:#eeebe3;border:1px solid #3fb96b;border-radius:999px;padding:5px 12px;font-size:12.5px;pointer-events:none;white-space:nowrap}
+.modal .fld{display:block;font-size:13px;color:var(--muted);margin:14px 0 6px}
+.inp.txt{width:100%;height:42px;background:var(--base);border:1px solid var(--line);border-radius:var(--r-sm);padding:0 12px;color:var(--text);font:inherit}
+.inp.txt:focus{outline:2px solid var(--lit);outline-offset:1px}
+.modal .err{color:#ff8a78;font-size:13.5px;margin:10px 0 0}
 .modal.about{width:min(520px,100%)}
 .phone-btn{display:inline-flex;align-items:center;gap:8px;position:relative}
 .phone-btn .rx{display:none;width:8px;height:8px;border-radius:50%;background:#3fb96b;margin-left:2px}
@@ -295,7 +302,7 @@ kbd{font:inherit;font-stretch:80%;font-weight:600;font-size:12.5px;color:var(--t
   <nav class="rail" aria-label="Playlists">
     <h2>Playlists</h2>
     <div id="playlists"><button class="key sm find" data-pick>Choose folder</button><p class="hint">Each folder inside it becomes a playlist.</p></div>
-    <h2 class="inputs-h">Inputs</h2>
+    <h2 class="inputs-h" id="inputsH">Inputs</h2>
     <div id="inputs"></div>
   </nav>
 
@@ -353,11 +360,13 @@ kbd{font:inherit;font-stretch:80%;font-weight:600;font-size:12.5px;color:var(--t
       <div class="striphead"><b id="stripName">Playlist</b><small id="stripCount"></small>
       <div class="acts" id="stripActions" hidden>
         <button class="key solid sm" id="goLive">Play this playlist</button>
+        <button class="key ghost sm" id="addWebBtn" hidden title="Add a live web page to this playlist">Add web page</button>
         <button class="key ghost sm" id="dupBtn" title="Make a copy you can hide files in without changing this one">Duplicate</button>
         <button class="key ghost sm" id="renameBtn" hidden>Rename</button>
         <button class="key ghost sm" id="deleteBtn" hidden>Delete copy</button>
         <button class="key sm" id="offInput" hidden>Take off screen</button>
         <button class="key ghost sm" id="closeInput" hidden>Close</button>
+        <button class="key ghost sm" id="hideInput" hidden>Hide this input</button>
       </div><div class="endctl" id="endCtl" hidden><span id="advLbl">Advance</span><div class="seg" role="radiogroup" aria-labelledby="advLbl" id="advSeg"><button role="radio" data-v="auto" title="Move on by itself after each image or video">Auto</button><button role="radio" data-v="manual" title="Stay on each slide until you press next (arrow keys or a clicker)">Manual</button></div><span id="endLbl">At the end</span><div class="seg" role="radiogroup" aria-labelledby="endLbl" id="endSeg"><button role="radio" data-v="loop" title="Start the playlist over">Loop</button><button role="radio" data-v="stop" title="Stay on the last slide">Stop</button><button role="radio" data-v="logo" title="Stop and show your logo screen">Logo</button></div></div></div>
       <div class="film" id="grid"><p class="emptystrip">Choose a folder to see its images, PDFs and videos.</p></div>
     </div>
@@ -373,6 +382,11 @@ kbd{font:inherit;font-stretch:80%;font-weight:600;font-size:12.5px;color:var(--t
       <h3>Projector</h3>
       <div class="fieldrow"><select class="inp" id="screenSel" aria-label="Projector display"><option value="auto">Automatic</option><option value="here">This screen (fullscreen here)</option></select><button class="key" id="detectBtn">Find displays</button></div>
       <p class="note">The projector window opens fullscreen on this display. Automatic picks the first screen that isn’t this one, or uses this screen if there’s only one. Press Esc to get back to the controls.</p>
+    </div>
+    <div class="group">
+      <h3>Live inputs</h3>
+      <label class="toggle"><span>Show inputs in the sidebar<small>Turn off if you never use cameras or capture devices.</small></span><span class="sw"><input type="checkbox" id="showInputs"><i></i></span></label>
+      <p class="note" id="hiddenInputsNote"></p>
     </div>
     <div class="group">
       <h3>Web pages</h3>
@@ -439,6 +453,19 @@ kbd{font:inherit;font-stretch:80%;font-weight:600;font-size:12.5px;color:var(--t
   </div>
 </div>
 <div class="ptoast" id="ptoast" role="status" aria-live="polite" hidden><span id="ptoastMsg"></span><button class="key solid sm" id="ptoastGo">Show now</button><button class="key ghost icon sm" id="ptoastX" aria-label="Dismiss"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+<div class="modal-scrim" id="webAdd" hidden>
+  <form class="modal" id="webAddForm" role="dialog" aria-modal="true" aria-labelledby="webAddTitle" novalidate>
+    <h2 id="webAddTitle">Add a web page</h2>
+    <p id="webAddTo"></p>
+    <label class="fld" for="webUrl">Web address</label>
+    <input class="inp txt" id="webUrl" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://www.slido.com/…">
+    <label class="fld" for="webName">Name</label>
+    <input class="inp txt" id="webName" type="text" autocomplete="off" placeholder="Live poll">
+    <p class="note" style="margin-top:8px">Tip: start the name with a number, like “03 Live poll”, to choose where it plays in the playlist.</p>
+    <p class="err" id="webAddErr" hidden></p>
+    <div class="modal-actions"><button type="button" class="key" id="webAddCancel">Cancel</button><button type="submit" class="key solid">Add page</button></div>
+  </form>
+</div>
 <div class="modal-scrim" id="modal" hidden>
   <div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalBody">
     <h2 id="modalTitle"></h2>
@@ -465,7 +492,7 @@ let toastT;
 function toast(msg, ms = 3600){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),ms); }
 
 /* ---------- settings ---------- */
-const DEFAULTS = { imageSec:8, transition:'fade', fadeSec:1, fit:'contain', shuffle:false, muted:true, rescanOnLoop:true, screen:'auto', playlist:null, plOpts:{}, copies:[], webReload:0 };
+const DEFAULTS = { imageSec:8, transition:'fade', fadeSec:1, fit:'contain', shuffle:false, muted:true, rescanOnLoop:true, screen:'auto', playlist:null, plOpts:{}, copies:[], webReload:0, hiddenInputs:[], showInputs:true };
 let settings = { ...DEFAULTS };
 try { Object.assign(settings, JSON.parse(localStorage.getItem('loopcast.settings')||'{}')); } catch {}
 const save = () => { try { localStorage.setItem('loopcast.settings', JSON.stringify(settings)); } catch {} };
@@ -1182,23 +1209,48 @@ async function refreshInputs(ask){
 navigator.mediaDevices?.addEventListener?.('devicechange', () => refreshInputs(false));
 function renderInputs(){
   const box = $('#inputs');
+  applyInputsVisible();
   if (!S.inputsAllowed) {
     box.innerHTML = '<button class="key sm find" id="findInputs">Find inputs</button><p class="hint">HDMI capture sticks and cameras. Show a guest laptop, camera or Apple TV on the projector.</p>';
     $('#findInputs').onclick = () => refreshInputs(true);
     return;
   }
+  const hiddenSet = new Set(settings.hiddenInputs || []);
+  const shown = S.inputs.filter(d => !hiddenSet.has(d.label) || S.liveInput === d.id);
+  const hidden = S.inputs.filter(d => !shown.includes(d));
+  const more = hidden.length ? `<button class="key ghost sm hidden-inputs" id="hiddenInputsBtn" aria-expanded="${S.showHiddenInputs ? 'true' : 'false'}">${hidden.length} hidden ${S.showHiddenInputs ? '▴' : '▾'}</button>` +
+    (S.showHiddenInputs ? hidden.map(d => `<div class="hidden-row"><span>${esc(d.label)}</span><button class="key sm" data-unhide="${esc(d.label)}">Show</button></div>`).join('') : '') : '';
   if (!S.inputs.length) { box.innerHTML = '<p class="none">Plug in a capture stick or camera.</p>'; return; }
-  const rows = S.inputs.map(d => {
+  if (!shown.length) { box.innerHTML = '<p class="none">All inputs are hidden.</p>' + more; return; }
+  const rows = shown.map(d => {
     const live = S.liveInput === d.id, sel = S.viewInput === d.id;
     return { id:d.id, cls:`pl input${sel?' sel':''}${live?' onair':''}`, cur:sel, inner:`<b>${ICON_INPUT}<span>${esc(d.label)}</span></b><small>${live ? 'On screen' : 'Live input'}</small>` };
   });
   const old = [...box.querySelectorAll('.pl')];
-  if (old.length === rows.length && old.every((b,i) => b.dataset.id === rows[i].id)) {
+  if (old.length === rows.length && old.every((b,i) => b.dataset.id === rows[i].id) && (box.dataset.more || '') === more) {
     old.forEach((b,i) => { const r = rows[i]; if (b.className !== r.cls) b.className = r.cls; if (b.innerHTML !== r.inner) b.innerHTML = r.inner; r.cur ? b.setAttribute('aria-current','true') : b.removeAttribute('aria-current'); });
     return;
   }
-  box.innerHTML = rows.map(r => `<button class="${r.cls}" data-id="${esc(r.id)}" ${r.cur?'aria-current="true"':''} title="Click to preview. Double-click to show on screen.">${r.inner}</button>`).join('');
+  box.innerHTML = rows.map(r => `<button class="${r.cls}" data-id="${esc(r.id)}" ${r.cur?'aria-current="true"':''} title="Click to preview. Double-click to show on screen.">${r.inner}</button>`).join('') + more;
+  box.dataset.more = more;
 }
+function applyInputsVisible(){
+  const on = settings.showInputs !== false || !!S.liveInput;
+  $('#inputsH').hidden = $('#inputs').hidden = !on;
+  const n = (settings.hiddenInputs || []).length;
+  $('#hiddenInputsNote').textContent = n ? `${n} input${n === 1 ? '' : 's'} hidden: ${settings.hiddenInputs.join(', ')}. Show ${n === 1 ? 'it' : 'them'} again from “${n} hidden” under Inputs.` : 'To hide one input, such as a webcam you never use, open it and choose Hide this input.';
+}
+$('#hideInput').onclick = () => {
+  const d = S.inputs.find(x => x.id === S.viewInput); if (!d || S.liveInput === d.id) return;
+  settings.hiddenInputs = [...new Set([...(settings.hiddenInputs || []), d.label])]; save();
+  closeInputView(); applyInputsVisible();
+  toast(`${d.label} is hidden. Find it under “hidden” in Inputs if you need it again.`);
+};
+$('#inputs').addEventListener('click', e => {
+  if (e.target.closest('#hiddenInputsBtn')) { S.showHiddenInputs = !S.showHiddenInputs; renderInputs(); return; }
+  const u = e.target.closest('[data-unhide]');
+  if (u) { settings.hiddenInputs = (settings.hiddenInputs || []).filter(l => l !== u.dataset.unhide); save(); renderInputs(); applyInputsVisible(); }
+});
 function viewInput(id){
   S.viewInput = id;
   renderPlaylists(); renderInputs(); renderGrid();
@@ -1314,7 +1366,9 @@ function renderGrid(){
   const gen = ++gridGen;
   const grid = $('#grid');
   $('#dupBtn').hidden = !!S.viewInput;
+  $('#addWebBtn').hidden = !!S.viewInput || !native?.addWeb || !S.dirPath;
   $('#closeInput').hidden = !S.viewInput || S.liveInput === S.viewInput;
+  $('#hideInput').hidden = !S.viewInput || S.liveInput === S.viewInput;
   $('#offInput').hidden = !S.viewInput || S.liveInput !== S.viewInput;
   $('#goLive').textContent = S.viewInput ? 'Show on screen' : 'Play this playlist';
   if (S.viewInput) { renderInputView(gen); return; }
@@ -1505,6 +1559,35 @@ document.addEventListener('keydown', e => {
 }, true);
 document.addEventListener('pointerdown', e => { if (webState.typing && !e.target.closest('#pstage')) setWebTyping(false); }, true);
 
+/* ---------- Add a web page ---------- */
+function openAddWeb(){
+  const p = vpl(); if (!p || !native?.addWeb || !S.dirPath) return;
+  const m = $('#webAdd'), prev = document.activeElement;
+  $('#webAddTo').textContent = `It will play in ${p.copyOf ? p.copyOf + ' (and its copies)' : p.name}.`;
+  $('#webUrl').value = ''; $('#webName').value = ''; $('#webAddErr').hidden = true;
+  m.hidden = false; modalBusy = true; $('#webUrl').focus();
+  const close = () => { m.hidden = true; modalBusy = false; document.removeEventListener('keydown', keys, true); prev?.focus?.(); };
+  const keys = e => { if (e.key === 'Escape') { e.preventDefault(); close(); } e.stopPropagation(); };
+  document.addEventListener('keydown', keys, true);
+  $('#webAddCancel').onclick = close;
+  m.onclick = e => { if (e.target === m) close(); };
+  $('#webAddForm').onsubmit = async e => {
+    e.preventDefault();
+    let url = $('#webUrl').value.trim();
+    if (url && !/^[a-z][a-z0-9+.-]*:/i.test(url)) url = 'https://' + url;
+    let ok = false; try { const u = new URL(url); ok = /^https?:$/.test(u.protocol) && (u.hostname.includes('.') || u.hostname === 'localhost'); } catch {}
+    if (!ok) { $('#webAddErr').textContent = 'Enter a web address, like https://www.example.com.'; $('#webAddErr').hidden = false; $('#webUrl').focus(); return; }
+    const name = $('#webName').value.trim() || new URL(url).hostname.replace(/^www\./, '');
+    const folder = p.top ? '' : (p.copyOf || p.name);
+    try {
+      const file = await native.addWeb({ dir: S.dirPath, folder, name, url });
+      close(); await rescan(true);
+      toast(`Added ${file.replace(/\.url$/i, '')}. It plays in ${p.copyOf || p.name}.`);
+    } catch { $('#webAddErr').textContent = 'LoopCast couldn’t save the page into that folder.'; $('#webAddErr').hidden = false; }
+  };
+}
+$('#addWebBtn').onclick = openAddWeb;
+
 /* ---------- Send from a phone ---------- */
 const phoneState = { info: null, recent: [] };
 function renderPhone(){
@@ -1560,7 +1643,7 @@ native?.onPhoneFile?.(async f => {
 });
 
 /* ---------- About ---------- */
-const APP_VERSION = '1.8.0', PDFJS_VERSION = '6.5.438';
+const APP_VERSION = '1.8.1', PDFJS_VERSION = '6.5.438';
 async function openAbout(){
   const info = native?.appInfo ? await native.appInfo().catch(() => null) : null;
   const os = info ? ({ win32:'Windows', darwin:'macOS', linux:'Linux' }[info.platform] || info.platform) + ` (${info.arch})` : null;
@@ -1655,6 +1738,9 @@ $('#sound').checked = !settings.muted;
 $('#sound').onchange = e => { settings.muted = !e.target.checked; applySetting('muted'); };
 $('#rescanOnLoop').checked = settings.rescanOnLoop;
 $('#rescanOnLoop').onchange = e => { settings.rescanOnLoop = e.target.checked; applySetting('rescanOnLoop'); };
+$('#showInputs').checked = settings.showInputs !== false;
+$('#showInputs').onchange = e => { settings.showInputs = e.target.checked; save(); applyInputsVisible(); };
+applyInputsVisible();
 $('#webReload').value = String(settings.webReload || 0);
 $('#webReload').onchange = e => { settings.webReload = +e.target.value; save(); if (webState.on) { webState.on = false; webSync(); } };
 $('#screenSel').onchange = e => { settings.screen = e.target.value; save(); native?.setOutputDisplay(settings.screen); };
