@@ -72,7 +72,7 @@ def header(home=False):
     return f'''<header class="wrap">
   <nav aria-label="Main">
     <a class="brand" href="/" aria-label="LoopCast home"><img src="/assets/mark.svg" width="31" height="26" alt=""><span>LoopCast</span></a>
-    <div class="nav-r">{links}<a class="btn solid sm" href="{'#download' if home else '/#download'}">Download</a></div>
+    <div class="nav-r">{links}<a class="btn solid sm" href="/app/" target="_blank" rel="noopener">Open in your browser</a></div>
   </nav>
 </header>
 '''
@@ -166,9 +166,7 @@ def build():
     out = head('LoopCast: looping images, video and PDFs for every event space',
                'Free looping software for event screens. Play images, PDFs and video on a projector or TV, on repeat, offline. For conferences, churches, booths and lobbies.',
                '/', ld=[ORG, APP, {"@type": "WebSite", "@id": f"{SITE}/#site", "name": "LoopCast", "url": f"{SITE}/", "publisher": {"@id": f"{SITE}/#org"}}])
-    out += header(home=True) + '\n' + home + FOOTER + '''<script>
-  if (/Mac/i.test(navigator.userAgentData?.platform || navigator.platform || '')) document.getElementById('heroDlLabel').textContent = 'Download for Mac';
-</script>
+    out += header(home=True) + '\n' + home + FOOTER + '''
 </body>
 </html>
 '''
