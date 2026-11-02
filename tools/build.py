@@ -29,7 +29,7 @@ APP = {"@type": "SoftwareApplication", "@id": f"{SITE}/#app", "name": "LoopCast"
 PAGES_NAV = [  # footer links: (path, label)
     ('/conferences/', 'Conferences'), ('/churches/', 'Churches'), ('/trade-shows/', 'Trade shows'),
     ('/digital-signage/', 'Lobbies and schools'), ('/guides/loop-powerpoint-pdf-on-projector/', 'Loop a PowerPoint or PDF'),
-    ('/propresenter-alternative/', 'ProPresenter alternative'), ('/faq/', 'FAQ'),
+    ('/propresenter-alternative/', 'ProPresenter alternative'), ('/install/', 'Installing and the security warning'), ('/faq/', 'FAQ'),
 ]
 
 def esc(s): return html.escape(s, quote=True)
@@ -94,8 +94,8 @@ GET = f'''<section id="download" class="get">
       <a class="btn solid" href="{REL}LoopCast-Mac.dmg">{DL_ICON}Download for Mac</a>
       <a class="btn ghost" href="/app/" target="_blank" rel="noopener">Open in your browser</a>
     </div>
-    <p>Windows 10 or 11. Mac: macOS 12 or later, Apple silicon or Intel. Open in your browser runs in any modern browser with nothing to install.</p>
-    <p><b>First time opening it?</b> Windows may show a blue warning: choose More info, then Run anyway. On a Mac, go to System Settings › Privacy &amp; Security and choose Open Anyway.</p>
+    <p>Windows 10 or 11. Mac: macOS 12 or later, Apple silicon or Intel. The browser version needs nothing installed.</p>
+    <p><b>Expect a security warning the first time.</b> LoopCast isn’t signed with a paid developer certificate yet, so Windows and macOS can’t confirm who made it. On Windows choose More info, then Run anyway. On a Mac, go to System Settings › Privacy &amp; Security and choose Open Anyway. <a href="/install/">What this means, step by step</a></p>
     <p>Plays images, video and PDFs. Using PowerPoint or Keynote? Save your deck as a PDF first.</p>
   </div>
 </section>
@@ -111,7 +111,7 @@ def related(current):
     blurbs = {'/conferences/': 'Walk-in loops, agendas and sponsors', '/churches/': 'Pre-service announcement loops',
               '/trade-shows/': 'All-day loops on the booth TV', '/digital-signage/': 'Lobby, hallway and office screens',
               '/guides/loop-powerpoint-pdf-on-projector/': 'Three ways, step by step', '/propresenter-alternative/': 'When you only need loops',
-              '/faq/': 'Projectors, files, installs'}
+              '/install/': 'Why Windows and Mac warn you, and what to do', '/faq/': 'Projectors, files, installs'}
     return '<div class="related">' + ''.join(f'<a href="{p}"><b>{l}</b><span>{blurbs[p]}</span></a>' for p, l in picks) + '</div>'
 
 def page(path, crumb, title, desc, h1, lede, body, image=None, image_alt=None, extra_ld=None):
@@ -159,7 +159,7 @@ FAQS = [
     ("Can I show a presenter’s laptop or a camera?", "Yes. Plug it into a USB HDMI capture stick and it shows up under Inputs. Preview it, then put it on screen with one click. The playlist waits underneath, and Logo and Black still work."),
     ("Does it work on a Mac?", "Yes, on macOS 12 or later, on Apple silicon and Intel Macs. The first time you open it, go to System Settings › Privacy & Security and choose Open Anyway."),
     ("Can I use it without installing anything?", "Yes. Open in your browser runs the full player in any modern browser. The desktop app adds a few conveniences, like opening the projector window fullscreen on its own."),
-    ("Why does my computer warn me when I install it?", "LoopCast isn’t signed with a paid developer certificate yet, so Windows and macOS ask you to confirm the first time. On Windows choose More info, then Run anyway. On a Mac, go to System Settings › Privacy & Security and choose Open Anyway."),
+    ("Why does my computer warn me when I install it?", "LoopCast isn’t signed with a paid developer certificate yet. Without one, Windows and macOS can’t confirm who made the app, so they ask you to confirm the first time. The warning is about an unverified publisher; it doesn’t mean the app was found to be harmful. Download it only from loopcast.space. The Installing LoopCast page explains each step. On Windows choose More info, then Run anyway. On a Mac, go to System Settings › Privacy & Security and choose Open Anyway."),
     ("How do I show a logo between sessions?", "Put an image named logo.png in the main media folder. Press Logo (or H) to cover the screen with it while the playlist keeps its place underneath. A playlist can also end on the logo by itself."),
 ]
 
@@ -318,6 +318,55 @@ def build():
     page('/faq/', 'FAQ', 'LoopCast FAQ: projectors, files, PDFs, PowerPoint and installs',
          'Answers about LoopCast: projectors and TVs, single-screen use, supported files, PDFs and PowerPoint, live inputs, Mac support and install warnings.',
          'Questions, answered.', 'Everything people usually ask before their first event with LoopCast.', body, extra_ld=[faq_ld])
+
+    # ---------- install / security warning ----------
+    page('/install/', 'Installing LoopCast', 'Installing LoopCast: the Windows and Mac security warning, explained',
+         'Why Windows SmartScreen and macOS warn you when you open LoopCast, what that means, and step-by-step instructions to install it safely.',
+         'About the security warning.',
+         'Windows and macOS will warn you the first time you open LoopCast. Here’s why, what it does and doesn’t mean, and how to get past it.',
+         '''      <div class="callout">
+        <p><strong>The short version:</strong> LoopCast isn’t signed with a paid developer certificate yet, so your computer can’t confirm who made it. That’s why you see a warning. It doesn’t mean the app was checked and found to be harmful. If you’d rather not install anything, <a href="/app/" target="_blank" rel="noopener">open LoopCast in your browser</a> instead.</p>
+      </div>
+      <h2>Why the warning appears</h2>
+      <p>Microsoft and Apple let developers “sign” their apps with a certificate that proves who published them. Certificates cost a yearly fee and require identity checks. LoopCast doesn’t have one yet.</p>
+      <p>When an app isn’t signed, Windows and macOS can’t confirm the publisher, so they stop and ask you before it runs the first time. That’s a reasonable default: it protects people from apps they didn’t mean to install. After you’ve allowed LoopCast once, it opens normally.</p>
+      <h2>What it does and doesn’t mean</h2>
+      <ul>
+        <li><strong>It means</strong> your computer doesn’t know who published the app.</li>
+        <li><strong>It doesn’t mean</strong> Windows or macOS scanned LoopCast and found a problem. Your antivirus and your computer’s built-in malware protection still check it like any other app.</li>
+        <li><strong>It doesn’t change</strong> how LoopCast works once it’s open.</li>
+      </ul>
+      <h2>What LoopCast does on your computer</h2>
+      <ul>
+        <li>It plays files from the folder you choose. It doesn’t read files anywhere else.</li>
+        <li>It works offline. It doesn’t upload your files or send anything about you anywhere.</li>
+        <li>It only turns on a camera or capture device when you choose Find inputs. On a Mac, macOS asks your permission first.</li>
+        <li>On Windows it installs for your user account only and doesn’t need administrator rights.</li>
+      </ul>
+      <h2>Stay safe</h2>
+      <ul>
+        <li><strong>Only download LoopCast from loopcast.space.</strong> The files are named LoopCast-Setup.exe (Windows) and LoopCast-Mac.dmg (Mac).</li>
+        <li>If you get LoopCast from anywhere else, like an email attachment or another website, don’t open it.</li>
+        <li>If your organization manages your computer, ask your IT team before installing. They can allow it, or you can use the browser version.</li>
+      </ul>
+      <h2>Installing on Windows</h2>
+      <ol>
+        <li>Download LoopCast-Setup.exe. If your browser says the file isn’t commonly downloaded, choose <strong>Keep</strong> (in Edge, open the … menu next to the download, choose Keep, then Keep anyway).</li>
+        <li>Open the file. If a blue window says <strong>“Windows protected your PC,”</strong> choose <strong>More info</strong>, then <strong>Run anyway</strong>.</li>
+        <li>Follow the installer. LoopCast opens when it’s done and appears in your Start menu.</li>
+      </ol>
+      <p>To uninstall, go to Settings › Apps › Installed apps, find LoopCast and choose Uninstall.</p>
+      <h2>Installing on a Mac</h2>
+      <ol>
+        <li>Download LoopCast-Mac.dmg, open it, and drag LoopCast into your Applications folder.</li>
+        <li>Open LoopCast from Applications. macOS will say it can’t verify the app. Choose <strong>Done</strong> (or <strong>OK</strong>).</li>
+        <li>Open <strong>System Settings › Privacy &amp; Security</strong>, scroll down to the Security section, and choose <strong>Open Anyway</strong> next to the message about LoopCast. Enter your password if asked.</li>
+        <li>Choose <strong>Open</strong> to confirm. From then on, LoopCast opens like any other app.</li>
+      </ol>
+      <p>On macOS 14 or earlier you can also Control-click LoopCast in Applications, choose Open, then choose Open again.</p>
+      <p>To uninstall, drag LoopCast from Applications to the Trash.</p>
+      <h2>Prefer not to install?</h2>
+      <p>The browser version is the same player and needs no install or security prompts. The desktop app adds a few conveniences, like opening the projector window fullscreen on its own. <a href="/app/" target="_blank" rel="noopener">Open LoopCast in your browser</a>.</p>''')
 
     # ---------- 404 ----------
     out = head('Page not found | LoopCast', 'This page doesn’t exist.', '/404.html', noindex=True) + header() + '''<main>
