@@ -34,7 +34,7 @@ PAGES_NAV = [  # footer links: (path, label)
 
 def esc(s): return html.escape(s, quote=True)
 
-def head(title, desc, path, image=f"{SITE}/assets/og.jpg", image_alt="A conference ballroom with a full audience facing a large stage screen.", ld=None, noindex=False):
+def head(title, desc, path, image=f"{SITE}/assets/og-logo.jpg", image_alt="The LoopCast logo on a black background.", ld=None, noindex=False):
     url = SITE + path
     graph = ld or []
     tags = f'''<!doctype html>
@@ -51,6 +51,8 @@ def head(title, desc, path, image=f"{SITE}/assets/og.jpg", image_alt="A conferen
 <meta property="og:description" content="{esc(desc)}">
 <meta property="og:url" content="{url}">
 <meta property="og:image" content="{image}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="{esc(image_alt)}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{esc(title)}">
@@ -118,9 +120,7 @@ def related(current):
 
 def page(path, crumb, title, desc, h1, lede, body, image=None, image_alt=None, extra_ld=None):
     ld = [ORG, APP, crumbs_ld(path, crumb)] + (extra_ld or [])
-    kw = {}
-    if image: kw['image'] = image
-    if image_alt: kw['image_alt'] = image_alt
+    kw = {}  # every page shares the logo preview image
     out = head(title, desc, path, ld=ld, **kw)
     out += header()
     out += f'''<main>
