@@ -110,7 +110,7 @@ main{display:grid;grid-template-columns:232px 1fr;height:calc(100% - 60px)}
 .monhead .tl{display:flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden}
 .monhead .tl b{color:var(--text);font-weight:600;overflow:hidden;text-overflow:ellipsis}
 .monwrap{container-type:size;display:flex;align-items:center;justify-content:center;padding:0 24px;min-height:200px}
-.monitor{position:relative;width:min(100cqw - 0px,100cqh * 16 / 9);aspect-ratio:16/9;background:#000;border-radius:var(--r-md);overflow:hidden;
+.monitor{position:relative;--ar:1.7778;width:min(100cqw - 0px,100cqh * var(--ar));aspect-ratio:var(--ar);background:#000;border-radius:var(--r-md);overflow:hidden;
   outline:2px solid var(--line);outline-offset:4px;transition:outline-color .3s}
 .monitor.onair{outline-color:var(--tally)}
 #monitor:fullscreen{width:100vw;height:100vh;aspect-ratio:auto;border-radius:0;outline:none;background:#000}
@@ -804,8 +804,24 @@ function renderPdfPage(item, w, h){
 function pdfTarget(){
   const w = (outWin && !outWin.closed) ? outWin : window;
   const dpr = w.devicePixelRatio || 1;
-  return [Math.min(3840, Math.max(1280, Math.round(w.screen.width * dpr))), Math.min(2160, Math.max(720, Math.round(w.screen.height * dpr)))];
+  // The screen's real pixels, wide or tall, capped at 4K on the long side and at least 1280 on it.
+  let W = w.screen.width * dpr, H = w.screen.height * dpr;
+  const down = Math.min(1, 3840 / Math.max(W, H)); W *= down; H *= down;
+  const up = Math.max(1, 1280 / Math.max(W, H)); W *= up; H *= up;
+  return [Math.round(W), Math.round(H)];
 }
+// The preview takes the projector's shape (tall for a vertical sign), remembered for next time.
+function fitPreviewShape(){
+  let ar = settings.screenAspect || 16 / 9;
+  if (outputOpen() && outWin.innerWidth > 50 && outWin.innerHeight > 50) ar = outWin.innerWidth / outWin.innerHeight;
+  else if (document.fullscreenElement === $('#monitor')) ar = innerWidth / innerHeight;
+  ar = Math.max(0.3, Math.min(4, ar));
+  if (Math.abs(ar - (settings.screenAspect || 0)) > 0.01 && (outputOpen() || document.fullscreenElement === $('#monitor'))) { settings.screenAspect = ar; save(); }
+  $('#monitor').style.setProperty('--ar', ar.toFixed(4));
+}
+setTimeout(fitPreviewShape, 0); // after the rest of the page has set up
+setInterval(fitPreviewShape, 1500);
+document.addEventListener('fullscreenchange', fitPreviewShape);
 // Replace each PDF in the library with one slide per page.
 async function expandPdfs(pls){
   const office = [];
@@ -1258,6 +1274,8 @@ async function openOutput(){
   const d = w.document; d.open(); d.write(OUTPUT_HTML); d.close();
   if (native) d.body.classList.add('app'); // the desktop app already opens this window fullscreen
   outWin = w; outStage = new Stage(d.getElementById('stage'));
+  try { w.addEventListener('resize', fitPreviewShape); } catch {}
+  setTimeout(fitPreviewShape, 800);
   try { w.focus(); } catch {}
   outStage.setBlack(S.black); outStage.setHold(S.holding); outStage.setHoldSource(S.hold);
   outStage.setMessage(S.msg); paintCountdown();
@@ -2064,7 +2082,7 @@ native?.onPhoneFile?.(async f => {
 });
 
 /* ---------- About ---------- */
-const APP_VERSION = '1.10.0', PDFJS_VERSION = '6.5.438';
+const APP_VERSION = '1.10.1', PDFJS_VERSION = '6.5.438';
 async function openAbout(){
   const info = native?.appInfo ? await native.appInfo().catch(() => null) : null;
   const os = info ? ({ win32:'Windows', darwin:'macOS', linux:'Linux' }[info.platform] || info.platform) + ` (${info.arch})` : null;
