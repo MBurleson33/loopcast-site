@@ -95,7 +95,7 @@ GOATCOUNTER = 'loopcast'
 # Optional email box after a download: the form's POST address and its email field name.
 #   Kit:        action 'https://app.kit.com/forms/<FORM_ID>/subscriptions', field 'email_address'
 #   Buttondown: action 'https://buttondown.com/api/emails/embed-subscribe/<USERNAME>', field 'email'
-EMAIL_FORM = {'action': '', 'field': 'email_address'}
+EMAIL_FORM = {'action': 'https://app.kit.com/forms/10131096/subscriptions', 'field': 'email_address'}
 
 def tracking_tags():
     cfg = json.dumps({'gc': bool(GOATCOUNTER), 'form': EMAIL_FORM if EMAIL_FORM['action'] else None})

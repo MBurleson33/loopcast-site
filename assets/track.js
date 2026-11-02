@@ -28,7 +28,7 @@
           <input id="lcE" type="email" required autocomplete="email" placeholder="you@example.com">
           <div class="lc-act"><button type="button" class="btn ghost sm lc-no">No thanks</button><button type="submit" class="btn solid sm">Send</button></div>
         </form>
-        <p class="lc-done" hidden>Thanks! You’re on the list.</p>
+        <p class="lc-done" hidden>Almost done: check your email and tap the link to confirm.</p>
       </div>
       <iframe name="lc-sink" title="" hidden></iframe>`;
     const form = wrap.querySelector('form'), input = wrap.querySelector('input');
@@ -41,7 +41,7 @@
     wrap.querySelector('.lc-no').onclick = () => { count('email-declined'); close(); };
     form.addEventListener('submit', () => {
       count('email-signup-' + platform);
-      setTimeout(() => { form.hidden = true; wrap.querySelector('.lc-done').hidden = false; setTimeout(close, 2200); }, 300);
+      setTimeout(() => { form.hidden = true; wrap.querySelector('.lc-done').hidden = false; setTimeout(close, 3500); }, 300);
     });
     document.body.appendChild(wrap);
     setTimeout(() => input.focus(), 50);
