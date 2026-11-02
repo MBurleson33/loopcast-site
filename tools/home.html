@@ -1,50 +1,162 @@
 <main id="top">
-  <div class="wrap hero">
+  <section class="wrap hero">
+    <span class="pill"><span class="dot pulse"></span>Free for Windows, Mac and any modern browser</span>
     <h1>Every screen in the room, handled.</h1>
-    <p>Images, video and PDFs on the big screen, looping all day. No internet needed.</p>
+    <p class="lede">LoopCast plays your images, videos and PDFs on the big screen, on repeat, all day. No internet. No account. Nothing to learn.</p>
     <div class="ctas">
       <a class="btn solid" href="#download"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>Download free</a>
       <a class="btn ghost" href="/app/" target="_blank" rel="noopener">Open in your browser</a>
     </div>
-    <small>Free for Windows and Mac, or run it in any modern browser with nothing to install.</small>
-  </div>
 
-  <figure class="photo">
-    <picture>
-      <source media="(max-width: 700px)" srcset="/assets/photo-hero-phone.webp" width="1200" height="900">
-      <img src="/assets/photo-hero-wide.webp" width="1920" height="800" alt="A conference ballroom with a full audience facing a large stage screen showing a welcome message and the day’s schedule.">
-    </picture>
-  </figure>
+    <div class="stage" id="demo">
+      <div class="glow" id="glow" aria-hidden="true"></div>
+      <div class="bezel">
+        <div class="screen" id="screen" aria-live="polite">
+          <img class="on" src="/assets/slide-welcome.webp" width="1280" height="720" alt="Welcome slide: Glad you’re here. Grab a coffee and find a seat." data-name="welcome.jpg" data-glow="#2f5a88">
+          <img src="/assets/slide-agenda.webp" width="1280" height="720" loading="lazy" alt="The day’s agenda slide." data-name="agenda.jpg" data-glow="#2f4a3a">
+          <img src="/assets/slide-sponsors.webp" width="1280" height="720" loading="lazy" alt="Gold sponsors slide." data-name="sponsors.pdf, page 1" data-glow="#b7ac8c">
+          <img src="/assets/slide-wifi.webp" width="1280" height="720" loading="lazy" alt="Wi-Fi details slide." data-name="wifi.png" data-glow="#5c3560">
+          <img src="/assets/slide-photos.webp" width="1280" height="720" loading="lazy" alt="Event photos slide." data-name="photos.mp4" data-glow="#be513a">
+          <div class="cover logo" id="logoCover"><img src="/assets/mark.svg" width="104" height="88" alt="Logo screen"></div>
+          <div class="cover black" id="blackCover"></div>
+        </div>
+      </div>
+      <div class="tally"><span class="dot pulse" id="tallyDot"></span><span id="tally">LIVE</span></div>
+    </div>
+    <div class="strip">
+      <div class="now"><small>Walk-in · <span id="pos">1 of 5</span></small><b id="nowName">welcome.jpg</b></div>
+      <div class="transport">
+        <button class="ctl" type="button" id="prev" aria-label="Previous"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 5v14"/><path d="M18 5l-9 7 9 7z"/></svg></button>
+        <button class="ctl play" type="button" id="play" aria-label="Pause"><svg class="i-pause" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg></button>
+        <button class="ctl" type="button" id="next" aria-label="Next"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 5v14"/><path d="M6 5l9 7-9 7z"/></svg></button>
+      </div>
+      <div class="covers">
+        <button class="cov" type="button" id="logoBtn" aria-pressed="false">Logo <span>H</span></button>
+        <button class="cov" type="button" id="blackBtn" aria-pressed="false">Black <span>B</span></button>
+      </div>
+    </div>
+    <p class="hint">Go on, press Logo. These are the real controls, working on a real playlist.</p>
+  </section>
 
-  <section>
-    <div class="wrap">
-      <h2>Set up in the time it takes to find the HDMI cable.</h2>
-      <ol class="steps">
-        <li><b>Put your files in folders</b>Each folder becomes a playlist.</li>
-        <li><b>Show it on screen</b>One button, fullscreen on a projector, a TV, or the screen you’re on.</li>
-        <li><b>Press play</b>It loops until you stop it.</li>
-      </ol>
-      <figure class="shot"><img src="/assets/operator.webp" width="2880" height="1720" loading="lazy" alt="LoopCast's control window: a large preview of the slide that's on the projector, play controls, Logo and Black buttons, and a filmstrip of the playlist."></figure>
-      <dl class="list">
-        <div><dt>See what the room sees</dt><dd>A live preview, outlined red when it’s on.</dd></div>
-        <div><dt>Logo and black</dt><dd>One key covers the screen.</dd></div>
-        <div><dt>Loop it or click through</dt><dd>Auto-advance on repeat, or wait for your clicker.</dd></div>
-        <div><dt>Drop in files mid-event</dt><dd>New files show up next time around.</dd></div>
-        <div><dt>Live inputs</dt><dd>Show a laptop or camera through an HDMI capture stick.</dd></div>
-        <div><dt>Images, video and PDFs</dt><dd>Using PowerPoint or Keynote? Save as PDF.</dd></div>
-      </dl>
+  <section class="s wrap">
+    <div class="facts">
+      <div><b>Free.</b><span>No trial, no watermark.</span></div>
+      <div><b>Offline.</b><span>Venue Wi-Fi can do what it likes.</span></div>
+      <div><b class="red">No sign-up.</b><span>Open it and press play.</span></div>
     </div>
   </section>
 
-  <section style="padding-top:0">
-    <div class="wrap">
-      <h2>Made for every event space.</h2>
-      <div class="spaces">
-        <figure><img src="/assets/photo-workshop.webp" width="1600" height="900" loading="lazy" alt="A presenter leading a workshop in front of a large wall screen showing the session details."><figcaption>Training rooms and workshops</figcaption></figure>
-        <figure><img src="/assets/photo-meeting.webp" width="1600" height="900" loading="lazy" alt="A team around a conference table facing a wall display showing the meeting agenda."><figcaption>Meeting rooms, churches and lobbies</figcaption></figure>
+  <section class="s wrap" id="how">
+    <div class="eyebrow">How it works</div>
+    <h2 class="big" style="max-width:18ch">Set up in the time it takes to find the HDMI cable.</h2>
+    <div class="grid3" style="margin-top:56px">
+      <div class="card">
+        <div class="art tree">
+          <div class="root"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f4e9c9" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2.5h8.5A1.5 1.5 0 0 1 21 9v9.5a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5z"/></svg>Fall Summit</div>
+          <div class="row">Walk-in<span>5 files</span></div>
+          <div class="row">Sponsors<span>1 PDF</span></div>
+          <div class="row">Break<span>2 videos</span></div>
+          <div class="row">logo.png<span class="red">Logo screen</span></div>
+        </div>
+        <div><div class="num">01</div><h3>Put your files in folders</h3><p>Each folder becomes a playlist. Images, video and PDFs, side by side.</p></div>
       </div>
+      <div class="card">
+        <div class="art flow">
+          <div class="lap">Your laptop</div>
+          <svg width="40" height="16" viewBox="0 0 40 16" fill="none" stroke="#e8412c" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 8h34"/><path d="M30 2l6 6-6 6"/></svg>
+          <div class="proj"><img src="/assets/slide-agenda.webp" width="1280" height="720" loading="lazy" alt=""></div>
+        </div>
+        <div><div class="num">02</div><h3>Show it on screen</h3><p>One button goes fullscreen on the projector, the TV, or the screen you’re on.</p></div>
+      </div>
+      <div class="card">
+        <div class="art loopart">
+          <div class="thumbs">
+            <img src="/assets/slide-welcome.webp" width="1280" height="720" loading="lazy" alt="">
+            <img src="/assets/slide-agenda.webp" width="1280" height="720" loading="lazy" alt="">
+            <img class="cur" src="/assets/slide-sponsors.webp" width="1280" height="720" loading="lazy" alt="">
+            <img src="/assets/slide-wifi.webp" width="1280" height="720" loading="lazy" alt="">
+          </div>
+          <svg height="58" viewBox="0 0 300 58" preserveAspectRatio="none" fill="none" aria-hidden="true"><path d="M266 4v20a16 16 0 0 1-16 16H50a16 16 0 0 1-16-16V10" stroke="#f4e9c9" stroke-width="2.5" stroke-linecap="round" vector-effect="non-scaling-stroke"/><path d="M27 15l7-9 7 9" stroke="#f4e9c9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>
+          <div class="looptag"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>Loops back to the start</div>
+        </div>
+        <div><div class="num">03</div><h3>Press play</h3><p>It loops until you stop it. Or set it to Manual and click through on cue.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="s wrap">
+    <div class="grid2">
+      <div>
+        <div class="eyebrow">Run the room</div>
+        <h2 class="big" style="max-width:14ch">Your keyboard is the remote.</h2>
+        <p style="margin:22px 0 0;max-width:42ch;color:var(--muted);font-size:18px;line-height:1.55">Speaker running late? Cover the screen with your logo in one key. Presenter calls for the agenda? Jump straight to it. A clicker works too.</p>
+        <div class="ticks">
+          <div>A live preview shows exactly what the room sees</div>
+          <div>Drop new files in mid-event and they join the loop</div>
+          <div>Put a laptop or camera on screen through an HDMI capture stick</div>
+        </div>
+      </div>
+      <div class="keys">
+        <div class="key"><b>H</b><span>Logo screen</span></div>
+        <div class="key"><b>B</b><span>Fade to black</span></div>
+        <div class="key red"><b>O</b><span>Show on projector</span></div>
+        <div class="key"><b>← →</b><span>Previous, next</span></div>
+        <div class="key lit"><b>Space</b><span>Play or pause</span></div>
+        <div class="key"><b>R</b><span>Repeat this one</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="s wrap" id="rooms">
+    <div class="eyebrow">Made for every room</div>
+    <h2 class="big" style="max-width:16ch">From the ballroom to the lobby TV.</h2>
+    <a class="banner" href="/conferences/">
+      <picture>
+        <source media="(max-width: 700px)" srcset="/assets/photo-hero-phone.webp" width="1200" height="900">
+        <img src="/assets/photo-hero-wide.webp" width="1920" height="800" loading="lazy" alt="A conference ballroom with a full audience facing a large stage screen showing a welcome message and the day’s schedule.">
+      </picture>
+      <div class="cap"><div><b>Conferences</b><span>Walk-in loops, agendas and sponsor thank-yous</span></div><span class="go">See how →</span></div>
+    </a>
+    <div class="grid3" style="margin-top:20px">
+      <a class="room" href="/churches/"><div class="ph"><img src="/assets/photo-meeting.webp" width="1600" height="900" loading="lazy" alt="A team around a conference table facing a wall display showing the meeting agenda."></div><b>Meeting rooms and churches</b><span>Agendas and announcements on the wall</span></a>
+      <a class="room" href="/trade-shows/"><div class="ph"><img src="/assets/photo-workshop.webp" width="1600" height="900" loading="lazy" alt="A presenter leading a workshop in front of a large wall screen showing the session details."></div><b>Workshops and trade shows</b><span>All day on the booth or wall screen</span></a>
+      <a class="room" href="/digital-signage/"><div class="ph tv"><div class="set"><img src="/assets/slide-wifi.webp" width="1280" height="720" loading="lazy" alt="A Wi-Fi details slide on a lobby TV."></div><div class="stand"></div></div><b>Lobbies and schools</b><span>A digital sign from any TV</span></a>
     </div>
   </section>
 
   {{GET}}
 </main>
+<script>
+(() => {
+  const slides = [...document.querySelectorAll('#screen > img')];
+  const $ = id => document.getElementById(id);
+  let i = 0, playing = true, logo = false, black = false, timer;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function paint() {
+    slides.forEach((s, k) => s.classList.toggle('on', k === i));
+    $('logoCover').classList.toggle('on', logo);
+    $('blackCover').classList.toggle('on', black);
+    $('glow').style.background = black ? '#000' : logo ? '#3a2a24' : slides[i].dataset.glow;
+    $('tally').textContent = black ? 'BLACK' : logo ? 'LOGO' : 'LIVE';
+    $('tallyDot').style.background = black ? '#8d8a83' : '';
+    $('pos').textContent = (i + 1) + ' of ' + slides.length;
+    $('nowName').textContent = black ? 'Screen is black' : logo ? 'Showing your logo' : slides[i].dataset.name;
+    $('play').classList.toggle('paused', !playing);
+    $('play').setAttribute('aria-label', playing ? 'Pause' : 'Play');
+    $('logoBtn').setAttribute('aria-pressed', logo);
+    $('blackBtn').setAttribute('aria-pressed', black);
+  }
+  function arm() {
+    clearInterval(timer);
+    timer = setInterval(() => { if (playing && !logo && !black && !document.hidden) { i = (i + 1) % slides.length; paint(); } }, 4000);
+  }
+  function go(d) { i = (i + d + slides.length) % slides.length; logo = black = false; paint(); arm(); }
+  $('prev').onclick = () => go(-1);
+  $('next').onclick = () => go(1);
+  $('play').onclick = () => { playing = !playing; paint(); arm(); };
+  $('logoBtn').onclick = () => { logo = !logo; black = false; paint(); };
+  $('blackBtn').onclick = () => { black = !black; paint(); };
+  if (reduce) playing = false;
+  paint(); arm();
+})();
+</script>

@@ -56,7 +56,7 @@ def head(title, desc, path, image=f"{SITE}/assets/og.jpg", image_alt="A conferen
 <meta name="twitter:title" content="{esc(title)}">
 <meta name="twitter:description" content="{esc(desc)}">
 <meta name="twitter:image" content="{image}">
-<meta name="theme-color" content="#121316">
+<meta name="theme-color" content="#0c0d10">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/icon-512.png">
 <link rel="manifest" href="/site.webmanifest">
@@ -68,35 +68,36 @@ def head(title, desc, path, image=f"{SITE}/assets/og.jpg", image_alt="A conferen
     return tags + '</head>\n<body>\n'
 
 def header(home=False):
-    links = '' if home else '<a class="link" href="/faq/">FAQ</a>'
+    links = ('<a href="#how">How it works</a><a href="#rooms">Rooms</a>' if home else '<a href="/#how">How it works</a><a href="/install/">Install help</a>') + '<a href="/faq/">FAQ</a>'
     return f'''<header class="wrap">
-  <nav aria-label="Main">
-    <a class="brand" href="/" aria-label="LoopCast home"><img src="/assets/mark.svg" width="31" height="26" alt=""><span>LoopCast</span></a>
-    <div class="nav-r">{links}<a class="btn solid sm" href="/app/" target="_blank" rel="noopener">Open in your browser</a></div>
+  <nav class="top" aria-label="Main">
+    <a class="brand" href="/" aria-label="LoopCast home"><img src="/assets/mark.svg" width="32" height="27" alt=""><span>LoopCast</span></a>
+    <div class="nav-r"><div class="nav-links">{links}</div><a class="btn solid sm" href="/app/" target="_blank" rel="noopener">Open in your browser</a></div>
   </nav>
 </header>
 '''
 
 FOOTER = '''<footer>
-  <div class="wrap">
+  <div class="wrap"><div>
     <nav class="foot-links" aria-label="More about LoopCast">''' + ''.join(f'<a href="{p}">{l}</a>' for p, l in PAGES_NAV) + '''</nav>
-    <span><b>LoopCast</b>, for every space with a screen.</span>
-    <span>Questions? <a href="mailto:hello@loopcast.space">hello@loopcast.space</a></span>
-    <span>Made by Treetop Business Solutions in Oklahoma City. © 2026</span>
-  </div>
+    <div class="foot-row">
+      <span class="b"><img src="/assets/mark.svg" width="24" height="20" alt=""><span><b>LoopCast</b>, for every space with a screen.</span></span>
+      <span>Questions? <a href="mailto:hello@loopcast.space">hello@loopcast.space</a></span>
+      <span>Made by Treetop Business Solutions in Oklahoma City. © 2026</span>
+    </div>
+  </div></div>
 </footer>
 '''
 
-GET = f'''<section id="download" class="get">
-  <div class="wrap">
-    <h2>Get LoopCast</h2>
-    <div class="ctas">
-      <a class="btn solid" href="{REL}LoopCast-Setup.exe">{DL_ICON}Download for Windows</a>
-      <a class="btn solid" href="{REL}LoopCast-Mac.dmg">{DL_ICON}Download for Mac</a>
-      <a class="btn ghost" href="/app/" target="_blank" rel="noopener">Open in your browser</a>
+GET = f'''<section id="download" class="s wrap">
+  <div class="get">
+    <h2>Ready when the doors open.</h2>
+    <div class="grid3">
+      <a class="dl" href="{REL}LoopCast-Setup.exe"><b>Download for Windows</b><span>Windows 10 or 11</span></a>
+      <a class="dl" href="{REL}LoopCast-Mac.dmg"><b>Download for Mac</b><span>macOS 12 or later, Apple silicon or Intel</span></a>
+      <a class="dl alt" href="/app/" target="_blank" rel="noopener"><b>Open in your browser</b><span>Nothing to install</span></a>
     </div>
-    <p>Windows 10 or 11. Mac: macOS 12 or later, Apple silicon or Intel. The browser version needs nothing installed.</p>
-    <p><b>Expect a security warning the first time.</b> LoopCast isn’t signed with a paid developer certificate yet, so Windows and macOS can’t confirm who made it. On Windows choose More info, then Run anyway. On a Mac, go to System Settings › Privacy &amp; Security and choose Open Anyway. <a href="/install/">What this means, step by step</a></p>
+    <p><b>Expect a security warning the first time.</b> LoopCast isn’t signed with a paid developer certificate yet, so Windows and macOS can’t confirm who made it. On Windows choose More info, then Run anyway. On a Mac, go to System Settings › Privacy &amp; Security and choose Open Anyway. <a href="/install/">Here’s what that means</a>.</p>
     <p>Plays images, video and PDFs. Using PowerPoint or Keynote? Save your deck as a PDF first.</p>
   </div>
 </section>
@@ -133,8 +134,8 @@ def page(path, crumb, title, desc, h1, lede, body, image=None, image_alt=None, e
     <div class="prose">
 {body}
     </div>
-    <h2 style="margin-top:clamp(64px,8vw,104px);font-size:clamp(22px,2vw,28px)">Keep reading</h2>
-    {related(path)}
+    <div class="more"><div class="eyebrow">Keep reading</div>
+    {related(path)}</div>
   </div>
   {GET}
 </main>
@@ -372,9 +373,10 @@ def build():
 
     # ---------- 404 ----------
     out = head('Page not found | LoopCast', 'This page doesn’t exist.', '/404.html', noindex=True) + header() + '''<main>
-  <div class="wrap hero">
+  <div class="wrap hero" style="padding-bottom:clamp(64px,8vw,120px)">
+    <span class="pill"><span class="dot"></span>No signal</span>
     <h1>This page isn’t on the loop.</h1>
-    <p>The link may be old or mistyped.</p>
+    <p class="lede">The link may be old or mistyped.</p>
     <div class="ctas"><a class="btn solid" href="/">Go to the homepage</a><a class="btn ghost" href="/faq/">Read the FAQ</a></div>
   </div>
 </main>
