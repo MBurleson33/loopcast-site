@@ -80,7 +80,8 @@ def head(title, desc, path, image=f"{SITE}/assets/og-logo.jpg", image_alt="The L
 
 def header(home=False):
     links = '<a href="/features/">Features</a><a href="/uses/">Uses</a><a href="/faq/">FAQ</a>'
-    return f'''<header class="wrap">
+    return f'''<a class="promo" href="{'#download' if home else '/#download'}"><span class="dot pulse"></span><span><b>Free during our launch.</b> Download LoopCast now while it’s free.</span><span class="promo-go">Get it →</span></a>
+<header class="wrap">
   <nav class="top" aria-label="Main">
     <a class="brand" href="/" aria-label="LoopCast home"><img src="/assets/mark.svg" width="32" height="27" alt=""><span>LoopCast</span></a>
     <div class="nav-r"><div class="nav-links">{links}</div><a class="btn solid sm" href="/app/" target="_blank" rel="noopener">Open in your browser</a></div>
@@ -156,7 +157,7 @@ def fig(src, alt, caption, w=1600, h=900):
     return f'<figure class="figure"><img src="/assets/{src}" width="{w}" height="{h}" loading="lazy" alt="{esc(alt)}"><figcaption>{caption}</figcaption></figure>'
 
 FAQS = [
-    ("Is LoopCast free?", "Yes. You can download LoopCast for Windows and Mac, or open it in your browser, at no cost."),
+    ("Is LoopCast free?", "Yes, LoopCast is free during our launch. You can download it for Windows and Mac, or open it in your browser, at no cost."),
     ("Does it need internet?", "No. LoopCast runs on your computer and plays files from a folder on it. You only need internet to download it."),
     ("Will it work with our projector or TV?", "Yes, if your computer sees it as a second display: a projector, a TV, or an LED wall processor over HDMI, DisplayPort or USB-C. LoopCast opens the output fullscreen on it at its own resolution."),
     ("What if I only have one screen?", "Use Fullscreen here (the expand button, or the F key). LoopCast fills the screen it runs on, and Esc brings back the controls. If LoopCast only finds one display, Show on projector does this for you."),

@@ -281,3 +281,11 @@ footer .wrap>div{border-top:1px solid var(--line);padding-top:28px}
 .tp{position:absolute;left:0;bottom:0;height:3px;width:0;background:#e8412c}
 .mk-cursor{position:absolute;left:1120px;top:700px;transition:left .8s cubic-bezier(.4,0,.2,1),top .8s cubic-bezier(.4,0,.2,1);pointer-events:none;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}
 .mockwrap .glow{top:10%;bottom:-6%}
+
+/* launch banner */
+.promo{display:flex;align-items:center;justify-content:center;gap:10px;min-height:42px;padding:8px var(--gutter);background:#e8412c;color:#fff;text-decoration:none;font-size:14.5px;text-align:center}
+.promo .dot{background:#fff}
+.promo b{font-weight:700}
+.promo-go{font-weight:700;white-space:nowrap;margin-left:6px}
+.promo:hover .promo-go{text-decoration:underline;text-underline-offset:3px}
+@media (max-width:600px){.promo{font-size:13.5px}.promo-go{display:none}}
