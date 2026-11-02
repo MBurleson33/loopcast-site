@@ -89,6 +89,21 @@ def header(home=False):
 </header>
 '''
 
+# ---- Tracking (both stay off until filled in) ----
+# GoatCounter: your site code, e.g. 'loopcast' for https://loopcast.goatcounter.com
+GOATCOUNTER = ''
+# Optional email box after a download: the form's POST address and its email field name.
+#   Kit:        action 'https://app.kit.com/forms/<FORM_ID>/subscriptions', field 'email_address'
+#   Buttondown: action 'https://buttondown.com/api/emails/embed-subscribe/<USERNAME>', field 'email'
+EMAIL_FORM = {'action': '', 'field': 'email_address'}
+
+def tracking_tags():
+    cfg = json.dumps({'gc': bool(GOATCOUNTER), 'form': EMAIL_FORM if EMAIL_FORM['action'] else None})
+    tags = f'<script>window.LC_CFG={cfg}</script>\n<script src="/assets/track.js" defer></script>\n'
+    if GOATCOUNTER:
+        tags += f'<script data-goatcounter="https://{GOATCOUNTER}.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>\n'
+    return tags
+
 FOOTER = '''<footer>
   <div class="wrap"><div>
     <nav class="foot-links" aria-label="More about LoopCast">''' + ''.join(f'<a href="{p}">{l}</a>' for p, l in PAGES_NAV) + '''</nav>
@@ -99,7 +114,7 @@ FOOTER = '''<footer>
     </div>
   </div></div>
 </footer>
-'''
+''' + tracking_tags()
 
 GET = f'''<section id="download" class="s wrap">
   <div class="get">
