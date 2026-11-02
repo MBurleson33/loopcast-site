@@ -8,19 +8,49 @@
     </div>
     <p class="hint" style="margin-top:18px">For Windows and Mac. No account needed.</p>
 
-    <div class="stage" id="demo">
+    <figure class="mockwrap" id="demo" aria-label="LoopCast playing a walk-in playlist on a projector">
       <div class="glow" id="glow" aria-hidden="true"></div>
-      <div class="bezel">
-        <div class="screen" id="screen">
-          <img class="on" src="/assets/slide-welcome.webp" width="1280" height="720" alt="A welcome slide: Glad you’re here. Grab a coffee and find a seat." data-glow="#2f5a88">
-          <img src="/assets/slide-agenda.webp" width="1280" height="720" loading="lazy" alt="The day’s agenda." data-glow="#2f4a3a">
-          <img src="/assets/slide-sponsors.webp" width="1280" height="720" loading="lazy" alt="A sponsors slide." data-glow="#b7ac8c">
-          <img src="/assets/slide-wifi.webp" width="1280" height="720" loading="lazy" alt="A Wi-Fi details slide." data-glow="#5c3560">
-          <img src="/assets/slide-photos.webp" width="1280" height="720" loading="lazy" alt="An event photos slide." data-glow="#be513a">
+      <div class="mock" aria-hidden="true">
+        <div class="mk" id="mk">
+          <div class="mk-top">
+            <div class="mk-brand"><img src="/assets/mark.svg" width="30" height="25" alt=""><b>LoopCast</b></div>
+            <div class="mk-folder"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2.5h8.5A1.5 1.5 0 0 1 21 9v9.5a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5z"/></svg>Fall Summit</div>
+            <div class="mk-sp"></div>
+            <div class="mk-onproj"><span class="dot pulse"></span>On projector</div>
+            <div class="mk-gear"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></div>
+          </div>
+          <div class="mk-body">
+            <div class="mk-side">
+              <div class="mk-label">Playlists</div>
+              <div class="mk-pl"><b>Break</b><span>1 item</span></div>
+              <div class="mk-pl"><b>Sponsors</b><span>2 items</span></div>
+              <div class="mk-pl on"><b>Walk-in</b><span>Playing, 5 items</span></div>
+            </div>
+            <div class="mk-main">
+              <div class="mk-status"><span><span class="dot"></span>On the projector now</span><span><span class="dot green"></span>Next <b id="mkNext">02-agenda.jpg</b></span></div>
+              <div class="mk-prev" id="mkPrev">
+                <img class="on" src="/assets/slide-welcome.webp" width="1280" height="720" alt="">
+                <img src="/assets/slide-agenda.webp" width="1280" height="720" alt="" loading="lazy">
+                <img src="/assets/slide-sponsors.webp" width="1280" height="720" alt="" loading="lazy">
+                <img src="/assets/slide-wifi.webp" width="1280" height="720" alt="" loading="lazy">
+                <img src="/assets/slide-photos.webp" width="1280" height="720" alt="" loading="lazy">
+                <div class="mk-logo" id="mkLogo"><img src="/assets/mark.svg" width="104" height="88" alt=""></div>
+              </div>
+              <div class="mk-ctl">
+                <div class="mk-now"><b id="mkName">01-welcome.jpg</b><div class="mk-bar"><i id="mkBar"></i></div><span id="mkTime">0:00 / 0:06</span></div>
+                <div class="mk-tr"><span class="mk-b"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 5v14"/><path d="M18 5l-9 7 9 7z"/></svg></span><span class="mk-b play"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg></span><span class="mk-b" id="mkNextBtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 5v14"/><path d="M6 5l9 7-9 7z"/></svg></span></div>
+                <div class="mk-cov"><span class="mk-c" id="mkLogoBtn">Logo</span><span class="mk-c">Black</span></div>
+              </div>
+              <div class="mk-strip">
+                <div class="mk-sh"><b>Walk-in</b><span>5 items</span><span class="mk-dup">Duplicate</span><span class="mk-sp"></span><span class="mk-end">At the end <span class="seg"><i class="on">Loop</i><i>Stop</i><i>Logo</i></span></span></div>
+                <div class="mk-thumbs"><div class="t" data-k="0"><div class="ti"><img src="/assets/slide-welcome.webp" width="1280" height="720" alt="" loading="lazy"><span class="badge"></span><span class="tp"></span></div><small>01-welcome.jpg</small></div><div class="t" data-k="1"><div class="ti"><img src="/assets/slide-agenda.webp" width="1280" height="720" alt="" loading="lazy"><span class="badge"></span><span class="tp"></span></div><small>02-agenda.jpg</small></div><div class="t" data-k="2"><div class="ti"><img src="/assets/slide-sponsors.webp" width="1280" height="720" alt="" loading="lazy"><span class="badge"></span><span class="tp"></span></div><small>03-sponsors.pdf</small></div><div class="t" data-k="3"><div class="ti"><img src="/assets/slide-wifi.webp" width="1280" height="720" alt="" loading="lazy"><span class="badge"></span><span class="tp"></span></div><small>04-wifi.jpg</small></div><div class="t" data-k="4"><div class="ti"><img src="/assets/slide-photos.webp" width="1280" height="720" alt="" loading="lazy"><span class="badge"></span><span class="tp"></span></div><small>05-photos.jpg</small></div></div>
+              </div>
+            </div>
+          </div>
+          <svg class="mk-cursor" id="mkCursor" width="26" height="26" viewBox="0 0 24 24"><path d="M5 3l14 8-6.2 1.6L10 19z" fill="#fff" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/></svg>
         </div>
       </div>
-      <div class="tally"><span class="dot pulse"></span>ON SCREEN</div>
-    </div>
+    </figure>
   </section>
 
   <section class="s wrap">
@@ -37,14 +67,50 @@
 </main>
 <script>
 (() => {
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const slides = [...document.querySelectorAll('#screen > img')], glow = document.getElementById('glow');
-  let i = 0;
-  setInterval(() => {
-    if (document.hidden) return;
-    i = (i + 1) % slides.length;
-    slides.forEach((s, k) => s.classList.toggle('on', k === i));
-    glow.style.background = slides[i].dataset.glow;
-  }, 4000);
+  const mk = document.getElementById('mk'), wrap = mk.parentElement;
+  const fit = () => mk.style.transform = 'scale(' + (wrap.clientWidth / 1440) + ')';
+  fit(); addEventListener('resize', fit);
+  const names = ['01-welcome.jpg', '02-agenda.jpg', '03-sponsors.pdf', '04-wifi.jpg', '05-photos.jpg'];
+  const glows = ['#2f5a88', '#2f4a3a', '#b7ac8c', '#5c3560', '#be513a'];
+  const prev = [...document.querySelectorAll('#mkPrev > img')], thumbs = [...document.querySelectorAll('.mk-thumbs .t')];
+  const $ = id => document.getElementById(id), cur = $('mkCursor');
+  const DUR = 6000, still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let i = 0, start = performance.now(), logo = false, cycles = 0, busy = false;
+  function show() {
+    prev.forEach((p, k) => p.classList.toggle('on', k === i));
+    thumbs.forEach((t, k) => { t.classList.toggle('live', k === i); t.classList.toggle('next', k === (i + 1) % 5); t.querySelector('.badge').textContent = k === i ? 'Live' : k === (i + 1) % 5 ? 'Next' : ''; });
+    $('mkName').textContent = logo ? 'Logo screen' : names[i];
+    $('mkNext').textContent = names[(i + 1) % 5];
+    $('glow').style.background = logo ? '#3a2a24' : glows[i];
+  }
+  const moveTo = (el, cb) => {
+    const r = el.getBoundingClientRect(), m = mk.getBoundingClientRect(), sc = wrap.clientWidth / 1440;
+    cur.style.left = ((r.left - m.left) / sc + r.width / sc / 2) + 'px'; cur.style.top = ((r.top - m.top) / sc + r.height / sc / 2) + 'px';
+    setTimeout(() => { el.classList.add('press'); setTimeout(() => { el.classList.remove('press'); cb && cb(); }, 180); }, 900);
+  };
+  function toggleLogo(on) { logo = on; $('mkLogo').classList.toggle('on', on); $('mkLogoBtn').classList.toggle('on', on); show(); }
+  function act() {
+    // Every few slides, the operator covers the screen with the logo for a moment, then brings it back.
+    busy = true;
+    moveTo($('mkLogoBtn'), () => { toggleLogo(true);
+      setTimeout(() => moveTo($('mkLogoBtn'), () => { toggleLogo(false); start = performance.now();
+        setTimeout(() => { cur.style.left = '1120px'; cur.style.top = '700px'; busy = false; }, 400); }), 2600); });
+  }
+  function tick(now) {
+    if (!busy && !logo) {
+      const t = Math.min(1, (now - start) / DUR);
+      $('mkBar').style.width = (t * 100) + '%';
+      $('mkTime').textContent = '0:0' + Math.floor(t * 6) + ' / 0:06';
+      thumbs[i].querySelector('.tp').style.width = (t * 100) + '%';
+      if (t >= 1 && !document.hidden) {
+        thumbs[i].querySelector('.tp').style.width = '0';
+        i = (i + 1) % 5; start = now; cycles++; show();
+        if (cycles % 3 === 0) setTimeout(act, 1800);
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+  show();
+  if (!still) requestAnimationFrame(tick);
 })();
 </script>
