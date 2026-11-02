@@ -289,3 +289,10 @@ footer .wrap>div{border-top:1px solid var(--line);padding-top:28px}
 .promo-go{font-weight:700;white-space:nowrap;margin-left:6px}
 .promo:hover .promo-go{text-decoration:underline;text-underline-offset:3px}
 @media (max-width:600px){.promo{font-size:13.5px}.promo-go{display:none}}
+@media (max-width:900px){
+  .simple{margin-top:32px;gap:10px;text-align:left}
+  .simple li{display:grid;grid-template-columns:40px 1fr;column-gap:14px;align-items:center;padding:16px 18px;border-radius:16px}
+  .simple li::before{grid-row:span 2;width:40px;height:40px;margin:0;font-size:17px}
+  .simple b{font-size:17px}
+  .simple span{margin-top:2px;font-size:14.5px}
+}
