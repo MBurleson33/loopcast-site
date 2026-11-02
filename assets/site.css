@@ -205,3 +205,12 @@ footer .wrap>div{border-top:1px solid var(--line);padding-top:28px}
   .strip .now{width:100%;text-align:center;padding-left:0}
 }
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+
+/* simple steps (homepage) */
+.simple{list-style:none;margin:56px auto 0;padding:0;max-width:1000px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;counter-reset:s;text-align:center}
+.simple li{counter-increment:s;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:36px 24px}
+.simple li::before{content:counter(s);display:grid;place-items:center;width:52px;height:52px;margin:0 auto 18px;border-radius:50%;background:var(--lit);color:var(--ink);font-weight:800;font-size:22px;font-stretch:115%}
+.simple b{display:block;font-size:21px;font-weight:700}
+.simple span{display:block;margin-top:6px;color:var(--muted);font-size:16px}
+.feats .card{gap:8px}
+@media (max-width:900px){.simple{grid-template-columns:1fr}}

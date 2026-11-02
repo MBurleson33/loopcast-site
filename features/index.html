@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LoopCast features: logo screen, black, manual mode, PDFs, live inputs</title>
+<meta name="description" content="Everything LoopCast does: one-key logo and black screens, auto or manual advance, clicker support, PDFs as slides, per-file repeat, live inputs and more.">
+<link rel="canonical" href="https://loopcast.space/features/">
+<meta property="og:site_name" content="LoopCast">
+<meta property="og:type" content="website">
+<meta property="og:title" content="LoopCast features: logo screen, black, manual mode, PDFs, live inputs">
+<meta property="og:description" content="Everything LoopCast does: one-key logo and black screens, auto or manual advance, clicker support, PDFs as slides, per-file repeat, live inputs and more.">
+<meta property="og:url" content="https://loopcast.space/features/">
+<meta property="og:image" content="https://loopcast.space/assets/og-logo.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The LoopCast logo on a black background.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="LoopCast features: logo screen, black, manual mode, PDFs, live inputs">
+<meta name="twitter:description" content="Everything LoopCast does: one-key logo and black screens, auto or manual advance, clicker support, PDFs as slides, per-file repeat, live inputs and more.">
+<meta name="twitter:image" content="https://loopcast.space/assets/og-logo.jpg">
+<meta name="theme-color" content="#0c0d10">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/icon-512.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="preload" href="/assets/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "@id": "https://loopcast.space/#org", "name": "Treetop Business Solutions", "email": "hello@loopcast.space", "address": {"@type": "PostalAddress", "addressLocality": "Oklahoma City", "addressRegion": "OK", "addressCountry": "US"}}, {"@type": "SoftwareApplication", "@id": "https://loopcast.space/#app", "name": "LoopCast", "url": "https://loopcast.space/", "image": "https://loopcast.space/assets/icon-512.png", "screenshot": "https://loopcast.space/assets/operator.webp", "applicationCategory": "MultimediaApplication", "applicationSubCategory": "Digital signage and presentation software", "operatingSystem": "Windows 10, Windows 11, macOS 12 or later, web browser", "description": "Offline looping media player for event screens. Plays a folder of images, PDFs and videos on a projector or TV, on repeat, without internet.", "featureList": ["Loops images, PDFs and video", "Folder-based playlists", "Projector output with live preview", "Logo screen and fade to black", "Loop, repeat or stop per playlist", "Live HDMI capture inputs", "Fullscreen on a single screen", "Works offline"], "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "publisher": {"@id": "https://loopcast.space/#org"}, "downloadUrl": "https://loopcast.space/#download"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "LoopCast", "item": "https://loopcast.space/"}, {"@type": "ListItem", "position": 2, "name": "Features", "item": "https://loopcast.space/features/"}]}]}</script>
+</head>
+<body>
+<header class="wrap">
+  <nav class="top" aria-label="Main">
+    <a class="brand" href="/" aria-label="LoopCast home"><img src="/assets/mark.svg" width="32" height="27" alt=""><span>LoopCast</span></a>
+    <div class="nav-r"><div class="nav-links"><a href="/features/">Features</a><a href="/uses/">Uses</a><a href="/faq/">FAQ</a></div><a class="btn solid sm" href="/app/" target="_blank" rel="noopener">Open in your browser</a></div>
+  </nav>
+</header>
+<main>
+  <div class="wrap">
+    <p class="crumbs"><a href="/">LoopCast</a> › Features</p>
+    <div class="page-hero">
+      <h1>Everything it can do.</h1>
+      <p>Simple on the surface, with the controls you want when the room is full.</p>
+      <div class="ctas"><a class="btn solid" href="#download"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>Download free</a><a class="btn ghost" href="/app/" target="_blank" rel="noopener">Open in your browser</a></div>
+    </div>
+    <section>
+    <div class="eyebrow">Try it</div>
+    <h2 class="big" style="max-width:20ch">These are the real controls.</h2>
+    <p style="margin:18px 0 0;max-width:52ch;color:var(--muted);font-size:18px">Press Logo to cover the screen with your logo, or Black to fade out, just like you would at the event.</p>
+    <div style="text-align:center">
+    <div class="stage" id="demo">
+      <div class="glow" id="glow" aria-hidden="true"></div>
+      <div class="bezel">
+        <div class="screen" id="screen" aria-live="polite">
+          <img class="on" src="/assets/slide-welcome.webp" width="1280" height="720" alt="Welcome slide: Glad you’re here. Grab a coffee and find a seat." data-name="welcome.jpg" data-glow="#2f5a88">
+          <img src="/assets/slide-agenda.webp" width="1280" height="720" loading="lazy" alt="The day’s agenda slide." data-name="agenda.jpg" data-glow="#2f4a3a">
+          <img src="/assets/slide-sponsors.webp" width="1280" height="720" loading="lazy" alt="Gold sponsors slide." data-name="sponsors.pdf, page 1" data-glow="#b7ac8c">
+          <img src="/assets/slide-wifi.webp" width="1280" height="720" loading="lazy" alt="Wi-Fi details slide." data-name="wifi.png" data-glow="#5c3560">
+          <img src="/assets/slide-photos.webp" width="1280" height="720" loading="lazy" alt="Event photos slide." data-name="photos.mp4" data-glow="#be513a">
+          <div class="cover logo" id="logoCover"><img src="/assets/mark.svg" width="104" height="88" alt="Logo screen"></div>
+          <div class="cover black" id="blackCover"></div>
+        </div>
+      </div>
+      <div class="tally"><span class="dot pulse" id="tallyDot"></span><span id="tally">LIVE</span></div>
+    </div>
+    <div class="strip">
+      <div class="now"><small>Walk-in · <span id="pos">1 of 5</span></small><b id="nowName">welcome.jpg</b></div>
+      <div class="transport">
+        <button class="ctl" type="button" id="prev" aria-label="Previous"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 5v14"/><path d="M18 5l-9 7 9 7z"/></svg></button>
+        <button class="ctl play" type="button" id="play" aria-label="Pause"><svg class="i-pause" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg></button>
+        <button class="ctl" type="button" id="next" aria-label="Next"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 5v14"/><path d="M6 5l9 7-9 7z"/></svg></button>
+      </div>
+      <div class="covers">
+        <button class="cov" type="button" id="logoBtn" aria-pressed="false">Logo <span>H</span></button>
+        <button class="cov" type="button" id="blackBtn" aria-pressed="false">Black <span>B</span></button>
+      </div>
+    </div>
+    
+    </div>
+  </section>
+  <section class="s">
+    <div class="facts">
+      <div><b>Free.</b><span>No trial, no watermark.</span></div>
+      <div><b>Offline.</b><span>Venue Wi-Fi can do what it likes.</span></div>
+      <div><b class="red">No sign-up.</b><span>Open it and press play.</span></div>
+    </div>
+  </section>
+
+
+  <section class="s">
+    <div class="grid2">
+      <div>
+        <div class="eyebrow">Run the room</div>
+        <h2 class="big" style="max-width:14ch">Your keyboard is the remote.</h2>
+        <p style="margin:22px 0 0;max-width:42ch;color:var(--muted);font-size:18px;line-height:1.55">Speaker running late? Cover the screen with your logo in one key. Presenter calls for the agenda? Jump straight to it. A clicker works too.</p>
+        <div class="ticks">
+          <div>A live preview shows exactly what the room sees</div>
+          <div>Drop new files in mid-event and they join the loop</div>
+          <div>Put a laptop or camera on screen through an HDMI capture stick</div>
+        </div>
+      </div>
+      <div class="keys">
+        <div class="key"><b>H</b><span>Logo screen</span></div>
+        <div class="key"><b>B</b><span>Fade to black</span></div>
+        <div class="key red"><b>O</b><span>Show on projector</span></div>
+        <div class="key"><b>← →</b><span>Previous, next</span></div>
+        <div class="key lit"><b>Space</b><span>Play or pause</span></div>
+        <div class="key"><b>R</b><span>Repeat this one</span></div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="s">
+    <div class="eyebrow">Also built in</div>
+    <h2 class="big" style="max-width:18ch">The little things that save an event.</h2>
+    <div class="grid3 feats" style="margin-top:48px">
+      <div class="card"><h3>Click through on cue</h3><p>Set a playlist to Manual and each slide waits for you. Arrow keys, Page Down or a presentation clicker move it on.</p></div>
+      <div class="card"><h3>PDFs become slides</h3><p>Every page of a PDF plays as its own slide, sharp at the projector’s resolution. Export PowerPoint or Keynote decks as PDFs.</p></div>
+      <div class="card"><h3>Repeat one file</h3><p>Keep a single image or video up until you press next, while the rest of the playlist waits.</p></div>
+      <div class="card"><h3>Copies with hidden files</h3><p>Duplicate a playlist and hide a few files for the second session. The original stays untouched.</p></div>
+      <div class="card"><h3>End on your logo</h3><p>Each playlist can loop, stop on the last slide, or finish on your logo screen by itself.</p></div>
+      <div class="card"><h3>One screen is enough</h3><p>No projector? Fullscreen here fills the computer you’re on, and Esc brings the controls back.</p></div>
+    </div>
+  </section>
+<script>
+(() => {
+  const slides = [...document.querySelectorAll('#screen > img')];
+  const $ = id => document.getElementById(id);
+  let i = 0, playing = true, logo = false, black = false, timer;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function paint() {
+    slides.forEach((s, k) => s.classList.toggle('on', k === i));
+    $('logoCover').classList.toggle('on', logo);
+    $('blackCover').classList.toggle('on', black);
+    $('glow').style.background = black ? '#000' : logo ? '#3a2a24' : slides[i].dataset.glow;
+    $('tally').textContent = black ? 'BLACK' : logo ? 'LOGO' : 'LIVE';
+    $('tallyDot').style.background = black ? '#8d8a83' : '';
+    $('pos').textContent = (i + 1) + ' of ' + slides.length;
+    $('nowName').textContent = black ? 'Screen is black' : logo ? 'Showing your logo' : slides[i].dataset.name;
+    $('play').classList.toggle('paused', !playing);
+    $('play').setAttribute('aria-label', playing ? 'Pause' : 'Play');
+    $('logoBtn').setAttribute('aria-pressed', logo);
+    $('blackBtn').setAttribute('aria-pressed', black);
+  }
+  function arm() {
+    clearInterval(timer);
+    timer = setInterval(() => { if (playing && !logo && !black && !document.hidden) { i = (i + 1) % slides.length; paint(); } }, 4000);
+  }
+  function go(d) { i = (i + d + slides.length) % slides.length; logo = black = false; paint(); arm(); }
+  $('prev').onclick = () => go(-1);
+  $('next').onclick = () => go(1);
+  $('play').onclick = () => { playing = !playing; paint(); arm(); };
+  $('logoBtn').onclick = () => { logo = !logo; black = false; paint(); };
+  $('blackBtn').onclick = () => { black = !black; paint(); };
+  if (reduce) playing = false;
+  paint(); arm();
+})();
+</script>
+
+    <div class="more"><div class="eyebrow">Keep reading</div>
+    <div class="related"><a href="/uses/"><b>Uses</b><span>Conferences, churches, booths, lobbies</span></a><a href="/conferences/"><b>Conferences</b><span>Walk-in loops, agendas and sponsors</span></a><a href="/churches/"><b>Churches</b><span>Pre-service announcement loops</span></a></div></div>
+  </div>
+  <section id="download" class="s wrap">
+  <div class="get">
+    <h2>Ready when the doors open.</h2>
+    <div class="grid3">
+      <a class="dl" href="https://github.com/MBurleson33/loopcast-site/releases/latest/download/LoopCast-Setup.exe"><b>Download for Windows</b><span>Windows 10 or 11</span></a>
+      <a class="dl" href="https://github.com/MBurleson33/loopcast-site/releases/latest/download/LoopCast-Mac.dmg"><b>Download for Mac</b><span>macOS 12 or later, Apple silicon or Intel</span></a>
+      <a class="dl alt" href="/app/" target="_blank" rel="noopener"><b>Open in your browser</b><span>Nothing to install</span></a>
+    </div>
+    <p>Your computer will show a security warning the first time you open it. That’s expected. <a href="/install/">Here’s why, and what to click</a>.</p>
+  </div>
+</section>
+
+</main>
+<footer>
+  <div class="wrap"><div>
+    <nav class="foot-links" aria-label="More about LoopCast"><a href="/features/">Features</a><a href="/uses/">Uses</a><a href="/conferences/">Conferences</a><a href="/churches/">Churches</a><a href="/trade-shows/">Trade shows</a><a href="/digital-signage/">Lobbies and schools</a><a href="/guides/loop-powerpoint-pdf-on-projector/">Loop a PowerPoint or PDF</a><a href="/propresenter-alternative/">ProPresenter alternative</a><a href="/install/">Install help</a><a href="/faq/">FAQ</a></nav>
+    <div class="foot-row">
+      <span class="b"><img src="/assets/mark.svg" width="24" height="20" alt=""><span><b>LoopCast</b>, for every space with a screen.</span></span>
+      <span>Questions? <a href="mailto:hello@loopcast.space">hello@loopcast.space</a></span>
+      <span>Made by Treetop Business Solutions in Oklahoma City. © 2026</span>
+    </div>
+  </div></div>
+</footer>
+</body>
+</html>

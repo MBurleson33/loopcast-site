@@ -27,6 +27,7 @@ APP = {"@type": "SoftwareApplication", "@id": f"{SITE}/#app", "name": "LoopCast"
        "publisher": {"@id": f"{SITE}/#org"}, "downloadUrl": f"{SITE}/#download"}
 
 PAGES_NAV = [  # footer links: (path, label)
+    ('/features/', 'Features'), ('/uses/', 'Uses'),
     ('/conferences/', 'Conferences'), ('/churches/', 'Churches'), ('/trade-shows/', 'Trade shows'),
     ('/digital-signage/', 'Lobbies and schools'), ('/guides/loop-powerpoint-pdf-on-projector/', 'Loop a PowerPoint or PDF'),
     ('/propresenter-alternative/', 'ProPresenter alternative'), ('/install/', 'Install help'), ('/faq/', 'FAQ'),
@@ -70,7 +71,7 @@ def head(title, desc, path, image=f"{SITE}/assets/og-logo.jpg", image_alt="The L
     return tags + '</head>\n<body>\n'
 
 def header(home=False):
-    links = ('<a href="#how">How it works</a><a href="#rooms">Rooms</a>' if home else '<a href="/#how">How it works</a><a href="/install/">Install help</a>') + '<a href="/faq/">FAQ</a>'
+    links = '<a href="/features/">Features</a><a href="/uses/">Uses</a><a href="/faq/">FAQ</a>'
     return f'''<header class="wrap">
   <nav class="top" aria-label="Main">
     <a class="brand" href="/" aria-label="LoopCast home"><img src="/assets/mark.svg" width="32" height="27" alt=""><span>LoopCast</span></a>
@@ -99,8 +100,7 @@ GET = f'''<section id="download" class="s wrap">
       <a class="dl" href="{REL}LoopCast-Mac.dmg"><b>Download for Mac</b><span>macOS 12 or later, Apple silicon or Intel</span></a>
       <a class="dl alt" href="/app/" target="_blank" rel="noopener"><b>Open in your browser</b><span>Nothing to install</span></a>
     </div>
-    <p><b>Expect a security warning the first time.</b> LoopCast isn’t signed with a paid developer certificate yet, so Windows and macOS can’t confirm who made it. On Windows choose More info, then Run anyway. On a Mac, go to System Settings › Privacy &amp; Security and choose Open Anyway. <a href="/install/">Here’s what that means</a>.</p>
-    <p>Plays images, video and PDFs. Using PowerPoint or Keynote? Save your deck as a PDF first.</p>
+    <p>Your computer will show a security warning the first time you open it. That’s expected. <a href="/install/">Here’s why, and what to click</a>.</p>
   </div>
 </section>
 '''
@@ -112,13 +112,13 @@ def crumbs_ld(path, name):
 
 def related(current):
     picks = [(p, l) for p, l in PAGES_NAV if p != current][:3]
-    blurbs = {'/conferences/': 'Walk-in loops, agendas and sponsors', '/churches/': 'Pre-service announcement loops',
+    blurbs = {'/features/': 'Everything LoopCast can do', '/uses/': 'Conferences, churches, booths, lobbies','/conferences/': 'Walk-in loops, agendas and sponsors', '/churches/': 'Pre-service announcement loops',
               '/trade-shows/': 'All-day loops on the booth TV', '/digital-signage/': 'Lobby, hallway and office screens',
               '/guides/loop-powerpoint-pdf-on-projector/': 'Three ways, step by step', '/propresenter-alternative/': 'When you only need loops',
               '/install/': 'Why Windows and Mac warn you, and what to do', '/faq/': 'Projectors, files, installs'}
     return '<div class="related">' + ''.join(f'<a href="{p}"><b>{l}</b><span>{blurbs[p]}</span></a>' for p, l in picks) + '</div>'
 
-def page(path, crumb, title, desc, h1, lede, body, image=None, image_alt=None, extra_ld=None):
+def page(path, crumb, title, desc, h1, lede, body, image=None, image_alt=None, extra_ld=None, wide=False):
     ld = [ORG, APP, crumbs_ld(path, crumb)] + (extra_ld or [])
     kw = {}  # every page shares the logo preview image
     out = head(title, desc, path, ld=ld, **kw)
@@ -131,9 +131,7 @@ def page(path, crumb, title, desc, h1, lede, body, image=None, image_alt=None, e
       <p>{lede}</p>
       <div class="ctas"><a class="btn solid" href="#download">{DL_ICON}Download free</a><a class="btn ghost" href="/app/" target="_blank" rel="noopener">Open in your browser</a></div>
     </div>
-    <div class="prose">
-{body}
-    </div>
+    {body if wide else '<div class="prose">' + chr(10) + body + chr(10) + '    </div>'}
     <div class="more"><div class="eyebrow">Keep reading</div>
     {related(path)}</div>
   </div>
@@ -177,6 +175,16 @@ def build():
 </html>
 '''
     open(os.path.join(ROOT, 'index.html'), 'w').write(out)
+
+    # ---------- features / uses ----------
+    page('/features/', 'Features', 'LoopCast features: logo screen, black, manual mode, PDFs, live inputs',
+         'Everything LoopCast does: one-key logo and black screens, auto or manual advance, clicker support, PDFs as slides, per-file repeat, live inputs and more.',
+         'Everything it can do.', 'Simple on the surface, with the controls you want when the room is full.',
+         open(os.path.join(ROOT, 'tools', 'features.html')).read(), wide=True)
+    page('/uses/', 'Uses', 'Where to use LoopCast: conferences, churches, trade shows and lobbies',
+         'LoopCast puts looping pictures, videos and PDFs on screens at conferences, churches, trade show booths, meeting rooms, lobbies and schools.',
+         'Made for every room.', 'From the ballroom stage to the lobby TV, anywhere a screen should keep showing something useful.',
+         open(os.path.join(ROOT, 'tools', 'uses.html')).read(), wide=True)
 
     # ---------- conferences ----------
     page('/conferences/', 'Conferences',
