@@ -18,7 +18,7 @@ ORG = {"@type": "Organization", "@id": f"{SITE}/#org", "name": "Treetop Business
 APP = {"@type": "SoftwareApplication", "@id": f"{SITE}/#app", "name": "LoopCast",
        "url": f"{SITE}/", "image": f"{SITE}/assets/icon-512.png", "screenshot": f"{SITE}/assets/operator.webp",
        "applicationCategory": "MultimediaApplication", "applicationSubCategory": "Digital signage and presentation software",
-       "operatingSystem": "Windows 10, Windows 11, macOS 12 or later, Chrome, Edge",
+       "operatingSystem": "Windows 10, Windows 11, macOS 12 or later, web browser",
        "description": "Offline looping media player for event screens. Plays a folder of images, PDFs and videos on a projector or TV, on repeat, without internet.",
        "featureList": ["Loops images, PDFs and video", "Folder-based playlists", "Projector output with live preview",
                        "Logo screen and fade to black", "Loop, repeat or stop per playlist", "Live HDMI capture inputs",
@@ -94,7 +94,7 @@ GET = f'''<section id="download" class="get">
       <a class="btn solid" href="{REL}LoopCast-Mac.dmg">{DL_ICON}Download for Mac</a>
       <a class="btn ghost" href="/app/" target="_blank" rel="noopener">Open in your browser</a>
     </div>
-    <p>Windows 10 or 11. Mac: macOS 12 or later, Apple silicon or Intel. Open in your browser runs in Chrome or Edge with nothing to install.</p>
+    <p>Windows 10 or 11. Mac: macOS 12 or later, Apple silicon or Intel. Open in your browser runs in any modern browser with nothing to install.</p>
     <p><b>First time opening it?</b> Windows may show a blue warning: choose More info, then Run anyway. On a Mac, go to System Settings › Privacy &amp; Security and choose Open Anyway.</p>
     <p>Plays images, video and PDFs. Using PowerPoint or Keynote? Save your deck as a PDF first.</p>
   </div>
@@ -158,7 +158,7 @@ FAQS = [
     ("Can I add or swap files during an event?", "Yes. Add or remove files in the folder and LoopCast picks up the changes the next time the playlist comes around, or right away if you press Rescan."),
     ("Can I show a presenter’s laptop or a camera?", "Yes. Plug it into a USB HDMI capture stick and it shows up under Inputs. Preview it, then put it on screen with one click. The playlist waits underneath, and Logo and Black still work."),
     ("Does it work on a Mac?", "Yes, on macOS 12 or later, on Apple silicon and Intel Macs. The first time you open it, go to System Settings › Privacy & Security and choose Open Anyway."),
-    ("Can I use it without installing anything?", "Yes. Open in your browser runs the full player in Chrome or Edge. The desktop app adds a few conveniences, like opening the projector window fullscreen on its own."),
+    ("Can I use it without installing anything?", "Yes. Open in your browser runs the full player in any modern browser. The desktop app adds a few conveniences, like opening the projector window fullscreen on its own."),
     ("Why does my computer warn me when I install it?", "LoopCast isn’t signed with a paid developer certificate yet, so Windows and macOS ask you to confirm the first time. On Windows choose More info, then Run anyway. On a Mac, go to System Settings › Privacy & Security and choose Open Anyway."),
     ("How do I show a logo between sessions?", "Put an image named logo.png in the main media folder. Press Logo (or H) to cover the screen with it while the playlist keeps its place underneath. A playlist can also end on the logo by itself."),
 ]
@@ -306,7 +306,7 @@ def build():
         <li>Logo screen and fade to black on one key.</li>
         <li>Per-playlist endings (loop, stop or end on the logo), per-item repeat, and a manual mode to click through slides with the keyboard or a clicker.</li>
         <li>Live inputs from a USB HDMI capture stick.</li>
-        <li>Runs offline on Windows and Mac, or in Chrome and Edge.</li>
+        <li>Runs offline on Windows and Mac, or in any modern browser.</li>
       </ul>
       <h2>What it doesn’t do</h2>
       <p>LoopCast isn’t a lyric or sermon presenter. It has no song library, stage display, timeline cues or video switching between multiple outputs. If you need those, a full presentation suite is the right tool, and LoopCast can still run the loops on a separate screen.</p>
