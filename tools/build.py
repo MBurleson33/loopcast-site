@@ -165,6 +165,7 @@ FAQS = [
     ("Can it play PowerPoint or Keynote files?", "Not directly. Save your deck as a PDF (in PowerPoint, File › Export › PDF; in Keynote, File › Export To › PDF) and put the PDF in the folder. If LoopCast finds a PowerPoint or Keynote file, it tells you how to export it."),
     ("Can I click through slides myself?", "Yes. Set a playlist’s Advance option to Manual and each slide stays up until you press next: the arrow keys, Page Up and Page Down, or a presentation clicker. Click any slide to jump straight to it. Videos play once and hold on their last frame."),
     ("Can I add or swap files during an event?", "Yes. Add or remove files in the folder and LoopCast picks up the changes the next time the playlist comes around, or right away if you press Rescan."),
+    ("Can I send photos from my phone?", "Yes, in the desktop app. Click From phone and LoopCast shows a QR code. Scan it with a phone on the same Wi-Fi, pick photos, videos or a PDF, and they arrive in a Phone uploads playlist within seconds. Nothing goes on screen until you choose Show now. Some guest and venue networks block devices from reaching each other; if the phone can’t connect, try another network."),
     ("Can I show a presenter’s laptop or a camera?", "Yes. Plug it into a USB HDMI capture stick and it shows up under Inputs. Preview it, then put it on screen with one click. The playlist waits underneath, and Logo and Black still work."),
     ("Does it work on a Mac?", "Yes, on macOS 12 or later, on Apple silicon and Intel Macs. The first time you open it, go to System Settings › Privacy & Security and choose Open Anyway."),
     ("Can I use it without installing anything?", "Yes. Open in your browser runs the full player in any modern browser. The desktop app adds a few conveniences, like opening the projector window fullscreen on its own."),
@@ -334,10 +335,22 @@ def build():
 
     # ---------- FAQ ----------
     faq_ld = {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in FAQS]}
-    body = '      <div class="faq-list">\n' + '\n'.join(f'        <details><summary>{esc(q)}</summary><p>{esc(a)}</p></details>' for q, a in FAQS) + '\n      </div>'
+    body = ('      <div class="faq-layout">\n        <div class="faq-list">\n' + '\n'.join(f'          <details><summary>{esc(q)}</summary><p>{esc(a)}</p></details>' for q, a in FAQS) + '\n        </div>\n'
+            '''        <aside class="faq-aside">
+          <div class="card">
+            <h3>Still have a question?</h3>
+            <p>Email us and a real person will get back to you.</p>
+            <a class="btn solid sm" href="mailto:hello@loopcast.space">hello@loopcast.space</a>
+          </div>
+          <div class="card">
+            <h3>Helpful pages</h3>
+            <nav class="aside-links"><a href="/install/">Install help and the security warning</a><a href="/guides/">Step-by-step guides</a><a href="/features/">Everything LoopCast can do</a></nav>
+          </div>
+        </aside>
+      </div>''')
     page('/faq/', 'FAQ', 'LoopCast FAQ: projectors, files, PDFs, PowerPoint and installs',
          'Answers about LoopCast: projectors and TVs, single-screen use, supported files, PDFs and PowerPoint, live inputs, Mac support and install warnings.',
-         'Questions, answered.', 'Everything people usually ask before their first event with LoopCast.', body, extra_ld=[faq_ld])
+         'Questions, answered.', 'Everything people usually ask before their first event with LoopCast.', body, extra_ld=[faq_ld], wide=True)
 
     # ---------- install / security warning ----------
     page('/install/', 'Installing LoopCast', 'Installing LoopCast: the Windows and Mac security warning, explained',

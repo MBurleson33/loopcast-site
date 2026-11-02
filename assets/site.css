@@ -296,3 +296,14 @@ footer .wrap>div{border-top:1px solid var(--line);padding-top:28px}
   .simple b{font-size:17px}
   .simple span{margin-top:2px;font-size:14.5px}
 }
+
+/* FAQ: questions + side card */
+.faq-layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:clamp(24px,4vw,56px);align-items:start}
+.faq-layout .faq-list details{max-width:none}
+.faq-aside{position:sticky;top:24px;display:flex;flex-direction:column;gap:14px}
+.faq-aside .card{gap:10px;padding:24px}
+.faq-aside h3{margin:0;font-size:19px}
+.faq-aside .btn{align-self:flex-start;margin-top:6px}
+.aside-links{display:flex;flex-direction:column;gap:10px;font-size:15.5px}
+.aside-links a{color:var(--lit);text-underline-offset:3px}
+@media (max-width:900px){.faq-layout{grid-template-columns:1fr}.faq-aside{position:static}}
