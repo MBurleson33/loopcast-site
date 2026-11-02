@@ -91,7 +91,7 @@ def header(home=False):
 
 # ---- Tracking (both stay off until filled in) ----
 # GoatCounter: your site code, e.g. 'loopcast' for https://loopcast.goatcounter.com
-GOATCOUNTER = ''
+GOATCOUNTER = 'loopcast'
 # Optional email box after a download: the form's POST address and its email field name.
 #   Kit:        action 'https://app.kit.com/forms/<FORM_ID>/subscriptions', field 'email_address'
 #   Buttondown: action 'https://buttondown.com/api/emails/embed-subscribe/<USERNAME>', field 'email'
