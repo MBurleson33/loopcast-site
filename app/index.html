@@ -89,6 +89,11 @@ main{display:grid;grid-template-columns:232px 1fr;height:calc(100% - 60px)}
 .monitor{position:relative;width:min(100cqw - 0px,100cqh * 16 / 9);aspect-ratio:16/9;background:#000;border-radius:var(--r-md);overflow:hidden;
   outline:2px solid var(--line);outline-offset:4px;transition:outline-color .3s}
 .monitor.onair{outline-color:var(--tally)}
+#monitor:fullscreen{width:100vw;height:100vh;aspect-ratio:auto;border-radius:0;outline:none;background:#000}
+#monitor:fullscreen .welcome{display:none}
+#monitor.idle{cursor:none}
+.herehint{position:absolute;left:50%;bottom:7%;transform:translateX(-50%);z-index:30;max-width:80%;text-align:center;background:rgba(20,20,22,.88);color:var(--lit);border:1px solid rgba(244,233,201,.25);border-radius:12px;padding:.8em 1.3em;font-size:clamp(15px,1.6vw,24px);font-weight:600;opacity:0;transition:opacity .4s;pointer-events:none}
+.herehint.show{opacity:1}
 
 /* onboarding inside the monitor */
 .welcome{position:absolute;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;background:var(--well);padding:24px}
@@ -222,6 +227,9 @@ kbd{font:inherit;font-stretch:80%;font-weight:600;font-size:12.5px;color:var(--t
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
   </button>
   <div class="spacer"></div>
+  <button class="key ghost icon" id="hereBtn" title="Fullscreen on this screen (F). For when there’s no second screen." aria-label="Fullscreen on this screen">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+  </button>
   <button class="key out solid" id="outBtn"><span class="tdot"></span><span id="outLabel">Show on projector</span></button>
   <button class="key ghost icon" id="settingsBtn" title="Settings" aria-label="Settings">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>
@@ -245,6 +253,7 @@ kbd{font:inherit;font-stretch:80%;font-weight:600;font-size:12.5px;color:var(--t
 
     <div class="monwrap">
       <div class="monitor" id="monitor">
+        <div class="herehint" id="hereHint" aria-live="polite"></div>
         <div class="stage" id="pstage"></div>
         <div class="welcome" id="welcome">
           <div class="inner">
@@ -306,8 +315,8 @@ kbd{font:inherit;font-stretch:80%;font-weight:600;font-size:12.5px;color:var(--t
   <div class="dbody">
     <div class="group">
       <h3>Projector</h3>
-      <div class="fieldrow"><select class="inp" id="screenSel" aria-label="Projector display"><option value="auto">Automatic</option></select><button class="key" id="detectBtn">Find displays</button></div>
-      <p class="note">The projector window opens fullscreen on this display. Automatic picks the first screen that isn’t this one.</p>
+      <div class="fieldrow"><select class="inp" id="screenSel" aria-label="Projector display"><option value="auto">Automatic</option><option value="here">This screen (fullscreen here)</option></select><button class="key" id="detectBtn">Find displays</button></div>
+      <p class="note">The projector window opens fullscreen on this display. Automatic picks the first screen that isn’t this one, or uses this screen if there’s only one. Press Esc to get back to the controls.</p>
     </div>
     <div class="group">
       <h3>Slides</h3>
@@ -338,7 +347,7 @@ kbd{font:inherit;font-stretch:80%;font-weight:600;font-size:12.5px;color:var(--t
         <kbd>R</kbd><span>Repeat the current item</span>
         <kbd>B</kbd><span>Fade to black</span>
         <kbd>O</kbd><span>Show on projector</span>
-        <kbd>F</kbd><span>Fullscreen (in the projector window)</span>
+        <kbd>F</kbd><span>Fullscreen on this screen (Esc to leave)</span>
       </div>
     </div>
   </div>
@@ -909,9 +918,9 @@ async function detectScreens(quiet){
 }
 function fillScreens(){
   const sel = $('#screenSel');
-  sel.innerHTML = '<option value="auto">Automatic</option>' + screenDetails.screens.map((s,i) =>
+  sel.innerHTML = '<option value="auto">Automatic</option><option value="here">This screen (fullscreen here)</option>' + screenDetails.screens.map((s,i) =>
     `<option value="${i}">${esc(s.label || 'Display ' + (i+1))}, ${s.width}×${s.height}${s.isPrimary ? ' (this screen)' : ''}</option>`).join('');
-  sel.value = screenDetails.screens[+settings.screen] ? settings.screen : 'auto';
+  sel.value = settings.screen === 'here' ? 'here' : screenDetails.screens[+settings.screen] ? settings.screen : 'auto';
 }
 function chosenScreen(){
   if (!screenDetails) return null;
@@ -943,12 +952,38 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 focus();
 <\/script></body></html>`;
 
+/* ---------- fullscreen on this screen (no second display) ---------- */
+let hintT, idleT;
+function showHereHint(text, ms = 3500){
+  const h = $('#hereHint'); h.textContent = text; h.classList.add('show');
+  clearTimeout(hintT); hintT = setTimeout(() => h.classList.remove('show'), ms);
+}
+function goFullHere(auto = false){
+  if (document.fullscreenElement === $('#monitor')) { document.exitFullscreen(); return; }
+  $('#monitor').requestFullscreen().then(() => {
+    showHereHint(auto ? 'No second screen found, so LoopCast is using this one. Press Esc to get back to the controls.' : 'Press Esc to get back to the controls.', auto ? 6000 : 3500);
+  }).catch(() => toast('Couldn’t go fullscreen. Try the button again.'));
+}
+document.addEventListener('fullscreenchange', () => {
+  const on = document.fullscreenElement === $('#monitor');
+  document.body.classList.toggle('herefull', on);
+  if (!on) { $('#monitor').classList.remove('idle'); $('#hereHint').classList.remove('show'); }
+});
+$('#monitor').addEventListener('mousemove', () => {
+  if (document.fullscreenElement !== $('#monitor')) return;
+  $('#monitor').classList.remove('idle'); clearTimeout(idleT);
+  idleT = setTimeout(() => $('#monitor').classList.add('idle'), 2000);
+});
+$('#hereBtn').onclick = () => goFullHere(false);
+
 async function openOutput(){
   if (outputOpen()) { outWin.focus(); return; }
   if (native) native.setOutputDisplay(settings.screen);
   else if (!screenDetails && 'getScreenDetails' in window) {
     try { const st = await navigator.permissions.query({ name:'window-management' }); if (st.state !== 'denied') await detectScreens(true); } catch { await detectScreens(true); }
   }
+  // Only one screen (or "This screen" chosen): fill this one instead of opening a small window.
+  if (settings.screen === 'here' || (settings.screen === 'auto' && screenDetails && screenDetails.screens.length < 2)) { goFullHere(settings.screen !== 'here'); return; }
   const s = native ? null : chosenScreen();
   let features = s ? `popup,left=${s.availLeft},top=${s.availTop},width=${s.availWidth},height=${s.availHeight}` : 'popup,width=1280,height=720';
   // Chrome can open a pop-up already fullscreen once window management is allowed; browsers that don't support it ignore this.
@@ -1285,6 +1320,7 @@ function handleKey(key){
   else if (key === 'h' || key === 'H') setHold(!S.holding);
   else if ((key === 'r' || key === 'R') && current()) toggleRep(S.order[S.pos], pl());
   else if (key === 'o' || key === 'O') outputOpen() ? outWin.focus() : openOutput();
+  else if (key === 'f' || key === 'F') goFullHere(false);
 }
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && document.body.classList.contains('settings')) { closeSettings(); return; }
