@@ -546,6 +546,41 @@ def build():
         <li><strong>One or a few screens, mixed media, no internet needed:</strong> <a href="/#download">LoopCast</a>.</li>
       </ul>""")
 
+
+    # ---------- private links page (not linked, not in the sitemap, not indexed, not counted) ----------
+    ADMIN_SLUG = 'hq-1b2312f2f8'
+    links = [
+      ('Interest', [
+        ('Visitor stats', 'GoatCounter: visits, referrers, download clicks', 'https://loopcast.goatcounter.com'),
+        ('Email signups', 'Kit: subscribers from the download box', 'https://app.kit.com/subscribers'),
+        ('Downloads dashboard', 'GitHub download counts per release (ask Claude to refresh)', 'https://claude.ai/artifact/Y5xetPB7GeUdXHnu9BS2Ze'),
+        ('Release downloads (raw)', 'Every release and its files on GitHub', 'https://github.com/MBurleson33/loopcast-site/releases'),
+      ]),
+      ('Search', [
+        ('Google Search Console', 'Indexing and the searches that find you', 'https://search.google.com/search-console'),
+        ('Bing Webmaster Tools', 'Bing indexing and searches', 'https://www.bing.com/webmasters'),
+        ('Bing notifications', 'The automatic IndexNow runs', 'https://github.com/MBurleson33/loopcast-site/actions/workflows/indexnow.yml'),
+      ]),
+      ('Build and release', [
+        ('Run a release', 'Actions → Release → Run workflow', 'https://github.com/MBurleson33/loopcast/actions'),
+        ('App code', 'MBurleson33/loopcast', 'https://github.com/MBurleson33/loopcast'),
+        ('Website code', 'MBurleson33/loopcast-site', 'https://github.com/MBurleson33/loopcast-site'),
+        ('GitHub Pages settings', 'Domain and HTTPS', 'https://github.com/MBurleson33/loopcast-site/settings/pages'),
+      ]),
+      ('Listings and domain', [
+        ('AlternativeTo', 'Your LoopCast listing', 'https://alternativeto.net/software/loopcast/about/'),
+        ('Product Hunt', 'Your products', 'https://www.producthunt.com/my/products'),
+        ('Namecheap', 'loopcast.space DNS and email forwarding', 'https://ap.www.namecheap.com/domains/list/'),
+      ]),
+    ]
+    groups = ''.join('<section class="s" style="padding-top:48px"><div class="eyebrow">' + esc(g) + '</div><div class="related" style="margin-top:16px">' +
+                     ''.join(f'<a href="{u}" target="_blank" rel="noopener noreferrer"><b>{esc(t)}</b><span>{esc(d)}</span></a>' for t, d, u in items) + '</div></section>' for g, items in links)
+    out = head('LoopCast HQ', 'Private links.', '/' + ADMIN_SLUG + '/', noindex=True).replace('</head>', '<meta name="referrer" content="no-referrer">\n</head>')
+    out += header() + '<main><div class="wrap"><div class="page-hero" style="padding-top:48px"><h1>LoopCast HQ.</h1><p>Your private shortcuts. This page isn’t linked anywhere or shown to search engines; keep the address to yourself.</p></div>' + groups + '</div></main>'
+    out += FOOTER.split(tracking_tags())[0] + '</body>\n</html>\n'
+    os.makedirs(os.path.join(ROOT, ADMIN_SLUG), exist_ok=True)
+    open(os.path.join(ROOT, ADMIN_SLUG, 'index.html'), 'w').write(out)
+
     # ---------- 404 ----------
     out = head('Page not found | LoopCast', 'This page doesn’t exist.', '/404.html', noindex=True) + header() + '''<main>
   <div class="wrap hero" style="padding-bottom:clamp(64px,8vw,120px)">
