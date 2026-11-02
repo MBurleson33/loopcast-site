@@ -208,6 +208,23 @@ kbd{font:inherit;font-stretch:80%;font-weight:600;font-size:12.5px;color:var(--t
 .modal .key.solid.danger{background:var(--tally);border-color:var(--tally);color:#fff}
 .modal .key.solid.danger:hover{background:#f05440}
 .modal.about{width:min(520px,100%)}
+.phone-btn{display:inline-flex;align-items:center;gap:8px;position:relative}
+.phone-btn .rx{display:none;width:8px;height:8px;border-radius:50%;background:#3fb96b;margin-left:2px}
+.phone-btn.on .rx{display:block}
+.modal.phone{width:min(560px,100%)}
+.ph-wrap{display:grid;grid-template-columns:200px 1fr;gap:22px;align-items:center;margin-top:14px}
+.ph-qr{width:200px;height:200px;border-radius:12px;overflow:hidden;background:#fff}
+.ph-qr svg{display:block;width:100%;height:100%}
+.ph-steps{margin:0;padding-left:1.1em;color:var(--text);font-size:14.5px;line-height:1.5}
+.ph-steps li{margin:0 0 8px}
+.ph-url{display:block;margin-top:12px;font-size:13px;color:var(--muted);word-break:break-all}
+.ph-note{font-size:13px;color:var(--faint);margin-top:16px;line-height:1.5}
+.ph-recent{margin-top:16px;border-top:1px solid var(--line);padding-top:12px;font-size:13.5px;color:var(--muted)}
+.ph-recent b{color:var(--text);font-weight:600}
+.ptoast{position:fixed;right:20px;bottom:20px;z-index:70;display:flex;align-items:center;gap:10px;max-width:min(460px,calc(100vw - 40px));background:var(--surface);border:1px solid var(--line);border-left:3px solid #3fb96b;border-radius:var(--r-sm);padding:10px 10px 10px 14px;box-shadow:0 18px 40px rgba(0,0,0,.45);font-size:14px}
+.ptoast span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
+@media (max-width:1000px){.phone-btn span{display:none}}
+@media (max-width:620px){.ph-wrap{grid-template-columns:1fr}.ph-qr{margin:0 auto}}
 .about-head{display:flex;align-items:center;gap:16px;margin-bottom:18px}
 .about-head h2{font-size:24px;font-weight:800;font-stretch:118%;margin:0 0 2px}
 .about-head p{margin:0}
@@ -251,6 +268,9 @@ kbd{font:inherit;font-stretch:80%;font-weight:600;font-size:12.5px;color:var(--t
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
   </button>
   <div class="spacer"></div>
+  <button class="key ghost phone-btn" id="phoneBtn" title="Send photos and videos from a phone" aria-label="Send from a phone">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18h2"/></svg><span>From phone</span><i class="rx" aria-hidden="true"></i>
+  </button>
   <button class="key ghost icon" id="hereBtn" title="Fullscreen on this screen (F). For when there’s no second screen." aria-label="Fullscreen on this screen">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
   </button>
@@ -396,6 +416,14 @@ kbd{font:inherit;font-stretch:80%;font-weight:600;font-size:12.5px;color:var(--t
     <div class="modal-actions"><button class="key solid" id="aboutClose">Close</button></div>
   </div>
 </div>
+<div class="modal-scrim" id="phone" hidden>
+  <div class="modal phone" role="dialog" aria-modal="true" aria-labelledby="phoneTitle">
+    <h2 id="phoneTitle">Send from a phone</h2>
+    <div id="phoneBody"></div>
+    <div class="modal-actions"><button class="key" id="phoneStop" hidden>Stop receiving</button><button class="key solid" id="phoneClose">Done</button></div>
+  </div>
+</div>
+<div class="ptoast" id="ptoast" role="status" aria-live="polite" hidden><span id="ptoastMsg"></span><button class="key solid sm" id="ptoastGo">Show now</button><button class="key ghost icon sm" id="ptoastX" aria-label="Dismiss"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
 <div class="modal-scrim" id="modal" hidden>
   <div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalBody">
     <h2 id="modalTitle"></h2>
@@ -1354,8 +1382,62 @@ function tick(){
 }
 requestAnimationFrame(tick);
 
+/* ---------- Send from a phone ---------- */
+const phoneState = { info: null, recent: [] };
+function renderPhone(){
+  const body = $('#phoneBody'), i = phoneState.info;
+  $('#phoneStop').hidden = !i?.receiving;
+  $('#phoneBtn').classList.toggle('on', !!i?.receiving);
+  if (!native?.phoneStart) {
+    body.innerHTML = '<p>Sending from a phone works in the LoopCast desktop app for Windows and Mac. <a href="https://loopcast.space/#download" target="_blank" rel="noopener">Download it free</a>.</p>';
+    return;
+  }
+  if (!S.dirPath) { body.innerHTML = '<p>Choose your media folder first. Photos sent from a phone are saved in a <b>Phone uploads</b> folder inside it.</p><div class="modal-actions" style="justify-content:flex-start;margin-top:14px"><button class="key solid" id="phonePick">Choose folder</button></div>'; $('#phonePick').onclick = () => { closePhone(); pickFolder(); }; return; }
+  if (!i?.receiving) { body.innerHTML = '<p>Starting…</p>'; return; }
+  if (!i.urls.length) { body.innerHTML = '<p>This computer isn’t on a network right now. Connect it to Wi-Fi or a network cable, then open this again.</p>'; return; }
+  body.innerHTML = `<div class="ph-wrap"><div class="ph-qr">${i.qr}</div><div><ol class="ph-steps"><li>Connect the phone to the <b>same Wi-Fi</b> as this computer.</li><li>Open the camera and point it at the code.</li><li>Tap the link, then choose photos, videos or a PDF.</li></ol><span class="ph-url">${esc(i.urls[0])}</span></div></div>
+    <p class="ph-note">Files land in the <b>${esc(i.folder)}</b> playlist. Nothing goes on the projector until you choose Show now. If the phone can’t connect, the network may block devices from reaching each other; guest and venue Wi-Fi often do.</p>
+    ${phoneState.recent.length ? `<div class="ph-recent">Received: ${phoneState.recent.slice(0, 4).map(n => `<b>${esc(n)}</b>`).join(', ')}${phoneState.recent.length > 4 ? ` and ${phoneState.recent.length - 4} more` : ''}</div>` : ''}`;
+}
+let phonePrevFocus = null;
+async function openPhone(){
+  const m = $('#phone'); phonePrevFocus = document.activeElement;
+  m.hidden = false; modalBusy = true; renderPhone(); $('#phoneClose').focus();
+  if (native?.phoneStart && S.dirPath) {
+    try { phoneState.info = await native.phoneStart(S.dirPath); }
+    catch { phoneState.info = null; $('#phoneBody').innerHTML = '<p>LoopCast couldn’t start receiving. Another app may be using the network port; try again in a moment.</p>'; return; }
+    renderPhone();
+  }
+}
+function closePhone(){ $('#phone').hidden = true; modalBusy = false; phonePrevFocus?.focus?.(); }
+$('#phoneBtn').onclick = openPhone;
+$('#phoneClose').onclick = closePhone;
+$('#phone').addEventListener('click', e => { if (e.target.id === 'phone') closePhone(); });
+$('#phone').addEventListener('keydown', e => { if (e.key === 'Escape') { e.preventDefault(); closePhone(); } e.stopPropagation(); });
+$('#phoneStop').onclick = async () => { phoneState.info = await native.phoneStop(); phoneState.recent = []; renderPhone(); toast('Stopped receiving from phones.'); };
+let ptoastT, ptoastAction = null;
+function phoneToast(name){
+  $('#ptoastMsg').textContent = `New from a phone: ${name}`;
+  ptoastAction = async () => {
+    const i = S.lib.findIndex(p => p.name === 'Phone uploads' && !p.copyOf);
+    if (i < 0) { toast('Couldn’t find the Phone uploads playlist. Try Rescan.'); return; }
+    const idx = S.lib[i].items.findIndex(it => it.name === name || it.name.startsWith(name + ', page'));
+    playPlaylist(i, idx >= 0 ? idx : null);
+  };
+  $('#ptoast').hidden = false;
+  clearTimeout(ptoastT); ptoastT = setTimeout(() => { $('#ptoast').hidden = true; }, 15000);
+}
+$('#ptoastGo').onclick = () => { $('#ptoast').hidden = true; ptoastAction?.(); };
+$('#ptoastX').onclick = () => { $('#ptoast').hidden = true; };
+native?.onPhoneFile?.(async f => {
+  phoneState.recent.unshift(f.name);
+  await rescan(true);
+  phoneToast(f.name);
+  if (!$('#phone').hidden) renderPhone();
+});
+
 /* ---------- About ---------- */
-const APP_VERSION = '1.6.0', PDFJS_VERSION = '6.5.438';
+const APP_VERSION = '1.7.0', PDFJS_VERSION = '6.5.438';
 async function openAbout(){
   const info = native?.appInfo ? await native.appInfo().catch(() => null) : null;
   const os = info ? ({ win32:'Windows', darwin:'macOS', linux:'Linux' }[info.platform] || info.platform) + ` (${info.arch})` : null;
@@ -1367,6 +1449,7 @@ async function openAbout(){
     ['Plays', 'Images (JPG, PNG, GIF, WebP, AVIF, SVG), PDFs, video (MP4, WebM, MOV)'],
     ['Outputs', 'Projector or second display, or fullscreen on this screen'],
     ['Live inputs', 'Cameras and HDMI capture devices'],
+    ...(info ? [['From a phone', 'Send photos, videos and PDFs over Wi-Fi with a QR code']] : []),
     ['Works offline', 'Yes. Nothing is uploaded; files play from your computer.'],
     ['PDF engine', `PDF.js ${PDFJS_VERSION}`],
     ['Website', 'loopcast.space'],
