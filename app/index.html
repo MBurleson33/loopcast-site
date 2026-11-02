@@ -242,7 +242,16 @@ kbd{font:inherit;font-stretch:80%;font-weight:600;font-size:12.5px;color:var(--t
 .ctx{position:fixed;z-index:95;min-width:220px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:5px;box-shadow:0 16px 40px rgba(0,0,0,.5)}
 .ctx button{display:block;width:100%;text-align:left;background:none;border:0;color:var(--text);font:inherit;font-size:14px;padding:8px 12px;border-radius:6px;cursor:pointer}
 .ctx button:hover,.ctx button:focus{background:var(--raised);outline:none}
+.ctx button svg{vertical-align:-2px;margin-right:6px;color:var(--muted)}
 .ctx button.danger{color:#ff8a78}
+.newpl{margin:6px 10px 0;color:var(--muted)}
+.ctxrow{display:flex;align-items:center;gap:2px}
+.ctxrow .ctxmain{flex:1;min-width:0}
+.ctxrow .ctxmain b{display:block;font-weight:600}
+.ctxrow .ctxmain small{display:block;color:var(--muted);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:300px}
+.ctxrow.cur .ctxmain b::after{content:" · open";color:var(--muted);font-weight:400}
+.ctx .ctxi{width:30px;height:30px;padding:0;display:grid;place-items:center;color:var(--muted);flex:none}
+.ctx .ctxi.on{color:var(--lit)}
 .ctxh{font-size:12px;color:var(--muted);padding:6px 12px 4px}
 .ctx hr{border:0;border-top:1px solid var(--line);margin:4px 2px}
 .schedrow{display:grid;grid-template-columns:110px 1fr 34px;gap:6px;margin-top:6px}
@@ -337,6 +346,7 @@ body.dropping .drophint{display:flex}
   <nav class="rail" aria-label="Playlists">
     <h2>Playlists</h2>
     <div id="playlists"><button class="key sm find" data-pick>Choose folder</button><p class="hint">Each folder inside it becomes a playlist.</p></div>
+    <button class="key ghost sm newpl" id="newPlBtn" hidden>+ New playlist</button>
     <h2 class="inputs-h" id="inputsH">Inputs</h2>
     <div id="inputs"></div>
   </nav>
@@ -399,7 +409,7 @@ body.dropping .drophint{display:flex}
         <button class="key solid sm" id="goLive">Play this playlist</button>
         <button class="key ghost sm" id="removedBtn" hidden title="Items taken out of this playlist. The files are still in the folder.">0 removed</button>
         <button class="key ghost sm" id="sortReset" hidden title="Go back to playing files in name order">Sort by name</button>
-        <button class="key ghost sm" id="addWebBtn" hidden title="Add a live web page to this playlist">Add web page</button>
+        <button class="key ghost sm" id="addWebBtn" hidden title="Add a web page, camera or capture device to this playlist" aria-haspopup="menu">Add input ▾</button>
         <button class="key ghost sm" id="dupBtn" title="Make a copy you can hide files in without changing this one">Duplicate</button>
         <button class="key ghost sm" id="renameBtn" hidden>Rename</button>
         <button class="key ghost sm" id="deleteBtn" hidden>Delete copy</button>
@@ -548,6 +558,7 @@ const fmt = s => { s = Math.max(0, Math.floor(s)); return Math.floor(s/60) + ':'
 const ICON_PLAY = '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4v16l13-8z"/></svg>';
 const ICON_PAUSE = '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>';
 const ICON_REP = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></svg>';
+const ICON_PIN = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v5M9 3h6l-1 7 4 3H6l4-3z"/></svg>';
 const ICON_CLOCK = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6"/></svg>';
 const ICON_HIDE = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.7 5.1A10.4 10.4 0 0 1 12 5c5 0 9 4.5 10 7-.4 1-1.2 2.3-2.4 3.5M6.6 6.6C4.4 8 2.8 10.2 2 12c1 2.5 5 7 10 7 1.8 0 3.5-.6 4.9-1.5"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/><path d="M3 3l18 18"/></svg>';
 const ICON_WEB = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg>';
@@ -675,7 +686,7 @@ class Stage {
   }
   async show(item, src, { fade, muted, loop }){
     const seq = ++this.seq;
-    const isVid = item.kind === 'video';
+    const isVid = item.kind === 'video' || item.kind === 'input';
     if (item.kind === 'web') return this.showWeb(item, seq, fade);
     const el = this.doc.createElement(isVid ? 'video' : 'img');
     let url = src.url;
@@ -722,7 +733,8 @@ const PDF = /\.pdf$/i;
 // Presentation and document files can't play directly; they're noted so LoopCast can say how to export them.
 const OFFICE = /\.(pptx?|pptm|ppsx?|potx|key|odp|docx?|pages|odt|rtf)$/i;
 const WEB = /\.(url|webloc)$/i; // web page shortcuts; they play in the desktop app
-const kindOf = n => IMG.test(n) ? 'image' : VID.test(n) ? 'video' : PDF.test(n) ? 'pdf' : WEB.test(n) ? 'web' : OFFICE.test(n) ? 'office' : null;
+const INPUTF = /\.lcinput$/i; // a camera or capture device placed in a playlist
+const kindOf = n => IMG.test(n) ? 'image' : VID.test(n) ? 'video' : PDF.test(n) ? 'pdf' : WEB.test(n) ? 'web' : INPUTF.test(n) ? 'input' : OFFICE.test(n) ? 'office' : null;
 const officeWarned = new Set();
 function warnOffice(names){
   const fresh = names.filter(n => !officeWarned.has(n)); fresh.forEach(n => officeWarned.add(n));
@@ -812,7 +824,7 @@ async function expandPdfs(pls){
     p.items = out;
   }
   if (office.length) setTimeout(() => warnOffice(office), 1200);
-  return pls.filter(p => p.items.length);
+  return pls.filter(p => p.items.length || !p.top); // empty folders stay, so a new playlist can be filled from the app
 }
 const coll = new Intl.Collator(undefined, { numeric:true, sensitivity:'base' });
 const byName = (a,b) => coll.compare(a.name, b.name);
@@ -922,8 +934,8 @@ async function goTo(pos, { user = false } = {}){
   const manual = isManual(p);
   const primary = outStage || prevStage, mirror = outStage ? prevStage : null;
   let src;
-  try { src = item.kind === 'web' ? {} : item.pdf ? { file: await renderPdfPage(item, ...pdfTarget()) } : item.url ? { url: item.url } : { file: await item.getFile() }; }
-  catch { toast(`Couldn’t read ${item.name}. Skipping it.`); if (gen === S.gen) armTimer(1500, gen); return; }
+  try { src = item.kind === 'web' ? {} : item.kind === 'input' ? { stream: await streamForItem(item) } : item.pdf ? { file: await renderPdfPage(item, ...pdfTarget()) } : item.url ? { url: item.url } : { file: await item.getFile() }; }
+  catch { toast(item.kind === 'input' ? `${inputTitle(item)} isn’t connected. Skipping it.` : `Couldn’t read ${item.name}. Skipping it.`); if (gen === S.gen) armTimer(1500, gen); return; }
   if (gen !== S.gen) return;
   let el;
   try { el = await primary.show(item, src, { fade: fadeLen(), muted: settings.muted, loop: holdHere && item.kind === 'video' }); }
@@ -1064,8 +1076,9 @@ function loadLibrary(lib, folderName){
   const i = lib.findIndex(p => p.key === settings.playlist || p.name === settings.playlist);
   S.plIndex = S.view = i >= 0 ? i : 0;
   buildOrder();
-  $('#folderName').textContent = S.folderName || 'Choose folder'; $('#folderBtn').title = S.folderName ? 'Choose a different folder' : 'Choose your media folder';
+  $('#folderName').textContent = S.folderName || 'Choose folder'; $('#folderBtn').title = S.folderName ? 'Switch folders' : 'Choose your media folder';
   $('#rescanBtn').hidden = !(S.dir || S.dirPath);
+  $('#newPlBtn').hidden = !(native?.makePlaylist && S.dirPath);
   if (lib.length) $('#welcome').hidden = true;
   else {
     $('#welcome').hidden = false;
@@ -1473,13 +1486,14 @@ function renderGrid(){
   $('#stripActions').hidden = !p;
   $('#renameBtn').hidden = $('#deleteBtn').hidden = !(p && p.copyOf);
   if (!p) { grid.innerHTML = '<p class="emptystrip">Choose a folder to see its images, PDFs and videos.</p>'; $('#stripActions').hidden = true; $('#endCtl').hidden = true; return; }
-  grid.innerHTML = p.items.map((it,i) => `<div class="card" data-i="${i}" draggable="true"><button class="pick" title="Play ${esc(it.name)} now"><span class="th">${it.kind==='video'?`<span class="vid">${ICON_VID}</span>`:it.pdf?'<span class="vid pdf">PDF</span>':it.kind==='web'?`<span class="webth">${ICON_WEB}<small>${esc((it.page||'').replace(/^https?:\/\//,'').split('/')[0])}</small></span>`:''}<span class="tag" hidden></span><span class="dtag" hidden></span><span class="prog"></span></span><span class="nm">${esc(it.name)}</span></button><span class="tools">${it.kind !== 'video' ? `<button class="dur" aria-label="How long ${esc(it.name)} stays up">${ICON_CLOCK}</button>` : ''}<button class="hide" aria-pressed="false" aria-label="Hide ${esc(it.name)} in this playlist">${ICON_HIDE}</button><button class="rep" aria-pressed="false" aria-label="Repeat ${esc(it.name)}">${ICON_REP}</button></span></div>`).join('');
+  if (!p.items.length) { grid.innerHTML = `<p class="emptystrip">${native?.addWeb ? 'This playlist is empty. Use Add web page or Add input above, or drop files here.' : 'This playlist is empty. Add files to its folder, then press Rescan.'}</p>`; return; }
+  grid.innerHTML = p.items.map((it,i) => `<div class="card" data-i="${i}" draggable="true"><button class="pick" title="Play ${esc(it.name)} now"><span class="th">${it.kind==='video'?`<span class="vid">${ICON_VID}</span>`:it.pdf?'<span class="vid pdf">PDF</span>':it.kind==='input'?`<span class="webth">${ICON_INPUT.replace('width="14" height="14"','width="26" height="26"')}<small>${esc(it.input||'Camera or capture device')}</small></span>`:it.kind==='web'?`<span class="webth">${ICON_WEB}<small>${esc((it.page||'').replace(/^https?:\/\//,'').split('/')[0])}</small></span>`:''}<span class="tag" hidden></span><span class="dtag" hidden></span><span class="prog"></span></span><span class="nm">${esc(it.name)}</span></button><span class="tools">${it.kind !== 'video' ? `<button class="dur" aria-label="How long ${esc(it.name)} stays up">${ICON_CLOCK}</button>` : ''}<button class="hide" aria-pressed="false" aria-label="Hide ${esc(it.name)} in this playlist">${ICON_HIDE}</button><button class="rep" aria-pressed="false" aria-label="Repeat ${esc(it.name)}">${ICON_REP}</button></span></div>`).join('');
   thumbObserver = new IntersectionObserver(entries => {
     for (const en of entries) {
       if (!en.isIntersecting) continue;
       thumbObserver.unobserve(en.target);
       const it = p.items[+en.target.dataset.i], th = en.target.querySelector('.th');
-      if (it.kind === 'web') continue;
+      if (it.kind === 'web' || it.kind === 'input') continue;
       (it.pdf ? renderPdfPage(it, 480, 270) : it.url ? Promise.resolve(null) : it.getFile()).then(f => {
         if (gen !== gridGen) return; // the strip was redrawn while this file was opening
         let u = it.url;
@@ -1796,6 +1810,7 @@ function paintNextThumb(item){
   if (nextThumbUrl) { URL.revokeObjectURL(nextThumbUrl); nextThumbUrl = null; }
   if (!item) return;
   if (item.kind === 'web') { box.innerHTML = `<span class="webth">${ICON_WEB}</span>`; return; }
+  if (item.kind === 'input') { box.innerHTML = `<span class="webth">${ICON_INPUT}</span>`; return; }
   (item.pdf ? renderPdfPage(item, 320, 180) : item.url ? Promise.resolve(null) : item.getFile()).then(f => {
     if (nextThumbFor !== item) return;
     let u = item.url;
@@ -1932,7 +1947,64 @@ function openAddWeb(){
     } catch { $('#webAddErr').textContent = 'LoopCast couldn’t save the page into that folder.'; $('#webAddErr').hidden = false; }
   };
 }
-$('#addWebBtn').onclick = openAddWeb;
+$('#addWebBtn').onclick = openAddMenu;
+// One "Add input" menu: a web page, or any camera / capture device, added to the open playlist.
+async function openAddMenu(){
+  const p = vpl(); if (!p || !S.dirPath) return;
+  const m = $('#ctx'), b = $('#addWebBtn').getBoundingClientRect();
+  const devs = S.inputsAllowed ? S.inputs : [];
+  m.innerHTML = '<div class="ctxh">Add to ' + esc(p.copyOf || p.name) + '</div><button role="menuitem" data-add="web">' + ICON_WEB.replace('width="26" height="26"', 'width="15" height="15"') + ' Web page…</button><hr>' +
+    (devs.length ? devs.map(d => `<button role="menuitem" data-add="dev" data-label="${esc(d.label)}">${ICON_INPUT} ${esc(d.label)}</button>`).join('') : '') +
+    `<button role="menuitem" data-add="find">${S.inputsAllowed ? 'Look for cameras and capture devices again' : 'Find cameras and capture devices…'}</button>`;
+  m.hidden = false;
+  m.style.left = Math.max(8, Math.min(b.left, innerWidth - m.offsetWidth - 8)) + 'px';
+  m.style.top = (b.top - m.offsetHeight - 6 > 8 ? b.top - m.offsetHeight - 6 : b.bottom + 6) + 'px';
+  document.addEventListener('pointerdown', ctxAway, true);
+  m.onkeydown = e => {
+    const bs = [...m.querySelectorAll('button')], k = bs.indexOf(document.activeElement);
+    if (e.key === 'Escape') { e.preventDefault(); closeCtx(); $('#addWebBtn').focus(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); bs[(k + 1) % bs.length].focus(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); bs[(k - 1 + bs.length) % bs.length].focus(); }
+    e.stopPropagation();
+  };
+  m.onclick = async e => {
+    const t = e.target.closest('[data-add]'); if (!t) return;
+    if (t.dataset.add === 'find') { await refreshInputs(true); openAddMenu(); return; }
+    closeCtx();
+    if (t.dataset.add === 'web') { openAddWeb(); return; }
+    try {
+      const file = await native.addInput({ dir: S.dirPath, folder: p.top ? '' : (p.copyOf || p.name), name: t.dataset.label, label: t.dataset.label });
+      await rescan(true); toast(`Added ${file.replace(/\.lcinput$/i, '')} to ${p.copyOf || p.name}. Drag it into place, or right-click it to set how long it shows.`);
+    } catch { toast('LoopCast couldn’t add that input to the folder.'); }
+  };
+  m.querySelector('button').focus();
+}
+
+/* ---------- inputs inside playlists, and new playlists ---------- */
+const inputTitle = it => it.name.split('/').pop().replace(/\.lcinput$/i, '');
+async function streamForItem(it){
+  let label = it.input;
+  if (!label && it.getFile) { try { label = JSON.parse(await (await it.getFile()).text()).label; } catch {} it.input = label; }
+  if (!label) throw new Error('noinput');
+  if (!S.inputsAllowed || !S.inputs.some(d => d.label === label)) await refreshInputs(!S.inputsAllowed);
+  const d = S.inputs.find(x => x.label === label);
+  if (!d) throw new Error('noinput');
+  return getStream(d.id);
+}
+$('#newPlBtn').onclick = newPlaylist;
+async function newPlaylist(){
+  if (!native?.makePlaylist || !S.dirPath) { toast(native ? 'Choose your media folder first.' : 'In the browser version, make a new folder inside your media folder, then press Rescan.'); return; }
+  const v = await ask({ title: 'New playlist', body: 'LoopCast makes a folder for it inside your media folder. Add files, web pages or inputs to it from here.',
+    fields: [{ label: 'Name', placeholder: 'Cameras and web' }], ok: 'Create', validate: v => v[0] ? null : 'Give the playlist a name.' });
+  if (!v) return;
+  try {
+    const name = await native.makePlaylist({ dir: S.dirPath, name: v[0] });
+    await rescan(true);
+    const i = S.lib.findIndex(p => p.name === name && !p.copyOf);
+    if (i >= 0) viewPlaylist(i);
+    toast(`Made ${name}. Use Add web page, Add input, or drop files on it.`);
+  } catch { toast('LoopCast couldn’t make that folder.'); }
+}
 
 /* ---------- Send from a phone ---------- */
 const phoneState = { info: null, recent: [] };
@@ -1992,7 +2064,7 @@ native?.onPhoneFile?.(async f => {
 });
 
 /* ---------- About ---------- */
-const APP_VERSION = '1.9.0', PDFJS_VERSION = '6.5.438';
+const APP_VERSION = '1.10.0', PDFJS_VERSION = '6.5.438';
 async function openAbout(){
   const info = native?.appInfo ? await native.appInfo().catch(() => null) : null;
   const os = info ? ({ win32:'Windows', darwin:'macOS', linux:'Linux' }[info.platform] || info.platform) + ` (${info.arch})` : null;
@@ -2245,14 +2317,18 @@ async function useHandle(h){
   S.dir = h; S.dirPath = null;
   try { await idb.set('dir', h); } catch {}
   $('#reconnectBtn').hidden = true;
-  loadLibrary(await expandPdfs(await scanHandle(h)), h.name);
+  const lib = await expandPdfs(await scanHandle(h));
+  useFolderSettings('dir:' + h.name); rememberFolder({ key: 'dir:' + h.name, name: h.name }, h);
+  loadLibrary(lib, h.name);
 }
 async function useNativePath(dir){
   try {
     const lib = await native.scan(dir);
     S.dir = null; S.dirPath = dir;
     try { localStorage.setItem('loopcast.dirPath', dir); } catch {}
-    loadLibrary(await expandPdfs(lib), dir.split(/[\\/]/).filter(Boolean).pop());
+    const name = dir.split(/[\\/]/).filter(Boolean).pop();
+    useFolderSettings('path:' + dir); rememberFolder({ key: 'path:' + dir, name, path: dir });
+    loadLibrary(await expandPdfs(lib), name);
   } catch { toast(`Couldn’t open ${dir}. Choose the folder again.`); }
 }
 async function pickFolder(){
@@ -2263,11 +2339,73 @@ async function pickFolder(){
 }
 $('#pickBtn').onclick = pickFolder;
 $('#playlists').addEventListener('click', e => { if (e.target.closest('[data-pick]')) pickFolder(); });
-$('#folderBtn').onclick = pickFolder;
+$('#folderBtn').onclick = openFolderMenu;
+
+/* ---------- each main folder keeps its own playlist settings ---------- */
+const PER_FOLDER = ['plOpts', 'copies', 'schedule', 'scheduleOn', 'playlist'];
+function useFolderSettings(key){
+  settings.folders ||= {};
+  if (settings.curFolder === key) return;
+  if (settings.curFolder) settings.folders[settings.curFolder] = Object.fromEntries(PER_FOLDER.map(k => [k, settings[k]]));
+  const saved = settings.folders[key];
+  if (saved) PER_FOLDER.forEach(k => { settings[k] = saved[k]; });
+  else if (settings.curFolder || settings.folderSettingsStarted) Object.assign(settings, { plOpts: {}, copies: [], schedule: [], scheduleOn: false, playlist: null });
+  // (The very first folder opened keeps the settings made before folders had their own.)
+  settings.plOpts ||= {}; settings.copies ||= []; settings.schedule ||= [];
+  settings.curFolder = key; settings.folderSettingsStarted = true;
+  delete settings.folders[key]; // the live copy is in settings itself
+  save();
+  try { $('#schedOn').checked = !!settings.scheduleOn; } catch {}
+}
+
+/* ---------- recent folders ---------- */
+function rememberFolder(entry, handle){
+  settings.recent ||= [];
+  const old = settings.recent.find(r => r.key === entry.key);
+  settings.recent = [{ ...entry, pinned: !!old?.pinned, at: Date.now() }, ...settings.recent.filter(r => r.key !== entry.key)];
+  const pinned = settings.recent.filter(r => r.pinned), rest = settings.recent.filter(r => !r.pinned);
+  settings.recent = [...pinned, ...rest].slice(0, Math.max(10, pinned.length));
+  save();
+  if (handle) idb.get('recentHandles').then(m => { m = m || {}; m[entry.key] = handle; return idb.set('recentHandles', m); }).catch(() => {});
+}
+function recentList(){ const r = settings.recent || []; return [...r.filter(x => x.pinned), ...r.filter(x => !x.pinned)]; }
+function openFolderMenu(){
+  const list = recentList().filter(r => r.path ? !!native : !native && hasPicker);
+  if (!list.length) { pickFolder(); return; }
+  const m = $('#ctx'), b = $('#folderBtn').getBoundingClientRect();
+  const cur = settings.curFolder;
+  m.innerHTML = '<div class="ctxh">Recent folders</div>' + list.map(r => `<div class="ctxrow${r.key === cur ? ' cur' : ''}"><button role="menuitem" class="ctxmain" data-open="${esc(r.key)}" title="${esc(r.path || r.name)}"><b>${esc(r.name)}</b>${r.path ? `<small>${esc(r.path)}</small>` : ''}</button><button class="ctxi${r.pinned ? ' on' : ''}" data-pin="${esc(r.key)}" aria-label="${r.pinned ? 'Unpin' : 'Pin'} ${esc(r.name)}" title="${r.pinned ? 'Unpin' : 'Keep at the top'}">${ICON_PIN}</button><button class="ctxi" data-forget="${esc(r.key)}" aria-label="Remove ${esc(r.name)} from this list" title="Remove from this list">×</button></div>`).join('') + '<hr><button role="menuitem" data-a="pick">Choose another folder…</button>';
+  m.hidden = false;
+  m.style.left = Math.max(8, Math.min(b.left, innerWidth - m.offsetWidth - 8)) + 'px'; m.style.top = (b.bottom + 6) + 'px';
+  document.addEventListener('pointerdown', ctxAway, true);
+  m.onkeydown = e => {
+    const bs = [...m.querySelectorAll('button')], k = bs.indexOf(document.activeElement);
+    if (e.key === 'Escape') { e.preventDefault(); closeCtx(); $('#folderBtn').focus(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); bs[(k + 1) % bs.length].focus(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); bs[(k - 1 + bs.length) % bs.length].focus(); }
+    e.stopPropagation();
+  };
+  m.onclick = async e => {
+    const t = e.target.closest('button'); if (!t) return;
+    if (t.dataset.pin) { const r = settings.recent.find(x => x.key === t.dataset.pin); if (r) r.pinned = !r.pinned; save(); openFolderMenu(); return; }
+    if (t.dataset.forget) { settings.recent = settings.recent.filter(x => x.key !== t.dataset.forget); save(); if (recentList().length) openFolderMenu(); else closeCtx(); return; }
+    closeCtx();
+    if (t.dataset.a === 'pick') { pickFolder(); return; }
+    const r = settings.recent.find(x => x.key === t.dataset.open); if (!r || r.key === cur) return;
+    if (r.path) { useNativePath(r.path); return; }
+    try {
+      const h = (await idb.get('recentHandles') || {})[r.key];
+      if (h && (await h.queryPermission({ mode:'read' }) === 'granted' || await h.requestPermission({ mode:'read' }) === 'granted')) { await useHandle(h); return; }
+    } catch {}
+    toast(`Couldn’t reopen ${r.name}. Choose it again.`); pickFolder();
+  };
+  (m.querySelector('.ctxrow.cur .ctxmain') || m.querySelector('button')).focus();
+}
 $('#dirInput').onchange = e => {
   const files = e.target.files; if (!files.length) return;
   S.dir = null; S.dirPath = null;
-  expandPdfs(scanFileList(files)).then(lib => loadLibrary(lib, (files[0].webkitRelativePath || '').split('/')[0]));
+  const name = (files[0].webkitRelativePath || '').split('/')[0];
+  expandPdfs(scanFileList(files)).then(lib => { useFolderSettings('files:' + name); loadLibrary(lib, name); });
 };
 $('#reconnectBtn').onclick = async () => {
   const h = $('#reconnectBtn')._h;
