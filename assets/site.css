@@ -106,3 +106,4 @@ footer b{color:var(--text);font-weight:800;font-stretch:118%}
 .callout{border:1px solid var(--line);border-left:3px solid var(--lit);border-radius:12px;padding:18px 20px;margin:0 0 8px;background:rgba(255,255,255,.03)}
 .callout p{margin:0}
 .get p a{color:var(--lit);text-underline-offset:3px;white-space:nowrap}
+footer a{color:inherit;text-underline-offset:3px}

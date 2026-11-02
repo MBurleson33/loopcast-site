@@ -13,7 +13,7 @@ TODAY = datetime.date.today().isoformat()
 REL = 'https://github.com/MBurleson33/loopcast-site/releases/latest/download/'
 DL_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>'
 
-ORG = {"@type": "Organization", "@id": f"{SITE}/#org", "name": "Treetop Business Solutions",
+ORG = {"@type": "Organization", "@id": f"{SITE}/#org", "name": "Treetop Business Solutions", "email": "hello@loopcast.space",
        "address": {"@type": "PostalAddress", "addressLocality": "Oklahoma City", "addressRegion": "OK", "addressCountry": "US"}}
 APP = {"@type": "SoftwareApplication", "@id": f"{SITE}/#app", "name": "LoopCast",
        "url": f"{SITE}/", "image": f"{SITE}/assets/icon-512.png", "screenshot": f"{SITE}/assets/operator.webp",
@@ -29,7 +29,7 @@ APP = {"@type": "SoftwareApplication", "@id": f"{SITE}/#app", "name": "LoopCast"
 PAGES_NAV = [  # footer links: (path, label)
     ('/conferences/', 'Conferences'), ('/churches/', 'Churches'), ('/trade-shows/', 'Trade shows'),
     ('/digital-signage/', 'Lobbies and schools'), ('/guides/loop-powerpoint-pdf-on-projector/', 'Loop a PowerPoint or PDF'),
-    ('/propresenter-alternative/', 'ProPresenter alternative'), ('/install/', 'Installing and the security warning'), ('/faq/', 'FAQ'),
+    ('/propresenter-alternative/', 'ProPresenter alternative'), ('/install/', 'Install help'), ('/faq/', 'FAQ'),
 ]
 
 def esc(s): return html.escape(s, quote=True)
@@ -81,6 +81,7 @@ FOOTER = '''<footer>
   <div class="wrap">
     <nav class="foot-links" aria-label="More about LoopCast">''' + ''.join(f'<a href="{p}">{l}</a>' for p, l in PAGES_NAV) + '''</nav>
     <span><b>LoopCast</b>, for every space with a screen.</span>
+    <span>Questions? <a href="mailto:hello@loopcast.space">hello@loopcast.space</a></span>
     <span>Made by Treetop Business Solutions in Oklahoma City. © 2026</span>
   </div>
 </footer>
@@ -160,6 +161,7 @@ FAQS = [
     ("Does it work on a Mac?", "Yes, on macOS 12 or later, on Apple silicon and Intel Macs. The first time you open it, go to System Settings › Privacy & Security and choose Open Anyway."),
     ("Can I use it without installing anything?", "Yes. Open in your browser runs the full player in any modern browser. The desktop app adds a few conveniences, like opening the projector window fullscreen on its own."),
     ("Why does my computer warn me when I install it?", "LoopCast isn’t signed with a paid developer certificate yet. Without one, Windows and macOS can’t confirm who made the app, so they ask you to confirm the first time. The warning is about an unverified publisher; it doesn’t mean the app was found to be harmful. Download it only from loopcast.space. The Installing LoopCast page explains each step. On Windows choose More info, then Run anyway. On a Mac, go to System Settings › Privacy & Security and choose Open Anyway."),
+    ("How do I get help or send feedback?", "Email hello@loopcast.space. Include your version number (click the LoopCast logo in the app to see it) and whether you use Windows, Mac or the browser version."),
     ("How do I show a logo between sessions?", "Put an image named logo.png in the main media folder. Press Logo (or H) to cover the screen with it while the playlist keeps its place underneath. A playlist can also end on the logo by itself."),
 ]
 
