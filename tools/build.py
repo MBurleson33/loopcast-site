@@ -80,7 +80,7 @@ def head(title, desc, path, image=f"{SITE}/assets/og-logo.jpg", image_alt="The L
 
 def header(home=False):
     links = '<a href="/features/">Features</a><a href="/uses/">Uses</a><a href="/faq/">FAQ</a>'
-    return f'''<a class="promo" href="{'#download' if home else '/#download'}"><span class="dot pulse"></span><span><b>Free during our launch.</b> Download LoopCast now while it’s free.</span><span class="promo-go">Get it →</span></a>
+    return f'''<a class="promo" href="{'#download' if home else '/#download'}"><span class="promo-t"><b><span class="dot pulse"></span>Free during our launch.</b> <span>Download LoopCast now while it’s free.</span></span><span class="promo-go">Get it →</span></a>
 <header class="wrap">
   <nav class="top" aria-label="Main">
     <a class="brand" href="/" aria-label="LoopCast home"><img src="/assets/mark.svg" width="32" height="27" alt=""><span>LoopCast</span></a>
