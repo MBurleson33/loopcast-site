@@ -232,6 +232,7 @@ kbd{font:inherit;font-stretch:80%;font-weight:600;font-size:12.5px;color:var(--t
 .modal-scrim{position:fixed;inset:0;z-index:80;background:rgba(10,10,12,.62);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadein .15s ease}
 .modal{width:min(440px,100%);background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:26px 26px 22px;box-shadow:0 24px 60px rgba(0,0,0,.5)}
 .modal h2{margin:0 0 8px;font-size:19px;font-weight:700;line-height:1.3}
+#modalBody{white-space:pre-line}
 .modal p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.5}
 .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:22px}
 .modal .key.solid.danger{background:var(--tally);border-color:var(--tally);color:#fff}
@@ -256,6 +257,8 @@ kbd{font:inherit;font-stretch:80%;font-weight:600;font-size:12.5px;color:var(--t
 .ctx hr{border:0;border-top:1px solid var(--line);margin:4px 2px}
 .schedrow{display:grid;grid-template-columns:110px 1fr 34px;gap:6px;margin-top:6px}
 .schedrow .inp.txt{height:36px}
+.upd #updGo{height:26px;padding:0 12px;margin-left:6px;font-size:12.5px}
+.upd #updLink{margin:0 6px}
 .upd{display:flex;align-items:center;gap:4px;background:#1f3a2a;border:1px solid #3fb96b;border-radius:999px;padding:2px 2px 2px 12px;font-size:13px}
 .upd a{color:#bff0cf;text-decoration:none;font-weight:600}
 .upd a:hover{text-decoration:underline}
@@ -267,6 +270,11 @@ body.dropping .drophint{display:flex}
 .modal .err{color:#ff8a78;font-size:13.5px;margin:10px 0 0}
 .modal.about{width:min(520px,100%)}
 .phone-btn{display:inline-flex;align-items:center;gap:8px;position:relative}
+.refresh-btn{display:inline-flex;align-items:center;gap:7px}
+.refresh-btn.spin svg{animation:lcspin .7s linear}
+@keyframes lcspin{to{transform:rotate(360deg)}}
+.watchnote{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);white-space:nowrap}
+.watchnote::before{content:"";width:7px;height:7px;border-radius:50%;background:#3fb96b}
 .phone-btn .rx{display:none;width:8px;height:8px;border-radius:50%;background:#3fb96b;margin-left:2px}
 .phone-btn.on .rx{display:block}
 .modal.phone{width:min(560px,100%)}
@@ -283,7 +291,7 @@ body.dropping .drophint{display:flex}
 .ph-recent b{color:var(--text);font-weight:600}
 .ptoast{position:fixed;right:20px;bottom:20px;z-index:70;display:flex;align-items:center;gap:10px;max-width:min(460px,calc(100vw - 40px));background:var(--surface);border:1px solid var(--line);border-left:3px solid #3fb96b;border-radius:var(--r-sm);padding:10px 10px 10px 14px;box-shadow:0 18px 40px rgba(0,0,0,.45);font-size:14px}
 .ptoast span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
-@media (max-width:1000px){.phone-btn span{display:none}}
+@media (max-width:1000px){.phone-btn span{display:none}.watchnote{display:none}}
 @media (max-width:620px){.ph-wrap{grid-template-columns:1fr}.ph-qr{margin:0 auto}}
 .about-head{display:flex;align-items:center;gap:16px;margin-bottom:18px}
 .about-head h2{font-size:24px;font-weight:800;font-stretch:118%;margin:0 0 2px}
@@ -324,11 +332,12 @@ body.dropping .drophint{display:flex}
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
     <span id="folderName">Choose folder</span>
   </button>
-  <button class="key ghost icon" id="rescanBtn" title="Rescan folder for new files" aria-label="Rescan folder" hidden>
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
+  <button class="key ghost refresh-btn" id="rescanBtn" title="Check the folder for new or changed files (F5)" hidden>
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg><span>Refresh</span>
   </button>
+  <span class="watchnote" id="watchNote" hidden title="LoopCast watches this folder. New files show up on their own.">Watching folder</span>
   <div class="spacer"></div>
-  <div class="upd" id="updBox" hidden><a href="https://loopcast.space/#download" target="_blank" rel="noopener">LoopCast <span id="updVer"></span> is out. Get it</a><button class="key ghost icon sm" id="updX" aria-label="Dismiss">×</button></div>
+  <div class="upd" id="updBox" hidden><span id="updMsg">LoopCast <span id="updVer"></span> is out.</span><button class="key solid sm" id="updGo">Update</button><a id="updLink" href="https://loopcast.space/#download" target="_blank" rel="noopener" hidden>Get it</a><button class="key ghost icon sm" id="updX" aria-label="Dismiss">×</button></div>
   <button class="key ghost phone-btn" id="phoneBtn" title="Send photos and videos from a phone" aria-label="Send from a phone">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18h2"/></svg><span>From phone</span><i class="rx" aria-hidden="true"></i>
   </button>
@@ -504,7 +513,7 @@ body.dropping .drophint{display:flex}
       <a href="https://github.com/MBurleson33/loopcast-site/releases/latest" target="_blank" rel="noopener">Latest release</a>
     </div>
     <p class="about-credit">Made by Treetop Business Solutions in Oklahoma City. © 2026.<br>PDF rendering by PDF.js (Mozilla, Apache 2.0). Archivo typeface (SIL Open Font License).</p>
-    <div class="modal-actions"><button class="key solid" id="aboutClose">Close</button></div>
+    <div class="modal-actions"><button class="key" id="aboutUpd" hidden>Check for updates</button><button class="key solid" id="aboutClose">Close</button></div>
   </div>
 </div>
 <div class="modal-scrim" id="phone" hidden>
@@ -1054,7 +1063,7 @@ function setPlaying(on){
 }
 function setBlack(on){ S.black = on; prevStage.setBlack(on); outStage?.setBlack(on); renderTransport(); renderOutputState(); webSync(); }
 function setHold(on){
-  if (on && !S.hold) { toast('Add an image named logo.png to the main folder, then rescan.'); return; }
+  if (on && !S.hold) { toast('Add an image named logo.png to the main folder, then press Refresh.'); return; }
   S.holding = on; prevStage.setHold(on); outStage?.setHold(on); renderTransport(); webSync();
 }
 function applyHoldSource(){
@@ -1065,23 +1074,42 @@ function applyHoldSource(){
     : 'Put an image named <b>logo.png</b> in the main folder (not a playlist folder). Press Logo to cover the screen with it while the playlist keeps going underneath.';
 }
 
+const fileKeys = () => new Set(S.lib.filter(p => !p.copyOf).flatMap(p => p.items.map(it => (p.key || p.name) + '|' + it.name)));
+// mode: false = the Refresh button (always says what happened), true = silent,
+// 'auto' = the folder changed on its own (speaks up only when something did change).
 async function rescan(quiet){
   if (!S.dir && !S.dirPath) return;
+  if (rescan.busy) { rescan.again = true; return; }
+  rescan.busy = true;
+  try { await rescanNow(quiet); } finally { rescan.busy = false; }
+  if (rescan.again) { rescan.again = false; rescan(quiet === false ? true : quiet); }
+}
+async function rescanNow(quiet){
+  const before = fileKeys();
   const curKey = pl()?.key, viewKey = vpl()?.key, curItem = current()?.name;
   try {
     const r = extractHold(await expandPdfs(S.dirPath ? await native.scan(S.dirPath) : await scanHandle(S.dir)));
     S.lib = withCopies(r.pls);
     if ((r.hold && r.hold.name) !== (S.hold && S.hold.name)) { S.hold = r.hold; applyHoldSource(); }
-  } catch { if (!quiet) toast('Couldn’t read the folder. Choose it again.'); return; }
+  } catch { if (quiet !== true) toast('Couldn’t read the folder. Choose it again.'); return; }
   const i = S.lib.findIndex(p => p.key === curKey);
   S.plIndex = i >= 0 ? i : 0;
   const v = S.lib.findIndex(p => p.key === viewKey);
   S.view = v >= 0 ? v : S.plIndex;
   const p = pl();
   buildOrder();
-  if (p && curItem && !quiet) { const idx = p.items.findIndex(it => it.name === curItem); S.pos = idx >= 0 ? S.order.indexOf(idx) : -1; }
+  if (p && curItem && quiet === false) { const idx = p.items.findIndex(it => it.name === curItem); S.pos = idx >= 0 ? S.order.indexOf(idx) : -1; }
   renderPlaylists(); renderGrid(); renderNowNext(); renderTransport();
-  if (!quiet) { const n = S.lib.filter(p => !p.copyOf).reduce((n,p)=>n+p.items.length,0); toast(`Rescanned. ${n} file${n===1?'':'s'} found.`); }
+  if (quiet === true) return;
+  const after = fileKeys();
+  const added = [...after].filter(k => !before.has(k)), gone = [...before].filter(k => !after.has(k)).length;
+  const files = n => `${n} file${n === 1 ? '' : 's'}`;
+  if (added.length) {
+    const pls = [...new Set(added.map(k => k.split('|')[0]))];
+    const where = pls.length === 1 ? ` in ${S.lib.find(x => (x.key || x.name) === pls[0])?.name || pls[0]}` : '';
+    toast(`${added.length === 1 ? 'New file' : added.length + ' new files'}${where}: ${added.length === 1 ? added[0].split('|').slice(1).join('|') : 'ready to play'}.` + (gone ? ` ${files(gone)} removed.` : ''));
+  } else if (gone) toast(`${files(gone)} no longer in the folder.`);
+  else if (quiet === false) toast(`Up to date. No new files (${files(after.size)} in this folder).`);
 }
 
 function loadLibrary(lib, folderName){
@@ -1094,6 +1122,7 @@ function loadLibrary(lib, folderName){
   buildOrder();
   $('#folderName').textContent = S.folderName || 'Choose folder'; $('#folderBtn').title = S.folderName ? 'Switch folders' : 'Choose your media folder';
   $('#rescanBtn').hidden = !(S.dir || S.dirPath);
+  watchFolder();
   $('#newPlBtn').hidden = !(native?.makePlaylist && S.dirPath);
   if (lib.length) $('#welcome').hidden = true;
   else {
@@ -1504,7 +1533,7 @@ function renderGrid(){
   $('#stripActions').hidden = !p;
   $('#renameBtn').hidden = $('#deleteBtn').hidden = !(p && p.copyOf);
   if (!p) { grid.innerHTML = '<p class="emptystrip">Choose a folder to see its images, PDFs and videos.</p>'; $('#stripActions').hidden = true; $('#endCtl').hidden = true; return; }
-  if (!p.items.length) { grid.innerHTML = `<p class="emptystrip">${native?.addWeb ? 'This playlist is empty. Use Add web page or Add input above, or drop files here.' : 'This playlist is empty. Add files to its folder, then press Rescan.'}</p>`; return; }
+  if (!p.items.length) { grid.innerHTML = `<p class="emptystrip">${native?.addWeb ? 'This playlist is empty. Use Add web page or Add input above, or drop files here.' : 'This playlist is empty. Add files to its folder, then press Refresh.'}</p>`; return; }
   grid.innerHTML = p.items.map((it,i) => `<div class="card" data-i="${i}" draggable="true"><button class="pick" title="Play ${esc(it.name)} now"><span class="th">${it.kind==='video'?`<span class="vid">${ICON_VID}</span>`:it.pdf?'<span class="vid pdf">PDF</span>':it.kind==='input'?`<span class="webth">${ICON_INPUT.replace('width="14" height="14"','width="26" height="26"')}<small>${esc(it.input||'Camera or capture device')}</small></span>`:it.kind==='web'?`<span class="webth">${ICON_WEB}<small>${esc((it.page||'').replace(/^https?:\/\//,'').split('/')[0])}</small></span>`:''}<span class="tag" hidden></span><span class="dtag" hidden></span><span class="prog"></span></span><span class="nm">${esc(it.name)}</span></button><span class="tools">${it.kind !== 'video' ? `<button class="dur" aria-label="How long ${esc(it.name)} stays up">${ICON_CLOCK}</button>` : ''}<button class="hide" aria-pressed="false" aria-label="Hide ${esc(it.name)} in this playlist">${ICON_HIDE}</button><button class="rep" aria-pressed="false" aria-label="Repeat ${esc(it.name)}">${ICON_REP}</button></span></div>`).join('');
   thumbObserver = new IntersectionObserver(entries => {
     for (const en of entries) {
@@ -1855,7 +1884,7 @@ addEventListener('dragleave', e => { if (!e.relatedTarget) document.body.classLi
 addEventListener('drop', async e => {
   if (dragFrom >= 0 || !hasFiles(e)) return;
   e.preventDefault(); document.body.classList.remove('dropping');
-  if (!native?.addFiles) { toast('Dropping files in works in the LoopCast desktop app. Here, put files in the folder and press Rescan.'); return; }
+  if (!native?.addFiles) { toast('Dropping files in works in the LoopCast desktop app. Here, put files in the folder and press Refresh.'); return; }
   if (!S.dirPath) { toast('Choose your media folder first, then drop files onto a playlist.'); return; }
   const row = e.target.closest?.('#playlists .pl');
   const p = row ? S.lib[+row.dataset.i] : vpl();
@@ -1922,17 +1951,60 @@ function autoStartShow(){
 
 /* ---------- new version notice (desktop app) ---------- */
 function newer(a, b){ const pa = a.split('.').map(Number), pb = b.split('.').map(Number); for (let i = 0; i < 3; i++) { if ((pa[i] || 0) !== (pb[i] || 0)) return (pa[i] || 0) > (pb[i] || 0); } return false; }
-async function checkUpdate(){
-  if (!native || !/^\d+\.\d+\.\d+$/.test(APP_VERSION)) return;
+// The desktop app updates itself on Windows and macOS. Elsewhere, the banner links to the website.
+let updInfo = null, updBusy = false;
+const canSelfUpdate = async () => {
+  if (!native?.updateDownload) return false;
+  const i = updInfo || (updInfo = await native.appInfo().catch(() => ({})));
+  return i.platform === 'win32' || i.platform === 'darwin';
+};
+async function runUpdate(v){
+  if (updBusy) return;
+  const live = outputOpen() || S.playing;
+  const ok = await confirmBox({
+    title: `Update to LoopCast ${v}?`,
+    body: (live ? 'LoopCast will close while it updates, so the projector will go dark for about a minute. Best to do this between sessions.\n\n' : '')
+      + 'LoopCast downloads the update, closes, installs it and opens again by itself. Your folders, playlists and settings stay as they are.',
+    ok: 'Update now', cancel: 'Not now'
+  });
+  if (!ok) return;
+  updBusy = true;
+  $('#updGo').hidden = true; $('#updX').hidden = true;
+  $('#updMsg').textContent = 'Downloading update…';
+  native.onUpdateProgress?.(p => { if (p >= 0) $('#updMsg').textContent = `Downloading update… ${p}%`; });
+  try {
+    await native.updateDownload();
+    $('#updMsg').textContent = 'Installing. LoopCast will reopen in a moment…';
+    const r = await native.updateInstall();
+    if (r && r.reason === 'manual') {
+      $('#updMsg').textContent = `LoopCast ${v} is downloaded.`;
+      toast('The update opened in Finder. Quit LoopCast, then drag the new LoopCast into Applications and replace the old one.', 9000);
+      updBusy = false; $('#updX').hidden = false;
+    }
+  } catch {
+    updBusy = false;
+    $('#updMsg').innerHTML = `Couldn’t download LoopCast ${esc(v)}.`;
+    $('#updLink').hidden = false; $('#updX').hidden = false;
+    toast('The update didn’t download. Check the internet connection, or download it from the website.', 7000);
+  }
+}
+async function checkUpdate(manual){
+  if (!native || !/^\d+\.\d+\.\d+$/.test(APP_VERSION)) return manual ? 'dev' : undefined;
   try {
     const r = await fetch('https://api.github.com/repos/MBurleson33/loopcast-site/releases/latest', { headers: { Accept: 'application/vnd.github+json' } });
-    if (!r.ok) return;
+    if (!r.ok) return manual ? 'offline' : undefined;
     const v = String((await r.json()).tag_name || '').replace(/^v/, '');
     let skip = null; try { skip = localStorage.getItem('loopcast.skipVersion'); } catch {}
-    if (!/^\d+\.\d+\.\d+$/.test(v) || !newer(v, APP_VERSION) || skip === v) return;
-    $('#updVer').textContent = v; $('#updBox').hidden = false;
+    if (!/^\d+\.\d+\.\d+$/.test(v) || !newer(v, APP_VERSION)) return manual ? 'current' : undefined;
+    if (updBusy || (skip === v && !manual)) return v;
+    const self = await canSelfUpdate();
+    $('#updMsg').innerHTML = `LoopCast <span id="updVer">${esc(v)}</span> is out.`;
+    $('#updGo').hidden = !self; $('#updLink').hidden = self; $('#updX').hidden = false;
+    $('#updGo').onclick = () => runUpdate(v);
+    $('#updBox').hidden = false;
     $('#updX').onclick = () => { $('#updBox').hidden = true; try { localStorage.setItem('loopcast.skipVersion', v); } catch {} };
-  } catch {}
+    return v;
+  } catch { return manual ? 'offline' : undefined; }
 }
 setTimeout(checkUpdate, 4000);
 setInterval(checkUpdate, 6 * 3600000);
@@ -2011,7 +2083,7 @@ async function streamForItem(it){
 }
 $('#newPlBtn').onclick = newPlaylist;
 async function newPlaylist(){
-  if (!native?.makePlaylist || !S.dirPath) { toast(native ? 'Choose your media folder first.' : 'In the browser version, make a new folder inside your media folder, then press Rescan.'); return; }
+  if (!native?.makePlaylist || !S.dirPath) { toast(native ? 'Choose your media folder first.' : 'In the browser version, make a new folder inside your media folder, then press Refresh.'); return; }
   const v = await ask({ title: 'New playlist', body: 'LoopCast makes a folder for it inside your media folder. Add files, web pages or inputs to it from here.',
     fields: [{ label: 'Name', placeholder: 'Cameras and web' }], ok: 'Create', validate: v => v[0] ? null : 'Give the playlist a name.' });
   if (!v) return;
@@ -2065,7 +2137,7 @@ function phoneToast(name){
   $('#ptoastMsg').textContent = `New from a phone: ${name}`;
   ptoastAction = async () => {
     const i = S.lib.findIndex(p => p.name === 'Phone uploads' && !p.copyOf);
-    if (i < 0) { toast('Couldn’t find the Phone uploads playlist. Try Rescan.'); return; }
+    if (i < 0) { toast('Couldn’t find the Phone uploads playlist. Try Refresh.'); return; }
     const idx = S.lib[i].items.findIndex(it => it.name === name || it.name.startsWith(name + ', page'));
     playPlaylist(i, idx >= 0 ? idx : null);
   };
@@ -2082,7 +2154,7 @@ native?.onPhoneFile?.(async f => {
 });
 
 /* ---------- About ---------- */
-const APP_VERSION = '1.10.1', PDFJS_VERSION = '6.5.438';
+const APP_VERSION = '1.11.0', PDFJS_VERSION = '6.5.438';
 async function openAbout(){
   const info = native?.appInfo ? await native.appInfo().catch(() => null) : null;
   const os = info ? ({ win32:'Windows', darwin:'macOS', linux:'Linux' }[info.platform] || info.platform) + ` (${info.arch})` : null;
@@ -2107,6 +2179,16 @@ async function openAbout(){
   document.addEventListener('keydown', keys, true);
   $('#aboutClose').onclick = close;
   m.onclick = e => { if (e.target === m) close(); };
+  const ub = $('#aboutUpd'); ub.hidden = !info; ub.disabled = false; ub.textContent = 'Check for updates';
+  ub.onclick = async () => {
+    ub.disabled = true; ub.textContent = 'Checking…';
+    const r = await checkUpdate(true);
+    ub.disabled = false; ub.textContent = 'Check for updates';
+    if (r === 'current') toast(`You have the latest version (${APP_VERSION}).`);
+    else if (r === 'offline') toast('Couldn’t check for updates. Is this computer online?');
+    else if (r === 'dev') toast('This is a development build, so it doesn’t update itself.');
+    else if (r) { close(); if (await canSelfUpdate()) runUpdate(r); }
+  };
 }
 $('#aboutBtn').onclick = openAbout;
 $('#aboutLink').onclick = () => { closeSettings(); openAbout(); };
@@ -2202,6 +2284,7 @@ function handleKey(key){
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && document.body.classList.contains('settings')) { closeSettings(); return; }
   if (document.body.classList.contains('settings')) return;
+  if (e.key === 'F5' || ((e.ctrlKey || e.metaKey) && (e.key === 'r' || e.key === 'R'))) { e.preventDefault(); if (S.dir || S.dirPath) $('#rescanBtn').click(); return; }
   if (e.target.matches('input,select,textarea') || e.metaKey || e.ctrlKey || e.altKey) return;
   if (e.key === ' ' && e.target.matches('button')) e.target.blur();
   if (e.key === ' ' || e.key.startsWith('Arrow') || e.key.startsWith('Page')) e.preventDefault();
@@ -2327,7 +2410,20 @@ $('#prevBtn').onclick = () => goTo(S.pos - 1, { user:true });
 $('#blackBtn').onclick = () => setBlack(!S.black);
 $('#holdBtn').onclick = () => setHold(!S.holding);
 $('#outBtn').onclick = () => outputOpen() ? closeOutput() : openOutput();
-$('#rescanBtn').onclick = () => rescan(false);
+$('#rescanBtn').onclick = async () => {
+  const b = $('#rescanBtn'); b.classList.remove('spin'); void b.offsetWidth; b.classList.add('spin');
+  await rescan(false);
+};
+// Desktop app: LoopCast watches the folder, so new files show up on their own.
+native?.onFolderChanged?.(() => rescan('auto'));
+function watchFolder(){
+  const on = !!(native?.watchFolder && S.dirPath);
+  native?.watchFolder?.(S.dirPath || null);
+  $('#watchNote').hidden = !on;
+  $('#rescanBtn').title = on ? 'New files show up on their own. Press to check now (F5).' : 'Check the folder for new or changed files (F5)';
+}
+// Browser version: check again when you come back to the tab, e.g. after copying files in.
+addEventListener('focus', () => { if (!native && S.dir) rescan('auto'); });
 
 /* ---------- choosing the folder ---------- */
 const hasPicker = 'showDirectoryPicker' in window;
@@ -2392,7 +2488,7 @@ function openFolderMenu(){
   if (!list.length) { pickFolder(); return; }
   const m = $('#ctx'), b = $('#folderBtn').getBoundingClientRect();
   const cur = settings.curFolder;
-  m.innerHTML = '<div class="ctxh">Recent folders</div>' + list.map(r => `<div class="ctxrow${r.key === cur ? ' cur' : ''}"><button role="menuitem" class="ctxmain" data-open="${esc(r.key)}" title="${esc(r.path || r.name)}"><b>${esc(r.name)}</b>${r.path ? `<small>${esc(r.path)}</small>` : ''}</button><button class="ctxi${r.pinned ? ' on' : ''}" data-pin="${esc(r.key)}" aria-label="${r.pinned ? 'Unpin' : 'Pin'} ${esc(r.name)}" title="${r.pinned ? 'Unpin' : 'Keep at the top'}">${ICON_PIN}</button><button class="ctxi" data-forget="${esc(r.key)}" aria-label="Remove ${esc(r.name)} from this list" title="Remove from this list">×</button></div>`).join('') + '<hr><button role="menuitem" data-a="pick">Choose another folder…</button>';
+  m.innerHTML = ((S.dir || S.dirPath) ? '<button role="menuitem" data-a="refresh">Refresh this folder <small style="opacity:.6">F5</small></button><hr>' : '') + '<div class="ctxh">Recent folders</div>' + list.map(r => `<div class="ctxrow${r.key === cur ? ' cur' : ''}"><button role="menuitem" class="ctxmain" data-open="${esc(r.key)}" title="${esc(r.path || r.name)}"><b>${esc(r.name)}</b>${r.path ? `<small>${esc(r.path)}</small>` : ''}</button><button class="ctxi${r.pinned ? ' on' : ''}" data-pin="${esc(r.key)}" aria-label="${r.pinned ? 'Unpin' : 'Pin'} ${esc(r.name)}" title="${r.pinned ? 'Unpin' : 'Keep at the top'}">${ICON_PIN}</button><button class="ctxi" data-forget="${esc(r.key)}" aria-label="Remove ${esc(r.name)} from this list" title="Remove from this list">×</button></div>`).join('') + '<hr><button role="menuitem" data-a="pick">Choose another folder…</button>';
   m.hidden = false;
   m.style.left = Math.max(8, Math.min(b.left, innerWidth - m.offsetWidth - 8)) + 'px'; m.style.top = (b.bottom + 6) + 'px';
   document.addEventListener('pointerdown', ctxAway, true);
@@ -2409,6 +2505,7 @@ function openFolderMenu(){
     if (t.dataset.forget) { settings.recent = settings.recent.filter(x => x.key !== t.dataset.forget); save(); if (recentList().length) openFolderMenu(); else closeCtx(); return; }
     closeCtx();
     if (t.dataset.a === 'pick') { pickFolder(); return; }
+    if (t.dataset.a === 'refresh') { $('#rescanBtn').click(); return; }
     const r = settings.recent.find(x => x.key === t.dataset.open); if (!r || r.key === cur) return;
     if (r.path) { useNativePath(r.path); return; }
     try {
