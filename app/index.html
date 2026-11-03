@@ -22,6 +22,8 @@
 .stage .webcard .wl span{opacity:.6;word-break:break-all}
 .stage .webcard .wl em{font-style:normal;opacity:.75}
 .stage .webcard.framed .wl{display:none}
+#stage .webcard,.monitor:fullscreen .webcard{background:#000}
+#stage .webcard .wl,.monitor:fullscreen .webcard .wl{visibility:hidden}
 .stage .cd{position:absolute;inset:0;z-index:7;background:#0c0d10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2cqmin;color:#f4e9c9;font-family:system-ui,sans-serif;opacity:0;transition:opacity .6s ease;pointer-events:none;text-align:center}
 .stage .cd span{font-size:6cqmin;opacity:.85;max-width:85%}
 .stage .cd b{font-size:26cqmin;line-height:1;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
@@ -679,6 +681,10 @@ class Stage {
     const sp = this.doc.createElement('span'); sp.textContent = item.page ? item.page.replace(/^https?:\/\//, '').replace(/\/$/, '') : '';
     const em = this.doc.createElement('em'); em.textContent = native ? 'Loading the page…' : 'Web pages play in the LoopCast desktop app.';
     wl.append(b, sp, em); el.append(img, wl);
+    // Fade into the last picture of the page; the live page takes over once it has loaded and the fade is done.
+    el._page = item.page; el._ready = performance.now() + fade * 1000;
+    const shot = webShots.get(item.page);
+    if (shot) { img.src = 'data:image/jpeg;base64,' + shot; img.hidden = false; el.classList.add('framed'); }
     this.place(el, fade);
     return el;
   }
@@ -906,7 +912,8 @@ function extractHold(pls){
 
 /* ---------- state ---------- */
 const native = window.loopcastNative || null;
-const webState = { on:false, url:null, host:null, interactive:false, visible:true, rect:'', typing:false };
+const webShots = new Map(); // page URL -> latest picture of it (JPEG, base64)
+const webState = { on:false, loaded:false, url:null, host:null, interactive:false, visible:true, rect:'', typing:false };
 const S = { hold:null, holding:false, dir:null, dirPath:null, folderName:'', lib:[], plIndex:0, view:0, inputs:[], inputsAllowed:false, viewInput:null, liveInput:null, order:[], pos:-1, playing:false, black:false,
             timer:null, timerWin:null, gen:0, curEl:null, mirrorEl:null, itemStart:0, imgDur:0, pausedElapsed:0 };
 const pl = () => S.lib[S.plIndex];   // the playlist going to the projector
@@ -1660,15 +1667,39 @@ function webRect(){
   const r = $('#pstage').getBoundingClientRect();
   return { x: r.left, y: r.top, width: r.width, height: r.height };
 }
+// Put a picture of the page into every card showing it, on the preview and the projector.
+function setWebStill(url, b64){
+  if (!url || !b64) return;
+  webShots.set(url, b64);
+  for (const st of [prevStage, outStage]) for (const l of st?.layers || []) for (const c of l.querySelectorAll('.webcard'))
+    if (c._page === url) { const img = c.querySelector('.wf'); img.src = 'data:image/jpeg;base64,' + b64; img.hidden = false; c.classList.add('framed'); }
+}
+// Before the live page is hidden or replaced, leave a still of it behind so the fade out has something to fade.
+function freezeWeb(then){
+  if (webState.snapping) return;
+  if (!(webState.on && webState.visible && native.webSnapshot)) { then(); return; }
+  webState.snapping = true;
+  const url = webState.url;
+  native.webSnapshot().then(b64 => { if (b64) { setWebStill(url, b64); native.webThumbSave?.(url, b64); } })
+    .catch(() => {}).finally(() => { webState.snapping = false; then(); });
+}
+// The live page only appears once it has loaded and the fade into its card has finished,
+// so the projector fades into the page instead of flashing text or cutting.
+function webReady(host){
+  if (!webState.loaded || performance.now() - webState.loadedAt < 150) return false;
+  const c = webCard(host === 'output' ? outStage : prevStage);
+  return !c || c._page !== webState.url || performance.now() >= c._ready;
+}
 // Keep the live page in step with what's on screen. Cheap enough to call often.
 function webSync(){
   if (!native?.webShow) return;
   const it = curWeb();
-  if (!it || !it.page) { if (webState.on) { native.webHide(); webState.on = false; setWebTyping(false); } return; }
+  if (!it || !it.page) { if (webState.on) freezeWeb(() => { if (!curWeb() && webState.on) { native.webHide(); webState.on = false; setWebTyping(false); } }); return; }
+  if (webState.snapping) return;
   const host = outStage ? 'output' : 'main';
   const interactive = webInteractive(it);
   const covered = host === 'main' && webOverlayOpen();
-  const visible = !S.black && !S.holding && !S.cd && !covered;
+  const visible = !S.black && !S.holding && !S.cd && !covered && webReady(host);
   let rect = host === 'main' ? webRect() : null;
   if (S.msg) { // leave room for the message banner at the bottom
     const base = rect || (host === 'output' && outputOpen() ? { x:0, y:0, width: outWin.innerWidth, height: outWin.innerHeight } : { x:0, y:0, width: innerWidth, height: innerHeight });
@@ -1676,8 +1707,11 @@ function webSync(){
   }
   const rk = JSON.stringify(rect);
   if (!webState.on || webState.url !== it.page || webState.host !== host) {
-    Object.assign(webState, { on:true, url:it.page, host, interactive, visible, rect:rk });
-    native.webShow({ url: it.page, host, rect, interactive, visible, reloadMinutes: settings.webReload || 0 }).catch(() => { webState.on = false; });
+    if (webState.on && webState.url !== it.page && webState.visible) { freezeWeb(() => { webState.visible = false; webSync(); }); return; } // one page to the next
+    const fresh = webState.url !== it.page || !webState.on;
+    if (fresh) webState.loaded = false;
+    Object.assign(webState, { on:true, url:it.page, host, interactive, visible: fresh ? false : visible, rect:rk });
+    native.webShow({ url: it.page, host, rect, interactive, visible: webState.visible, reloadMinutes: settings.webReload || 0 }).catch(() => { webState.on = false; });
     return;
   }
   // A menu or dialog just opened over the page: put a still of the page in its place first, so the
@@ -1686,11 +1720,8 @@ function webSync(){
   else if (webState.visible && !webState.still && native.webSnapshot) {
     if (!webState.snapping) {
       webState.snapping = true;
-      native.webSnapshot().then(b64 => {
-        const c = webCard(prevStage);
-        if (b64 && c) { const img = c.querySelector('.wf'); img.src = 'data:image/jpeg;base64,' + b64; img.hidden = false; c.classList.add('framed'); }
-        if (b64 && webState.url) native.webThumbSave?.(webState.url, b64);
-      }).catch(() => {}).finally(() => { webState.snapping = false; webState.still = true; webSync(); });
+      const url = webState.url;
+      native.webSnapshot().then(b64 => { if (b64) { setWebStill(url, b64); native.webThumbSave?.(url, b64); } }).catch(() => {}).finally(() => { webState.snapping = false; webState.still = true; webSync(); });
     }
     return;
   }
@@ -1712,6 +1743,8 @@ native?.onWebFrame?.(b64 => {
   const img = c.querySelector('.wf'); img.src = 'data:image/jpeg;base64,' + b64; img.hidden = false; c.classList.add('framed');
 });
 native?.onWebStatus?.(st => {
+  if (st.state === 'loading') webState.loaded = false;
+  if (st.state === 'loaded') { webState.loaded = true; webState.loadedAt = performance.now(); setTimeout(webSync, 160); }
   const cards = [webCard(prevStage), webCard(outStage)].filter(Boolean);
   if (st.state === 'failed') {
     cards.forEach(c => { c.classList.remove('framed'); c.querySelector('.wf').hidden = true; c.querySelector('em').textContent = 'Couldn’t load this page.'; });
@@ -1876,6 +1909,7 @@ $('#sortReset').onclick = async () => {
 function addWebShot(it, box, stillWanted, small){
   if (!native?.webThumb || !it.page) return;
   native.webThumb(it.page).then(b64 => {
+    if (b64 && !webShots.has(it.page)) webShots.set(it.page, b64);
     if (!b64 || !stillWanted() || !box.isConnected) return;
     box.querySelector('img.wshot')?.remove(); box.querySelector('.wsite')?.remove();
     const img = document.createElement('img'); img.className = 'wshot'; img.alt = ''; img.src = 'data:image/jpeg;base64,' + b64;
@@ -2194,7 +2228,7 @@ native?.onPhoneFile?.(async f => {
 });
 
 /* ---------- About ---------- */
-const APP_VERSION = '1.12.0', PDFJS_VERSION = '6.5.438';
+const APP_VERSION = '1.13.0', PDFJS_VERSION = '6.5.438';
 async function openAbout(){
   const info = native?.appInfo ? await native.appInfo().catch(() => null) : null;
   const os = info ? ({ win32:'Windows', darwin:'macOS', linux:'Linux' }[info.platform] || info.platform) + ` (${info.arch})` : null;
