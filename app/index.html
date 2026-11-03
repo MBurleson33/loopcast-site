@@ -239,6 +239,9 @@ kbd{font:inherit;font-stretch:80%;font-weight:600;font-size:12.5px;color:var(--t
 .modal .key.solid.danger:hover{background:#f05440}
 .webth{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:#1d2026;color:var(--muted);font-size:11.5px;padding:6px;text-align:center}
 .webth small{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.th img.wshot,.nthumb img.wshot{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top}
+.wsite{position:absolute;left:6px;bottom:6px;max-width:calc(100% - 12px);display:flex;align-items:center;gap:4px;background:rgba(12,13,16,.8);color:#eeebe3;border-radius:999px;padding:2px 8px 2px 6px;font-size:11px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.wsite svg{width:11px;height:11px;flex:none}
 .webchip{position:absolute;left:50%;top:10px;transform:translateX(-50%);z-index:20;background:rgba(17,18,21,.88);color:#eeebe3;border:1px solid #3fb96b;border-radius:999px;padding:5px 12px;font-size:12.5px;pointer-events:none;white-space:nowrap}
 .ctx{position:fixed;z-index:95;min-width:220px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:5px;box-shadow:0 16px 40px rgba(0,0,0,.5)}
 .ctx button{display:block;width:100%;text-align:left;background:none;border:0;color:var(--text);font:inherit;font-size:14px;padding:8px 12px;border-radius:6px;cursor:pointer}
@@ -1540,7 +1543,8 @@ function renderGrid(){
       if (!en.isIntersecting) continue;
       thumbObserver.unobserve(en.target);
       const it = p.items[+en.target.dataset.i], th = en.target.querySelector('.th');
-      if (it.kind === 'web' || it.kind === 'input') continue;
+      if (it.kind === 'web') { addWebShot(it, th, () => gen === gridGen); continue; }
+      if (it.kind === 'input') continue;
       (it.pdf ? renderPdfPage(it, 480, 270) : it.url ? Promise.resolve(null) : it.getFile()).then(f => {
         if (gen !== gridGen) return; // the strip was redrawn while this file was opening
         let u = it.url;
@@ -1649,7 +1653,8 @@ function webInteractive(it){
   const p = pl(); if (!it || !p) return false;
   return isManual(p) || isRep(p, it) || (p.items.length === 1 && opts(p).end === 'loop');
 }
-function webOverlayOpen(){ return document.body.classList.contains('settings') || !!document.querySelector('.modal-scrim:not([hidden])') || !!document.querySelector('.lc-modal'); }
+// Menus and dialogs that would otherwise end up behind the live page (it's a native view on top of the HTML).
+function webOverlayOpen(){ return document.body.classList.contains('settings') || !$('#ctx').hidden || !!document.querySelector('.modal-scrim:not([hidden])') || !!document.querySelector('.lc-modal'); }
 function webRect(){
   if (document.fullscreenElement === $('#monitor')) return null; // the whole window
   const r = $('#pstage').getBoundingClientRect();
@@ -1662,7 +1667,8 @@ function webSync(){
   if (!it || !it.page) { if (webState.on) { native.webHide(); webState.on = false; setWebTyping(false); } return; }
   const host = outStage ? 'output' : 'main';
   const interactive = webInteractive(it);
-  const visible = !S.black && !S.holding && !S.cd && !(host === 'main' && webOverlayOpen());
+  const covered = host === 'main' && webOverlayOpen();
+  const visible = !S.black && !S.holding && !S.cd && !covered;
   let rect = host === 'main' ? webRect() : null;
   if (S.msg) { // leave room for the message banner at the bottom
     const base = rect || (host === 'output' && outputOpen() ? { x:0, y:0, width: outWin.innerWidth, height: outWin.innerHeight } : { x:0, y:0, width: innerWidth, height: innerHeight });
@@ -1674,6 +1680,20 @@ function webSync(){
     native.webShow({ url: it.page, host, rect, interactive, visible, reloadMinutes: settings.webReload || 0 }).catch(() => { webState.on = false; });
     return;
   }
+  // A menu or dialog just opened over the page: put a still of the page in its place first, so the
+  // menu shows on top and the preview doesn't go blank behind it. Then the live page is hidden below.
+  if (!covered) webState.still = false;
+  else if (webState.visible && !webState.still && native.webSnapshot) {
+    if (!webState.snapping) {
+      webState.snapping = true;
+      native.webSnapshot().then(b64 => {
+        const c = webCard(prevStage);
+        if (b64 && c) { const img = c.querySelector('.wf'); img.src = 'data:image/jpeg;base64,' + b64; img.hidden = false; c.classList.add('framed'); }
+        if (b64 && webState.url) native.webThumbSave?.(webState.url, b64);
+      }).catch(() => {}).finally(() => { webState.snapping = false; webState.still = true; webSync(); });
+    }
+    return;
+  }
   const upd = {};
   if (webState.interactive !== interactive) upd.interactive = webState.interactive = interactive;
   if (webState.visible !== visible) upd.visible = webState.visible = visible;
@@ -1682,6 +1702,8 @@ function webSync(){
   if (!interactive) setWebTyping(false);
 }
 if (native?.webShow) setInterval(webSync, 300);
+// React straight away when a menu opens or closes, not on the next 300 ms tick.
+if (native?.webShow) new MutationObserver(() => webSync()).observe($('#ctx'), { attributes: true, attributeFilter: ['hidden'] });
 addEventListener('resize', () => webSync());
 document.addEventListener('fullscreenchange', () => setTimeout(webSync, 60));
 function webCard(stage){ return stage?.layers[stage.front]?.querySelector('.webcard'); }
@@ -1848,6 +1870,24 @@ $('#sortReset').onclick = async () => {
   renderGrid(); renderNowNext(); paintSortReset();
 };
 
+/* ---------- web page thumbnails (desktop app) ---------- */
+// A picture of the page itself instead of the globe. The globe and site name stay until it arrives,
+// and stay for good if the page can't be reached.
+function addWebShot(it, box, stillWanted, small){
+  if (!native?.webThumb || !it.page) return;
+  native.webThumb(it.page).then(b64 => {
+    if (!b64 || !stillWanted() || !box.isConnected) return;
+    box.querySelector('img.wshot')?.remove(); box.querySelector('.wsite')?.remove();
+    const img = document.createElement('img'); img.className = 'wshot'; img.alt = ''; img.src = 'data:image/jpeg;base64,' + b64;
+    const web = box.querySelector('.webth'); web ? web.after(img) : box.prepend(img);
+    if (!small) {
+      const site = document.createElement('span'); site.className = 'wsite';
+      site.innerHTML = ICON_WEB; site.append((it.page || '').replace(/^https?:\/\//, '').split('/')[0]);
+      img.after(site);
+    }
+  }).catch(() => {});
+}
+
 /* ---------- next-up thumbnail ---------- */
 let nextThumbFor = null, nextThumbUrl = null;
 function paintNextThumb(item){
@@ -1856,7 +1896,7 @@ function paintNextThumb(item){
   const box = $('#nextThumb'); box.replaceChildren();
   if (nextThumbUrl) { URL.revokeObjectURL(nextThumbUrl); nextThumbUrl = null; }
   if (!item) return;
-  if (item.kind === 'web') { box.innerHTML = `<span class="webth">${ICON_WEB}</span>`; return; }
+  if (item.kind === 'web') { box.innerHTML = `<span class="webth">${ICON_WEB}</span>`; addWebShot(item, box, () => nextThumbFor === item, true); return; }
   if (item.kind === 'input') { box.innerHTML = `<span class="webth">${ICON_INPUT}</span>`; return; }
   (item.pdf ? renderPdfPage(item, 320, 180) : item.url ? Promise.resolve(null) : item.getFile()).then(f => {
     if (nextThumbFor !== item) return;
@@ -2154,7 +2194,7 @@ native?.onPhoneFile?.(async f => {
 });
 
 /* ---------- About ---------- */
-const APP_VERSION = '1.11.0', PDFJS_VERSION = '6.5.438';
+const APP_VERSION = '1.12.0', PDFJS_VERSION = '6.5.438';
 async function openAbout(){
   const info = native?.appInfo ? await native.appInfo().catch(() => null) : null;
   const os = info ? ({ win32:'Windows', darwin:'macOS', linux:'Linux' }[info.platform] || info.platform) + ` (${info.arch})` : null;
