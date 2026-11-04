@@ -8,6 +8,7 @@
     if (/LoopCast-Setup\.exe/i.test(h)) return 'download-windows';
     if (/LoopCast-Mac\.dmg/i.test(h)) return 'download-mac';
     if (/^\/app\/?$/.test(h)) return 'open-in-browser';
+    if (/ko-fi\.com\/loopcast/i.test(h)) return 'kofi';
     return null;
   };
   let asked = false;
@@ -51,6 +52,6 @@
     const a = e.target.closest('a[href]'); if (!a) return;
     const k = kind(a); if (!k) return;
     count(k);
-    if (k !== 'open-in-browser') setTimeout(() => emailBox(k.replace('download-', '')), 600);
+    if (k.startsWith('download-')) setTimeout(() => emailBox(k.replace('download-', '')), 600);
   });
 })();
