@@ -306,6 +306,10 @@ body.dropping .drophint{display:flex}
 .specs dd{margin:0;color:var(--text)}
 .about-links{display:flex;flex-wrap:wrap;gap:8px 18px;margin:16px 0 10px;font-size:14.5px}
 .about-links a{color:var(--lit);text-underline-offset:3px}
+.about-kofi{display:flex;align-items:center;gap:12px;margin:6px 0 14px;padding:11px 14px;border:1px solid var(--line);border-radius:12px;color:var(--text);text-decoration:none;font-size:14px;transition:border-color .15s,background .15s}
+.about-kofi:hover{border-color:var(--lit);background:rgba(244,233,201,.05)}
+.about-kofi svg{flex:none;color:var(--tally)}
+.about-kofi b{color:var(--lit);font-weight:650}
 .about-credit{font-size:12.5px;color:var(--faint)!important;line-height:1.55}
 @keyframes fadein{from{opacity:0}to{opacity:1}}
 #toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,8px);background:var(--lit);color:#1d1c19;font-weight:550;padding:10px 16px;border-radius:var(--r-sm);
@@ -517,6 +521,7 @@ body.dropping .drophint{display:flex}
       <a href="https://loopcast.space/faq/" target="_blank" rel="noopener">FAQ</a>
       <a href="https://github.com/MBurleson33/loopcast-site/releases/latest" target="_blank" rel="noopener">Latest release</a>
     </div>
+    <a class="about-kofi" href="https://ko-fi.com/loopcast" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V9z"/><path d="M17 10h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M8 3.5c0 1 1 1 1 2M12 3.5c0 1 1 1 1 2"/></svg><span><b>Enjoying LoopCast?</b> Support it with a coffee on Ko-fi.</span></a>
     <p class="about-credit">Made by Treetop Business Solutions in Oklahoma City. © 2026.<br>PDF rendering by PDF.js (Mozilla, Apache 2.0). Archivo typeface (SIL Open Font License).</p>
     <div class="modal-actions"><button class="key" id="aboutUpd" hidden>Check for updates</button><button class="key solid" id="aboutClose">Close</button></div>
   </div>
@@ -2228,7 +2233,7 @@ native?.onPhoneFile?.(async f => {
 });
 
 /* ---------- About ---------- */
-const APP_VERSION = '1.13.0', PDFJS_VERSION = '6.5.438';
+const APP_VERSION = '1.14.0', PDFJS_VERSION = '6.5.438';
 async function openAbout(){
   const info = native?.appInfo ? await native.appInfo().catch(() => null) : null;
   const os = info ? ({ win32:'Windows', darwin:'macOS', linux:'Linux' }[info.platform] || info.platform) + ` (${info.arch})` : null;
