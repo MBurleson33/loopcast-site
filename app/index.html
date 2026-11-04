@@ -126,6 +126,7 @@ main{display:grid;grid-template-columns:232px 1fr;height:calc(100% - 60px)}
 .welcome .inner{display:grid;grid-template-columns:1fr auto;gap:36px;align-items:center;max-width:720px}
 .welcome h1{font-size:30px;font-stretch:112%;font-weight:750;line-height:1.1;margin:0 0 10px;letter-spacing:-.01em}
 .welcome p{color:var(--muted);margin:0 0 20px;max-width:34ch}
+.welcome .inner .key+.key:not([hidden]){margin:8px 0 0 8px}
 .tree{font-size:14px;background:var(--base);border:1px solid var(--line);border-radius:var(--r-md);padding:16px 18px;line-height:2}
 .tree div{display:flex;justify-content:space-between;gap:28px;white-space:nowrap}
 .tree .in{padding-left:18px}
@@ -237,6 +238,16 @@ kbd{font:inherit;font-stretch:80%;font-weight:600;font-size:12.5px;color:var(--t
 #modalBody{white-space:pre-line}
 .modal p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.5}
 .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:22px}
+.modal.noscreen{width:min(500px,100%)}
+.ns-tips{margin:14px 0 0;padding-left:20px;color:var(--text);font-size:14.5px;line-height:1.5;display:flex;flex-direction:column;gap:8px}
+.ns-tips li::marker{color:var(--muted)}
+.ns-tips b{font-weight:650}
+.ns-tips span{display:block;color:var(--muted);font-size:13.5px}
+.ns-tips kbd{font:inherit;font-size:12.5px;font-weight:650;padding:1px 7px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;background:var(--raised)}
+.ns-status{margin-top:14px!important;color:var(--lit)!important;font-weight:600}
+.noscreen.mac .ns-win,.noscreen.win .ns-mac{display:none}
+@keyframes nsShake{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.noscreen.shake{animation:nsShake .3s ease}
 .modal .key.solid.danger{background:var(--tally);border-color:var(--tally);color:#fff}
 .modal .key.solid.danger:hover{background:#f05440}
 .webth{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:#1d2026;color:var(--muted);font-size:11.5px;padding:6px;text-align:center}
@@ -385,6 +396,7 @@ body.dropping .drophint{display:flex}
               <h1 id="wTitle">Choose your media folder</h1>
               <p id="wText">LoopCast plays the images, PDFs and videos in a folder on repeat. Each folder inside it becomes a playlist you can switch to.</p>
               <button class="key solid" id="pickBtn">Choose folder</button>
+              <button class="key" id="startBlankBtn" hidden>New playlist for web pages or cameras</button>
               <button class="key solid" id="reconnectBtn" hidden></button>
             </div>
             <div class="tree" aria-hidden="true">
@@ -509,6 +521,19 @@ body.dropping .drophint{display:flex}
   </div>
 </aside>
 <div id="toast" role="status" aria-live="polite"></div>
+<div class="modal-scrim" id="noScreen" hidden>
+  <div class="modal noscreen" role="dialog" aria-modal="true" aria-labelledby="nsTitle" aria-describedby="nsLead">
+    <h2 id="nsTitle">No second screen found</h2>
+    <p id="nsLead">LoopCast can only see this computer’s own screen. If a projector or TV is plugged in, try these, then press Find displays:</p>
+    <ol class="ns-tips">
+      <li>Check that the projector or TV is <b>on</b>, set to the <b>right input</b> (HDMI 1, HDMI 2…), and that the cable and any adapter are pushed in firmly.</li>
+      <li class="ns-win">Press <kbd>Windows</kbd> + <kbd>P</kbd> and choose <b>Extend</b>. <span>“Duplicate” shows the same picture on both screens, so LoopCast sees only one.</span></li>
+      <li class="ns-mac">Open <b>System Settings › Displays</b> and make sure the projector is <b>not set to mirror</b> this screen.</li>
+    </ol>
+    <p class="ns-status" id="nsStatus" role="status" hidden></p>
+    <div class="modal-actions"><button class="key" id="nsHere">Use this screen instead</button><button class="key solid" id="nsFind">Find displays</button></div>
+  </div>
+</div>
 <div class="modal-scrim" id="about" hidden>
   <div class="modal about" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
     <div class="about-head">
@@ -1115,6 +1140,7 @@ async function rescanNow(quiet){
   buildOrder();
   if (p && curItem && quiet === false) { const idx = p.items.findIndex(it => it.name === curItem); S.pos = idx >= 0 ? S.order.indexOf(idx) : -1; }
   renderPlaylists(); renderGrid(); renderNowNext(); renderTransport();
+  if (S.lib.length) $('#welcome').hidden = true; // e.g. the first playlist was just made in an empty folder
   if (quiet === true) return;
   const after = fileKeys();
   const added = [...after].filter(k => !before.has(k)), gone = [...before].filter(k => !after.has(k)).length;
@@ -1138,7 +1164,8 @@ function loadLibrary(lib, folderName){
   $('#folderName').textContent = S.folderName || 'Choose folder'; $('#folderBtn').title = S.folderName ? 'Switch folders' : 'Choose your media folder';
   $('#rescanBtn').hidden = !(S.dir || S.dirPath);
   watchFolder();
-  $('#newPlBtn').hidden = !(native?.makePlaylist && S.dirPath);
+  $('#newPlBtn').hidden = !native?.makePlaylist;
+  $('#startBlankBtn').hidden = !native?.makePlaylist || lib.length > 0;
   if (lib.length) $('#welcome').hidden = true;
   else {
     $('#welcome').hidden = false;
@@ -1277,6 +1304,34 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 focus();
 <\/script></body></html>`;
 
+/* ---------- no second screen: help instead of a silent fallback ---------- */
+function noScreenHelp(){
+  const m = $('#noScreen'), box = m.querySelector('.noscreen'), st = $('#nsStatus'), prev = document.activeElement;
+  const plat = (updInfo && updInfo.platform) || (/Mac/i.test(navigator.platform) ? 'darwin' : /Win/i.test(navigator.platform) ? 'win32' : '');
+  box.classList.toggle('mac', plat === 'darwin'); box.classList.toggle('win', plat === 'win32');
+  st.hidden = true; m.hidden = false; modalBusy = true;
+  $('#nsFind').focus();
+  const btns = () => [$('#nsHere'), $('#nsFind')];
+  const keys = e => {
+    if (e.key === 'Escape') { e.preventDefault(); close(); }
+    else if (e.key === 'Tab') { e.preventDefault(); const b = btns(); (document.activeElement === b[1] ? b[0] : b[1]).focus(); }
+    e.stopPropagation();
+  };
+  function close(){ m.hidden = true; modalBusy = false; document.removeEventListener('keydown', keys, true); m.onclick = null; prev?.focus?.(); }
+  document.addEventListener('keydown', keys, true);
+  m.onclick = e => { if (e.target === m) close(); };
+  $('#nsHere').onclick = () => { close(); goFullHere(false); };
+  $('#nsFind').onclick = async () => {
+    const b = $('#nsFind'); b.disabled = true; b.textContent = 'Looking…';
+    const d = await detectScreens(false).catch(() => null);
+    b.disabled = false; b.textContent = 'Find displays';
+    const n = d?.screens?.length || 1;
+    if (n >= 2) { close(); toast('Found the projector. Showing it there now.'); openOutput(); return; }
+    st.textContent = 'Still only one screen. Check the steps above, then press Find displays again.'; st.hidden = false;
+    box.classList.remove('shake'); void box.offsetWidth; box.classList.add('shake');
+  };
+}
+
 /* ---------- fullscreen on this screen (no second display) ---------- */
 let hintT, idleT;
 function showHereHint(text, ms = 3500){
@@ -1301,14 +1356,19 @@ $('#monitor').addEventListener('mousemove', () => {
 });
 $('#hereBtn').onclick = () => goFullHere(false);
 
-async function openOutput(){
+async function openOutput({ unattended = false } = {}){
   if (outputOpen()) { outWin.focus(); return; }
-  if (native) native.setOutputDisplay(settings.screen);
+  if (native) { await detectScreens(true).catch(() => {}); native.setOutputDisplay(settings.screen); } // look again: a projector may have been plugged in since
   else if (!screenDetails && 'getScreenDetails' in window) {
     try { const st = await navigator.permissions.query({ name:'window-management' }); if (st.state !== 'denied') await detectScreens(true); } catch { await detectScreens(true); }
   }
   // Only one screen (or "This screen" chosen): fill this one instead of opening a small window.
-  if (settings.screen === 'here' || (settings.screen === 'auto' && screenDetails && screenDetails.screens.length < 2)) { goFullHere(settings.screen !== 'here'); return; }
+  if (settings.screen === 'here') { goFullHere(false); return; }
+  if (settings.screen === 'auto' && screenDetails && screenDetails.screens.length < 2) {
+    // Nobody at the computer (the show started by itself): just use this screen, as before.
+    if (unattended) { goFullHere(true); return; }
+    noScreenHelp(); return;
+  }
   const s = native ? null : chosenScreen();
   let features = s ? `popup,left=${s.availLeft},top=${s.availTop},width=${s.availWidth},height=${s.availHeight}` : 'popup,width=1280,height=720';
   // Chrome can open a pop-up already fullscreen once window management is allowed; browsers that don't support it ignore this.
@@ -2023,7 +2083,7 @@ if (native?.loginItem) {
 } else $('#loginItemRow').hidden = true;
 function autoStartShow(){
   if (!settings.autoStart || !S.lib.length) return;
-  openOutput();
+  openOutput({ unattended: true });
   setTimeout(() => playPlaylist(S.plIndex), 600);
   toast('Started the show automatically. Turn this off in Settings › When LoopCast opens.', 6000);
 }
@@ -2161,12 +2221,24 @@ async function streamForItem(it){
   return getStream(d.id);
 }
 $('#newPlBtn').onclick = newPlaylist;
+$('#startBlankBtn').onclick = newPlaylist;
+// Desktop app: playlists can be made before any folder is chosen (they go in Documents/LoopCast).
+if (native?.makePlaylist) { $('#newPlBtn').hidden = false; if (!S.lib.length) $('#startBlankBtn').hidden = false; }
 async function newPlaylist(){
-  if (!native?.makePlaylist || !S.dirPath) { toast(native ? 'Choose your media folder first.' : 'In the browser version, make a new folder inside your media folder, then press Refresh.'); return; }
-  const v = await ask({ title: 'New playlist', body: 'LoopCast makes a folder for it inside your media folder. Add files, web pages or inputs to it from here.',
+  if (!native?.makePlaylist) { toast('In the browser version, make a new folder inside your media folder, then press Refresh.'); return; }
+  const noFolder = !S.dirPath;
+  const v = await ask({ title: 'New playlist',
+    body: noFolder
+      ? 'You haven’t chosen a media folder yet, so LoopCast will keep your playlists in Documents › LoopCast. Add web pages, cameras or files to it from here. You can switch to another folder anytime.'
+      : 'LoopCast makes a folder for it inside your media folder. Add files, web pages or inputs to it from here.',
     fields: [{ label: 'Name', placeholder: 'Cameras and web' }], ok: 'Create', validate: v => v[0] ? null : 'Give the playlist a name.' });
   if (!v) return;
   try {
+    if (noFolder) {
+      const d = await native.defaultFolder();
+      await useNativePath(d);
+      if (!S.dirPath) throw new Error('no folder');
+    }
     const name = await native.makePlaylist({ dir: S.dirPath, name: v[0] });
     await rescan(true);
     const i = S.lib.findIndex(p => p.name === name && !p.copyOf);
@@ -2233,7 +2305,7 @@ native?.onPhoneFile?.(async f => {
 });
 
 /* ---------- About ---------- */
-const APP_VERSION = '1.14.0', PDFJS_VERSION = '6.5.438';
+const APP_VERSION = '1.15.0', PDFJS_VERSION = '6.5.438';
 async function openAbout(){
   const info = native?.appInfo ? await native.appInfo().catch(() => null) : null;
   const os = info ? ({ win32:'Windows', darwin:'macOS', linux:'Linux' }[info.platform] || info.platform) + ` (${info.arch})` : null;
