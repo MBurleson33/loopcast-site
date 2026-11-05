@@ -350,3 +350,13 @@ footer .wrap>div{border-top:1px solid var(--line);padding-top:28px}
 .words h2.big{margin:0 auto;max-width:22ch;font-size:clamp(28px,3vw,40px)}
 .words .hint{font-size:15px;text-wrap:pretty}
 .words .btn{margin-top:18px}
+/* Ko-fi support */
+.kofi-nav{gap:7px;padding:0 14px}
+.kofi-nav svg{color:var(--tally)}
+.kofi-card{display:flex;align-items:center;gap:18px;margin-top:28px;padding:18px 20px;border-radius:18px;background:rgba(23,22,15,.06);border:1px solid rgba(23,22,15,.12)}
+.kofi-ic{flex:none;width:52px;height:52px;border-radius:14px;background:var(--ink);color:var(--tally);display:grid;place-items:center}
+.kofi-card div{flex:1;display:flex;flex-direction:column;gap:2px;font-size:16px;line-height:1.4;color:var(--ink)}
+.kofi-card div span{color:#4d4836;font-size:15px}
+.kofi-btn{flex:none;height:46px;padding:0 22px;font-size:16px;background:var(--tally);color:#fff}
+.kofi-btn:hover{filter:brightness(1.08)}
+@media (max-width:640px){.kofi-card{flex-wrap:wrap}.kofi-card div{flex-basis:calc(100% - 70px)}.kofi-btn{width:100%;justify-content:center}.kofi-nav{display:none}}
