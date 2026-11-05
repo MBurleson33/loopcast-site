@@ -360,3 +360,12 @@ footer .wrap>div{border-top:1px solid var(--line);padding-top:28px}
 .kofi-btn{flex:none;height:46px;padding:0 22px;font-size:16px;background:var(--tally);color:#fff}
 .kofi-btn:hover{filter:brightness(1.08)}
 @media (max-width:640px){.kofi-card{flex-wrap:wrap}.kofi-card div{flex-basis:calc(100% - 70px)}.kofi-btn{width:100%;justify-content:center}.kofi-nav{display:none}}
+/* Real event photos (home page) */
+.real{text-align:center}
+.real h2.big{margin:0 auto;max-width:22ch;font-size:clamp(30px,3.4vw,46px)}
+.real .hint{margin:14px auto 0;max-width:56ch;font-size:16px;color:var(--muted);text-wrap:pretty}
+.real-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:36px;text-align:left}
+.real-grid figure{margin:0}
+.real-grid img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:18px;border:1px solid var(--line)}
+.real-grid figcaption{margin-top:10px;font-size:14px;color:var(--faint)}
+@media (max-width:720px){.real-grid{grid-template-columns:1fr}}
