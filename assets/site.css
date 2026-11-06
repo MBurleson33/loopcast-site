@@ -369,3 +369,6 @@ footer .wrap>div{border-top:1px solid var(--line);padding-top:28px}
 .real-grid img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:18px;border:1px solid var(--line)}
 .real-grid figcaption{margin-top:10px;font-size:14px;color:var(--faint)}
 @media (max-width:720px){.real-grid{grid-template-columns:1fr}}
+/* "Coming soon" feature card */
+.stream-card{position:relative;border-color:rgba(232,65,44,.45)}
+.soon{display:inline-block;align-self:flex-start;width:max-content;font-size:12px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:#fff;background:var(--tally);border-radius:999px;padding:3px 10px;margin-bottom:6px}
