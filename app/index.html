@@ -153,8 +153,8 @@ main{display:grid;grid-template-columns:232px 1fr;height:calc(100% - 60px)}
 .monhead{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 24px 10px;font-size:13.5px;color:var(--muted)}
 .monhead .tl{display:flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden}
 .monhead .tl b{color:var(--text);font-weight:600;overflow:hidden;text-overflow:ellipsis}
-.monwrap{container-type:size;display:flex;align-items:center;justify-content:center;padding:0 24px;min-height:200px}
-.monitor{position:relative;--ar:1.7778;width:min(100cqw - 0px,100cqh * var(--ar));aspect-ratio:var(--ar);background:#000;border-radius:var(--r-md);overflow:hidden;
+.monwrap{container-type:size;display:flex;align-items:center;justify-content:center;padding:0 24px;min-height:0;overflow:hidden} /* the preview shrinks to fit; it used to keep 200 px and slide under the controls in a short window */
+.monitor{position:relative;--ar:1.7778;width:min(100cqw - 12px,(100cqh - 12px) * var(--ar));aspect-ratio:var(--ar);background:#000;border-radius:var(--r-md);overflow:hidden;
   outline:2px solid var(--line);outline-offset:4px;transition:outline-color .3s}
 .monitor.onair{outline-color:var(--tally)}
 #monitor:fullscreen{width:100vw;height:100vh;aspect-ratio:auto;border-radius:0;outline:none;background:#000}
@@ -186,6 +186,8 @@ main{display:grid;grid-template-columns:232px 1fr;height:calc(100% - 60px)}
 .play{width:64px;height:52px;border-radius:var(--r-md)}
 .scenes{display:flex;gap:8px;justify-content:flex-end}
 .scenes .key{min-width:76px;padding-left:12px;padding-right:12px}
+/* Not enough room for title, transport and all the scene buttons on one line: the buttons get a row of their own. */
+@media (max-width:1180px) and (min-width:861px){.now{grid-template-columns:1fr auto;row-gap:12px}.scenes{grid-column:1/-1;justify-content:center;flex-wrap:wrap}}
 #clockSet .fieldrow,#msgSet .fieldrow,#pipSet .fieldrow,#qrSet .fieldrow{flex-wrap:wrap;row-gap:8px}
 #clockSet .seg,#msgSet .seg,#pipSet .seg,#qrSet .seg{max-width:100%}
 .ck-sw{display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
@@ -340,6 +342,8 @@ body.dropping .drophint{display:flex}
 .modal .fld{display:block;font-size:13px;color:var(--muted);margin:14px 0 6px}
 .inp.txt{width:100%;height:42px;background:var(--base);border:1px solid var(--line);border-radius:var(--r-sm);padding:0 12px;color:var(--text);font:inherit}
 .inp.txt:focus{outline:2px solid var(--lit);outline-offset:1px}
+/* The input picker in the left rail: fit the rail (the general .inp.txt rule above made it full width plus margins, so it overflowed). */
+.inp.txt.insel{margin:2px 10px 0;width:calc(100% - 20px);max-width:calc(100% - 20px);height:38px;font-size:14px;box-sizing:border-box;text-overflow:ellipsis}
 .modal .err{color:#ff8a78;font-size:13.5px;margin:10px 0 0}
 .modal.about{width:min(520px,100%)}
 .phone-btn{display:inline-flex;align-items:center;gap:8px;position:relative}
@@ -386,7 +390,8 @@ body.dropping .drophint{display:flex}
   opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:60;max-width:min(560px,90vw);box-shadow:0 8px 30px rgba(0,0,0,.4)}
 #toast.show{opacity:1;transform:translate(-50%,0)}
 
-@media (max-width:980px){
+/* Stacked layout for narrow browser windows only: the desktop app's smallest window (900 px) keeps the full layout. */
+@media (max-width:860px){
   main{grid-template-columns:1fr;grid-template-rows:auto 1fr;height:auto;min-height:calc(100% - 60px)}
   .rail{border-right:0;border-bottom:1px solid var(--line);display:flex;gap:4px;overflow-x:auto;padding:10px}
   .rail h2{display:none}
@@ -399,7 +404,7 @@ body.dropping .drophint{display:flex}
   .scenes{justify-content:center}
   .welcome .inner{grid-template-columns:1fr}
   .tree{display:none}
-  .folder{display:none}
+  .folder span{display:none} /* icon only: switching folders must stay possible */
 }
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important}}
 </style>
@@ -5099,7 +5104,7 @@ native?.onPhoneFile?.(async f => {
 });
 
 /* ---------- About ---------- */
-const APP_VERSION = '1.17.0', PDFJS_VERSION = '6.5.438';
+const APP_VERSION = '1.17.1', PDFJS_VERSION = '6.5.438';
 async function openAbout(){
   const info = native?.appInfo ? await native.appInfo().catch(() => null) : null;
   const os = info ? ({ win32:'Windows', darwin:'macOS', linux:'Linux' }[info.platform] || info.platform) + ` (${info.arch})` : null;
