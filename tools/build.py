@@ -5,7 +5,9 @@ Run from the repo root:  python3 tools/build.py
 Edit page content in PAGES below (or tools/home.html for the homepage body), then rebuild and commit.
 app/index.html is not built here; the LoopCast release workflow updates it.
 """
-import json, os, datetime, html
+import json, os, sys, datetime, html
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import guides
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = 'https://loopcast.space'
@@ -21,18 +23,30 @@ APP = {"@type": "SoftwareApplication", "@id": f"{SITE}/#app", "name": "LoopCast"
        "operatingSystem": "Windows 10, Windows 11, macOS 12 or later, web browser",
        "description": "Offline looping media player for event screens. Plays a folder of images, PDFs and videos on a projector or TV, on repeat, without internet.",
        "featureList": ["Loops images, PDFs and video", "Folder-based playlists", "Projector output with live preview",
-                       "Logo screen and fade to black", "Loop, repeat or stop per playlist", "Live HDMI capture inputs",
-                       "Fullscreen on a single screen", "Works offline"],
+                       "Logo screen and fade to black", "Loop, repeat or stop per playlist", "Manual mode for presentation clickers",
+                       "Countdown timer to a time or for minutes", "On-screen clock and message bar", "QR code overlay",
+                       "Picture in picture camera", "Streaming window for OBS, vMix and Ecamm", "Phone remote control over Wi-Fi",
+                       "Live web pages", "Send photos from a phone", "Live HDMI capture inputs", "Playlist schedule by time of day",
+                       "Starts automatically for unattended screens", "Works offline"],
        "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
        "publisher": {"@id": f"{SITE}/#org"}, "downloadUrl": f"{SITE}/#download"}
 
-GUIDES = [  # (path, title, one-line summary) for the /guides/ hub and the sitemap
-    ('/guides/loop-slideshow-on-tv/', 'How to loop a slideshow on a TV', 'Connect a laptop, extend the display, and keep pictures repeating all day.'),
-    ('/guides/lobby-tv-slideshow-from-laptop/', 'Put a slideshow on a lobby TV from a laptop', 'Cables, display settings and keeping the screen from going to sleep.'),
-    ('/guides/church-announcement-loop/', 'Set up a church announcement loop', 'A weekly routine any volunteer can run before the service.'),
-    ('/guides/free-digital-signage-windows-mac/', 'Free digital signage for Windows and Mac', 'Four free ways to run a looping sign, and when each one fits.'),
-    ('/guides/loop-powerpoint-pdf-on-projector/', 'How to loop a PowerPoint or PDF on a projector', 'Three ways, from PowerPoint’s own setting to a dedicated player.'),
+GUIDES = [  # (path, title, one-line summary, group) for the /guides/ hub, related links and the sitemap
+    ('/guides/loop-slideshow-on-tv/', 'How to loop a slideshow on a TV', 'Connect a laptop, extend the display, and keep pictures repeating all day.', 'How-to'),
+    ('/guides/lobby-tv-slideshow-from-laptop/', 'Put a slideshow on a lobby TV from a laptop', 'Cables, sleep settings, and a screen that starts by itself.', 'How-to'),
+    ('/guides/church-announcement-loop/', 'Set up a church announcement loop', 'A weekly routine any volunteer can run before the service.', 'How-to'),
+    ('/guides/loop-powerpoint-pdf-on-projector/', 'How to loop a PowerPoint or PDF on a projector', 'Three ways, from PowerPoint’s own setting to a dedicated player.', 'How-to'),
+    ('/guides/free-digital-signage-windows-mac/', 'Free digital signage for Windows and Mac', 'Five free ways to run a looping sign, and when each one fits.', 'How-to'),
+    ('/guides/free-countdown-timer-event-screen/', 'A free countdown timer for event screens', 'Count down to a time, show a clock or a quick message.', 'Features'),
+    ('/guides/qr-code-on-projector-screen/', 'Show a QR code on a projector or TV', 'Giving, registration or a survey, in a corner over your slides.', 'Features'),
+    ('/guides/phone-remote-for-slideshow/', 'Run the slideshow from your phone', 'Next, logo, messages and countdowns from anywhere in the room.', 'Features'),
+    ('/guides/picture-in-picture-slides-camera/', 'Show a camera over your slides', 'Picture in picture with fixed corners, shapes and borders.', 'Features'),
+    ('/guides/obs-streaming-window/', 'Put looping slides into OBS, vMix or Ecamm', 'The streaming window for your livestream.', 'Features'),
+    ('/guides/free-propresenter-alternatives/', 'The best free ProPresenter alternatives', 'FreeShow, OpenLP, LoopCast and PowerPoint, honestly compared.', 'Compare'),
+    ('/guides/powerpoint-kiosk-mode/', 'PowerPoint kiosk mode, and when to use something else', 'Set it up, fix it, and know its limits.', 'Compare'),
+    ('/guides/free-yodeck-screencloud-alternatives/', 'Free alternatives to Yodeck and ScreenCloud', 'What cloud signage costs per screen, and when free is enough.', 'Compare'),
 ]
+
 
 PAGES_NAV = [  # footer links: (path, label)
     ('/features/', 'Features'), ('/uses/', 'Uses'),
@@ -84,7 +98,7 @@ def header(home=False):
 <header class="wrap">
   <nav class="top" aria-label="Main">
     <a class="brand" href="/" aria-label="LoopCast home"><img src="/assets/mark.svg" width="32" height="27" alt=""><span>LoopCast</span></a>
-    <div class="nav-r"><div class="nav-links">{links}</div><a class="btn solid sm" href="/app/" target="_blank" rel="noopener">Open in your browser</a></div>
+    <div class="nav-r"><div class="nav-links">{links}</div><a class="btn ghost sm kofi-nav" href="https://ko-fi.com/loopcast" target="_blank" rel="noopener"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V9z"/><path d="M17 10h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M8 3.5c0 1 1 1 1 2M12 3.5c0 1 1 1 1 2"/></svg><span>Support</span></a><a class="btn solid sm" href="/app/" target="_blank" rel="noopener">Open in your browser</a></div>
   </nav>
 </header>
 '''
@@ -110,6 +124,7 @@ FOOTER = '''<footer>
     <div class="foot-row">
       <span class="b"><img src="/assets/mark.svg" width="24" height="20" alt=""><span><b>LoopCast</b>, for every space with a screen.</span></span>
       <span>Questions? <a href="mailto:hello@loopcast.space">hello@loopcast.space</a></span>
+      <span><a href="https://ko-fi.com/loopcast" target="_blank" rel="noopener">Support LoopCast on Ko-fi</a></span>
       <span>Made by Treetop Business Solutions in Oklahoma City. © 2026</span>
     </div>
   </div></div>
@@ -130,26 +145,32 @@ GET = f'''<section id="download" class="s wrap">
 '''
 
 def crumbs_ld(path, name):
-    return {"@type": "BreadcrumbList", "itemListElement": [
-        {"@type": "ListItem", "position": 1, "name": "LoopCast", "item": SITE + "/"},
-        {"@type": "ListItem", "position": 2, "name": name, "item": SITE + path}]}
+    items = [("LoopCast", SITE + "/")]
+    if path.startswith('/guides/') and path != '/guides/':
+        items.append(("Guides", SITE + "/guides/"))
+    items.append((name, SITE + path))
+    return {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": i + 1, "name": n, "item": u} for i, (n, u) in enumerate(items)]}
 
-def related(current):
-    picks = [(p, l) for p, l in PAGES_NAV if p != current][:3]
-    blurbs = {'/guides/': 'Step-by-step how-tos', '/features/': 'Everything LoopCast can do', '/uses/': 'Conferences, churches, booths, lobbies','/conferences/': 'Walk-in loops, agendas and sponsors', '/churches/': 'Pre-service announcement loops',
-              '/trade-shows/': 'All-day loops on the booth TV', '/digital-signage/': 'Lobby, hallway and office screens',
-              '/guides/loop-powerpoint-pdf-on-projector/': 'Three ways, step by step', '/propresenter-alternative/': 'When you only need loops',
-              '/install/': 'Why Windows and Mac warn you, and what to do', '/faq/': 'Projectors, files, installs'}
-    return '<div class="related">' + ''.join(f'<a href="{p}"><b>{l}</b><span>{blurbs[p]}</span></a>' for p, l in picks) + '</div>'
+BLURBS = {'/guides/': 'Step-by-step how-tos', '/features/': 'Everything LoopCast can do', '/uses/': 'Conferences, churches, booths, lobbies', '/conferences/': 'Walk-in loops, agendas and sponsors', '/churches/': 'Pre-service announcement loops',
+          '/trade-shows/': 'All-day loops on the booth TV', '/digital-signage/': 'Lobby, hallway and office screens', '/propresenter-alternative/': 'An honest comparison',
+          '/install/': 'Why Windows and Mac warn you, and what to do', '/faq/': 'Projectors, files, installs'}
+TITLES = dict(PAGES_NAV)
+TITLES['/propresenter-alternative/'] = 'LoopCast vs ProPresenter'
+for _p, _t, _d, _g in GUIDES:
+    TITLES[_p], BLURBS[_p] = _t, _d
 
-def page(path, crumb, title, desc, h1, lede, body, image=None, image_alt=None, extra_ld=None, wide=False):
+def related(current, picks=None):
+    picks = [p for p in (picks or []) if p != current] or [p for p, _ in PAGES_NAV if p != current][:3]
+    return '<div class="related">' + ''.join(f'<a href="{p}"><b>{TITLES[p]}</b><span>{BLURBS[p]}</span></a>' for p in picks[:3]) + '</div>'
+
+def page(path, crumb, title, desc, h1, lede, body, image=None, image_alt=None, extra_ld=None, wide=False, rel=None):
     ld = [ORG, APP, crumbs_ld(path, crumb)] + (extra_ld or [])
     kw = {}  # every page shares the logo preview image
     out = head(title, desc, path, ld=ld, **kw)
     out += header()
     out += f'''<main>
   <div class="wrap">
-    <p class="crumbs"><a href="/">LoopCast</a> › {esc(crumb)}</p>
+    <p class="crumbs"><a href="/">LoopCast</a> › {'<a href="/guides/">Guides</a> › ' if path.startswith('/guides/') and path != '/guides/' else ''}{esc(crumb)}</p>
     <div class="page-hero">
       <h1>{h1}</h1>
       <p>{lede}</p>
@@ -157,7 +178,7 @@ def page(path, crumb, title, desc, h1, lede, body, image=None, image_alt=None, e
     </div>
     {body if wide else '<div class="prose">' + chr(10) + body + chr(10) + '    </div>'}
     <div class="more"><div class="eyebrow">Keep reading</div>
-    {related(path)}</div>
+    {related(path, rel)}</div>
   </div>
   {GET}
 </main>
@@ -175,14 +196,18 @@ FAQS = [
     ("Is LoopCast free?", "Yes, LoopCast is free during our launch. You can download it for Windows and Mac, or open it in your browser, at no cost."),
     ("Does it need internet?", "No. LoopCast runs on your computer and plays files from a folder on it. You only need internet to download it."),
     ("Will it work with our projector or TV?", "Yes, if your computer sees it as a second display: a projector, a TV, or an LED wall processor over HDMI, DisplayPort or USB-C. LoopCast opens the output fullscreen on it at its own resolution."),
+    ("Can I send LoopCast to a livestream, like OBS?", "Yes. In Settings › Projector, choose a Streaming window (1920×1080 or 1280×720) and press Open streaming window. The show opens in its own window: add it to OBS, vMix or Ecamm as a Window Capture source and pick LoopCast Stream. Web pages, the clock and messages show up in the stream just like on the projector, and it keeps playing behind other windows (just don’t minimize it). This is a Pro feature, free while LoopCast is in its launch."),
     ("What if I only have one screen?", "Use Fullscreen here (the expand button, or the F key). LoopCast fills the screen it runs on, and Esc brings back the controls. If LoopCast only finds one display, Show on projector does this for you."),
     ("What kinds of files can I use?", "Images (JPG, PNG, GIF, WebP, SVG), PDFs, and video (MP4, WebM, MOV). Each page of a PDF becomes its own slide. MP4 with H.264 is the safest choice for video."),
     ("Can it play PowerPoint or Keynote files?", "Not directly. Save your deck as a PDF (in PowerPoint, File › Export › PDF; in Keynote, File › Export To › PDF) and put the PDF in the folder. If LoopCast finds a PowerPoint or Keynote file, it tells you how to export it."),
     ("Can I click through slides myself?", "Yes. Set a playlist’s Advance option to Manual and each slide stays up until you press next: the arrow keys, Page Up and Page Down, or a presentation clicker. Click any slide to jump straight to it. Videos play once and hold on their last frame."),
     ("Can I add or swap files during an event?", "Yes. Add or remove files in the folder and LoopCast picks up the changes the next time the playlist comes around, or right away if you press Rescan."),
-    ("Can I show a countdown or a quick message?", "Yes. Press T (or Timer) for a countdown that covers the screen, like “We’ll be back in 10:00,” and returns to the slides at zero. Press M (or Message) to show a bar of text along the bottom of the screen over whatever is playing."),
+    ("Can I show a countdown or a quick message?", "Yes. Press T (or Timer) for a countdown that covers the screen, like “We’ll be back in 10:00,” and returns to the slides at zero. Type a time instead of minutes, like 9:30 AM, to count down to it. Press M (or Message) to show a bar of text over whatever is playing, and C to show the time in a corner."),
     ("Can it switch playlists by itself at certain times?", "Yes. In Settings › Schedule, add times and the playlist for each, like Walk-in at 8:30 and Lunch at 12:00. For lobby TVs, LoopCast can also start the show automatically when it opens and open when the computer starts."),
     ("Can I show a live web page?", "Yes, in the desktop app. Open a playlist, choose Add web page, and paste the address. The page plays live like any other item: polls, social walls, schedules or dashboards. When the playlist is set to Manual, or the page is on repeat, you can click, scroll and type on it from the preview. Web pages need an internet connection."),
+    ("Can I show a QR code on screen?", "Yes. Press QR (or Q), paste a link for giving, registration or a survey, and add a few words to go under it. LoopCast shows the code in a corner over whatever is playing until you press Q again. Pick the corner and size in Settings › QR code."),
+    ("Can I control LoopCast from my phone?", "Yes, in the desktop app. Click From phone, choose Remote control and scan the code with a phone on the same Wi-Fi. The remote opens in the phone’s browser: next and back, Black, Logo, messages, countdowns, the clock, the QR code, picture in picture and switching playlists. This is a Pro feature, free while LoopCast is in its launch."),
+    ("Can I show a camera in the corner of the slides?", "Yes, in the desktop app. Picture in picture puts a webcam or USB HDMI capture device in a corner of the screen while the slides keep changing behind it. Choose the camera, corner, size, shape and border in Settings › Picture in picture, then press PiP (or P). This is a Pro feature, free while LoopCast is in its launch."),
     ("Can I send photos from my phone?", "Yes, in the desktop app. Click From phone and LoopCast shows a QR code. Scan it with a phone on the same Wi-Fi, pick photos, videos or a PDF, and they arrive in a Phone uploads playlist within seconds. Nothing goes on screen until you choose Show now. Some guest and venue networks block devices from reaching each other; if the phone can’t connect, try another network."),
     ("Can I show a presenter’s laptop or a camera?", "Yes. Plug it into a USB HDMI capture stick and it shows up under Inputs. Preview it, then put it on screen with one click. The playlist waits underneath, and Logo and Black still work."),
     ("Does it work on a Mac?", "Yes, on macOS 12 or later, on Apple silicon and Intel Macs. The first time you open it, go to System Settings › Privacy & Security and choose Open Anyway."),
@@ -194,19 +219,26 @@ FAQS = [
 
 def build():
     # ---------- homepage ----------
-    home = open(os.path.join(ROOT, 'tools', 'home.html')).read().replace('{{GET}}', GET.strip())
+    KOFI_CARD = '''    <div class="kofi-card">
+      <span class="kofi-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V9z"/><path d="M17 10h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M8 3.5c0 1 1 1 1 2M12 3.5c0 1 1 1 1 2"/></svg></span>
+      <div><b>LoopCast is free during our launch.</b><span>If it helps your event, a coffee helps keep it growing.</span></div>
+      <a class="btn kofi-btn" href="https://ko-fi.com/loopcast" target="_blank" rel="noopener">Buy us a coffee</a>
+    </div>
+'''
+    get_home = GET.replace('  </div>\n</section>', KOFI_CARD + '  </div>\n</section>')
+    home = open(os.path.join(ROOT, 'tools', 'home.html')).read().replace('{{GET}}', get_home.strip())
     out = head('LoopCast: free app to loop pictures, videos and PDFs on a projector or TV',
                'LoopCast is a free app that plays your pictures, videos and PDFs on a projector or TV, on repeat. For conferences, churches, trade show booths and lobby TVs. Windows, Mac or browser.',
                '/', ld=[ORG, APP, {"@type": "WebSite", "@id": f"{SITE}/#site", "name": "LoopCast", "url": f"{SITE}/", "publisher": {"@id": f"{SITE}/#org"}}])
-    out += header(home=True) + '\n' + home + FOOTER + '''
+    out += header(home=True) + '\n' + home + FOOTER.replace('</footer>\n', '</footer>\n<script src="/assets/testimonials.js" defer></script>\n') + '''
 </body>
 </html>
 '''
     open(os.path.join(ROOT, 'index.html'), 'w').write(out)
 
     # ---------- features / uses ----------
-    page('/features/', 'Features', 'LoopCast features: logo screen, black, manual mode, PDFs, live inputs',
-         'Everything LoopCast does: one-key logo and black screens, auto or manual advance, clicker support, PDFs as slides, per-file repeat, live inputs and more.',
+    page('/features/', 'Features', 'LoopCast features: countdowns, QR codes, phone remote, OBS, logo and black',
+         'Everything LoopCast does: loop images, PDFs and video; one-key logo and black; countdowns, a clock and messages; QR codes; picture in picture; a phone remote; and a streaming window for OBS.',
          'Everything it can do.', 'Simple on the surface, with the controls you want when the room is full.',
          open(os.path.join(ROOT, 'tools', 'features.html')).read(), wide=True)
     page('/uses/', 'Uses', 'Where to use LoopCast: conferences, churches, trade shows and lobbies',
@@ -233,30 +265,17 @@ def build():
       <p>Your laptop shows a live preview of what the room sees, outlined red when it’s on screen, with the next item marked. The projector output opens fullscreen on the second display. If the venue has a presenter laptop or camera feed, a USB HDMI capture stick turns it into a live input you can cut to and back.</p>
       <h3>No Wi-Fi required</h3>
       <p>Hotel and convention-center networks are unpredictable. LoopCast plays from files on your computer, so the loop keeps going whether or not the internet does.</p>
+      <h2>On the day</h2>
+      <ul>
+        <li><strong>Break timers and start times:</strong> press T for a full-screen countdown, in minutes or to a time. <a href="/guides/free-countdown-timer-event-screen/">Countdowns, clocks and messages</a>.</li>
+        <li><strong>Session feedback and the event app:</strong> a QR code in the corner, over every slide. <a href="/guides/qr-code-on-projector-screen/">QR codes on screen</a>.</li>
+        <li><strong>Run it from the floor:</strong> next, logo, messages and timers from your phone. <a href="/guides/phone-remote-for-slideshow/">The phone remote</a>.</li>
+        <li><strong>The speaker on the big screen:</strong> a camera in the corner while the slides keep going. <a href="/guides/picture-in-picture-slides-camera/">Picture in picture</a>.</li>
+        <li><strong>Hybrid events:</strong> the same walk-in loop and countdowns on the livestream. <a href="/guides/obs-streaming-window/">Slides into OBS</a>.</li>
+      </ul>
       <h3>Breakout rooms too</h3>
       <p>Put LoopCast on each room’s laptop with that room’s session details. If a room only has one screen, Fullscreen here fills it, and Esc gets you back to the controls.</p>''',
          image=f"{SITE}/assets/og.jpg")
-
-    # ---------- churches ----------
-    page('/churches/', 'Churches',
-         'Church announcement loop software | LoopCast',
-         'Loop church announcements, welcome slides and countdown videos before the service. Free, offline, and simple enough for any volunteer.',
-         'Pre-service announcement loops for churches.',
-         'Welcome slides, announcements and countdown videos on the sanctuary and lobby screens, looping until the service starts. Simple enough for any volunteer.',
-         f'''      <h2>The announcement loop, without tying up the presentation computer</h2>
-      <p>Most churches loop announcements before the service and between services. LoopCast does that one job well: point it at a folder of announcement slides and it plays them on repeat, fullscreen on the sanctuary projector or the lobby TV.</p>
-      <ul>
-        <li><strong>Volunteer-friendly.</strong> Choose the folder, click Show on projector, press play. Nothing to configure.</li>
-        <li><strong>Announcements as a PDF.</strong> Export this week’s slides from Canva, PowerPoint or Keynote as a PDF and drop it in. Each page becomes a slide.</li>
-        <li><strong>Countdown video at the end.</strong> Set the pre-service playlist to stop on its last item, or end on your church logo.</li>
-        <li><strong>Lobby and kids’ check-in screens.</strong> Run a separate copy on each screen’s computer, each with its own folder.</li>
-      </ul>
-      {fig('use-church.webp', 'A church welcome slide: coffee in the lobby, service starts at 10:30.', 'A pre-service welcome slide.', 960, 540)}
-      <h2>Update it in seconds</h2>
-      <p>Replace last week’s files with this week’s and LoopCast picks them up the next time the loop comes around. Want a version for the second service without one announcement? Duplicate the playlist and hide that slide. The original stays as it was.</p>
-      <h3>Works alongside your worship software</h3>
-      <p>LoopCast doesn’t replace lyric and sermon software. It’s for the loops around the service, on the same projector before worship starts or on a different screen entirely.</p>''',
-         image=f"{SITE}/assets/use-church.webp", image_alt="A church welcome slide shown by LoopCast.")
 
     # ---------- trade shows ----------
     page('/trade-shows/', 'Trade shows',
@@ -274,7 +293,11 @@ def build():
       </ul>
       {fig('use-booth.webp', 'A trade-show booth slide: demos every half hour.', 'A demo-schedule slide in the booth loop.', 960, 540)}
       <h2>Live demos on the big screen</h2>
-      <p>Plug a demo laptop or camera into a USB HDMI capture stick and it appears under Inputs. Cut to the live demo, then press play to go back to the loop.</p>''',
+      <p>Plug a demo laptop or camera into a USB HDMI capture stick and it appears under Inputs. Cut to the live demo, then press play to go back to the loop. Or keep the loop going and put the camera in a corner with <a href="/guides/picture-in-picture-slides-camera/">picture in picture</a>.</p>
+      <h2>Collect leads from the aisle</h2>
+      <p>Press Q and paste your demo booking or brochure link, and a QR code sits in the corner of every slide. <a href="/guides/qr-code-on-projector-screen/">QR codes on screen</a>.</p>
+      <h2>Already using PowerPoint?</h2>
+      <p>PowerPoint’s kiosk mode can loop one deck, but changing it means stopping the show in front of visitors. <a href="/guides/powerpoint-kiosk-mode/">PowerPoint kiosk mode vs a looping player</a>.</p>''',
          image=f"{SITE}/assets/use-booth.webp", image_alt="A trade-show booth slide shown by LoopCast.")
 
     # ---------- digital signage ----------
@@ -294,62 +317,12 @@ def build():
       {fig('use-lobby.webp', 'A lobby display listing today’s events and rooms.', 'A “today in the building” slide.', 960, 540)}
       <h2>Update it from the folder</h2>
       <p>LoopCast checks the folder every time a playlist comes around, so changing the sign is as simple as replacing a file. Put the folder in a shared drive or a synced cloud folder and anyone on your team can update it.</p>
-      {fig('use-school.webp', 'A school hallway slide: Spirit Week, Friday is blue and gold.', 'A hallway announcement for Spirit Week.', 960, 540)}''',
+      {fig('use-school.webp', 'A school hallway slide: Spirit Week, Friday is blue and gold.', 'A hallway announcement for Spirit Week.', 960, 540)}
+      <h2>Runs by itself</h2>
+      <p>Turn on <strong>Start the show automatically</strong> and <strong>Open LoopCast when this computer starts</strong>, and the screen comes back by itself after a restart or power cut. <strong>Settings › Schedule</strong> switches playlists by time of day: the breakfast menu until 10:30, lunch until 2:00. <a href="/guides/lobby-tv-slideshow-from-laptop/">Set up a lobby TV, step by step</a>.</p>
+      <h2>Compared with cloud signage</h2>
+      <p>Services like Yodeck and ScreenCloud manage many screens from a web dashboard and charge per screen. For one or a few screens in one place, a free offline player is often enough. <a href="/guides/free-yodeck-screencloud-alternatives/">An honest comparison</a>.</p>''',
          image=f"{SITE}/assets/use-lobby.webp", image_alt="A lobby digital sign shown by LoopCast.")
-
-    # ---------- guide ----------
-    page('/guides/loop-powerpoint-pdf-on-projector/', 'Loop a PowerPoint or PDF',
-         'How to loop a PowerPoint or PDF on a projector | LoopCast',
-         'Three ways to make a PowerPoint, Keynote, Google Slides or PDF slideshow loop continuously on a projector or TV, with step-by-step instructions.',
-         'How to loop a PowerPoint or PDF on a projector.',
-         'Three ways to keep a slideshow repeating on a projector or TV, from the setting already in your presentation app to a dedicated looping player.',
-         f'''      <h2>1. In PowerPoint</h2>
-      <ol>
-        <li>On the <strong>Transitions</strong> tab, check <strong>After</strong> and set how many seconds each slide stays up. Click <strong>Apply To All</strong>.</li>
-        <li>On the <strong>Slide Show</strong> tab, choose <strong>Set Up Slide Show</strong> and check <strong>Loop continuously until ‘Esc’</strong>.</li>
-        <li>Start the slide show. It repeats until you press Esc.</li>
-      </ol>
-      <h2>2. In Keynote or Google Slides</h2>
-      <p><strong>Keynote:</strong> in the Document inspector, set the presentation type to <strong>Self-Playing</strong>, choose a delay, and check <strong>Loop slideshow</strong>.</p>
-      <p><strong>Google Slides:</strong> start the presentation, open the options menu in the presenter toolbar, choose <strong>Auto-play</strong>, pick a speed and check <strong>Loop</strong>.</p>
-      <p>These work for a single deck. They get awkward when you need video in the loop, more than one loop for different parts of the day, a logo screen, or a preview of what the room sees.</p>
-      <h2>3. With LoopCast</h2>
-      <p>LoopCast is a free player built for this job. It loops images, PDFs and video, and gives you separate playlists, a live preview and one-key logo and black screens.</p>
-      <ol>
-        <li><strong>Export your deck as a PDF.</strong> PowerPoint: File › Export › PDF. Keynote: File › Export To › PDF. Google Slides: File › Download › PDF.</li>
-        <li><strong>Put the PDF in a folder</strong>, along with any videos or images you want in the same loop. Each page of the PDF becomes a slide.</li>
-        <li><strong>Open LoopCast and choose the folder.</strong> Click <strong>Show on projector</strong>, then play. Use <strong>Fullscreen here</strong> if there’s only one screen.</li>
-      </ol>
-      {fig('operator.webp', 'LoopCast’s control window with a live preview of the slide on the projector and a filmstrip of the playlist.', 'LoopCast’s controls, with a live preview of what the room sees.', 2880, 1720)}
-      <h3>Tips for a slideshow that reads well from the back of the room</h3>
-      <ul>
-        <li>Use a 16:9 slide size to match most projectors and TVs.</li>
-        <li>Keep text large and short. Eight to ten seconds per slide is a good starting point.</li>
-        <li>For video, export MP4 (H.264). It plays everywhere.</li>
-      </ul>''',
-         image=f"{SITE}/assets/operator.webp", image_alt="LoopCast’s control window.")
-
-    # ---------- alternative ----------
-    page('/propresenter-alternative/', 'ProPresenter alternative',
-         'Simple ProPresenter alternative for looping slides | LoopCast',
-         'Only need to loop announcements, slides and video? LoopCast is a free, simple alternative to full presentation suites for looping on a projector.',
-         'A simple alternative for when you only need loops.',
-         'Full presentation suites do a lot. If what you need is announcements, slides and video looping on a screen, LoopCast does that one thing simply, for free.',
-         '''      <h2>Different tools for different jobs</h2>
-      <p>ProPresenter is professional presentation software for worship and live production, with lyrics, stage displays, multiple screens and much more. If you run services or productions with all of that, it’s built for you.</p>
-      <p>Plenty of screens only need a loop: a conference walk-in, a lobby TV, a booth display, a pre-service announcement loop on a second computer. For those, LoopCast is lighter and quicker to learn.</p>
-      <h2>What LoopCast does</h2>
-      <ul>
-        <li>Loops images, PDFs and video from folders, one folder per playlist.</li>
-        <li>Shows a live preview of the projector, with the current and next item marked.</li>
-        <li>Logo screen and fade to black on one key.</li>
-        <li>Per-playlist endings (loop, stop or end on the logo), per-item repeat, and a manual mode to click through slides with the keyboard or a clicker.</li>
-        <li>Live inputs from a USB HDMI capture stick.</li>
-        <li>Runs offline on Windows and Mac, or in any modern browser.</li>
-      </ul>
-      <h2>What it doesn’t do</h2>
-      <p>LoopCast isn’t a lyric or sermon presenter. It has no song library, stage display, timeline cues or video switching between multiple outputs. If you need those, a full presentation suite is the right tool, and LoopCast can still run the loops on a separate screen.</p>
-      <p class="crumbs" style="margin-top:32px">ProPresenter is a trademark of Renewed Vision. LoopCast is not affiliated with or endorsed by Renewed Vision.</p>''')
 
     # ---------- FAQ ----------
     faq_ld = {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in FAQS]}
@@ -421,134 +394,18 @@ def build():
 
 
     # ---------- guides hub ----------
-    hub = '      <div class="related" style="margin-top:0">' + ''.join(f'<a href="{p}"><b>{t}</b><span>{d}</span></a>' for p, t, d in GUIDES) + '</div>'
-    page('/guides/', 'Guides', 'LoopCast guides: looping slideshows on projectors and TVs',
-         'Step-by-step guides for looping slideshows, announcements and signage on a projector or TV, from a laptop, for free.',
+    groups = [('How-to', 'Step by step'), ('Features', 'Using LoopCast’s tools'), ('Compare', 'Comparisons')]
+    hub = ''.join(f'      <h2 style="margin:56px 0 18px;font-size:clamp(24px,2.4vw,32px)">{label}</h2>\n      <div class="related" style="margin-top:0">' +
+                  ''.join(f'<a href="{p}"><b>{t}</b><span>{d}</span></a>' for p, t, d, g in GUIDES if g == key) + '</div>\n' for key, label in groups)
+    hub += '      <h2 style="margin:56px 0 18px;font-size:clamp(24px,2.4vw,32px)">By place</h2>\n      <div class="related" style="margin-top:0">' + ''.join(
+        f'<a href="{p}"><b>{TITLES[p]}</b><span>{BLURBS[p]}</span></a>' for p in ['/conferences/', '/churches/', '/trade-shows/', '/digital-signage/', '/propresenter-alternative/']) + '</div>'
+    page('/guides/', 'Guides', 'Guides: looping slideshows, countdowns, QR codes and signage | LoopCast',
+         'Step-by-step guides for looping slideshows and announcements on a projector or TV, countdowns, QR codes, phone remotes and OBS, plus honest comparisons with PowerPoint, ProPresenter and cloud signage.',
          'Guides.', 'Plain, step-by-step help for getting pictures, videos and PDFs onto a screen and keeping them there.',
          hub, wide=True)
 
-    # ---------- guide: loop a slideshow on a TV ----------
-    page('/guides/loop-slideshow-on-tv/', 'Loop a slideshow on a TV',
-         'How to loop a slideshow on a TV from a laptop (free) | LoopCast',
-         'Step-by-step: connect a laptop to a TV, extend the display, and loop pictures, videos and PDFs full screen all day for free.',
-         'How to loop a slideshow on a TV.',
-         'All you need is a laptop, an HDMI cable and a folder of pictures. Here’s how to get them repeating on the TV, full screen, for as long as you like.',
-         f"""      <h2>What you need</h2>
-      <ul>
-        <li>A Windows laptop or a Mac.</li>
-        <li>A cable from the laptop to the TV, usually HDMI. Newer laptops may need a USB-C to HDMI adapter.</li>
-        <li>Your pictures, videos or PDFs in one folder.</li>
-      </ul>
-      <h2>1. Connect the TV</h2>
-      <p>Plug the cable into the laptop and the TV, then switch the TV to that HDMI input with its remote.</p>
-      <h2>2. Set the TV as a second screen</h2>
-      <p><strong>Windows:</strong> press the Windows key and P together, then choose <strong>Extend</strong>. <strong>Mac:</strong> open System Settings › Displays and make sure the TV is set as an extended display, not a mirror.</p>
-      <p>Extending matters: the TV shows the slideshow while your laptop keeps the controls, so you can change things without the room seeing.</p>
-      <h2>3. Start the loop</h2>
-      <ol>
-        <li><a href="/#download">Download LoopCast</a> (free) or <a href="/app/" target="_blank" rel="noopener">open it in your browser</a>.</li>
-        <li>Choose your folder. Each folder inside it becomes a playlist.</li>
-        <li>Press <strong>Show on projector</strong>. LoopCast opens full screen on the TV.</li>
-        <li>Press play. It repeats until you stop it.</li>
-      </ol>
-      <h2>Tips for a slideshow people actually read</h2>
-      <ul>
-        <li>Make slides 16:9 (1920×1080) so they fill the TV with no black bars.</li>
-        <li>Keep text big and short. Eight to ten seconds per slide is a good start.</li>
-        <li>Use MP4 for video; it plays everywhere.</li>
-        <li>Turn off the laptop’s sleep setting so the TV doesn’t go dark mid-event.</li>
-      </ul>
-      <h2>Only one screen?</h2>
-      <p>If the laptop is the screen, press the F key in LoopCast to fill it. Esc brings the controls back.</p>""")
-
-    # ---------- guide: lobby TV from a laptop ----------
-    page('/guides/lobby-tv-slideshow-from-laptop/', 'Lobby TV slideshow',
-         'How to put a slideshow on a lobby TV from a laptop | LoopCast',
-         'Run a looping slideshow on a lobby, office or school TV from a laptop: cables, display settings, stopping sleep, and updating it without interrupting.',
-         'Put a slideshow on a lobby TV from a laptop.',
-         'A lobby TV should show something useful all day without anyone babysitting it. A spare laptop and a free app are enough.',
-         f"""      <h2>The setup</h2>
-      <ol>
-        <li><strong>Place the laptop near the TV</strong> and connect it with HDMI (or a USB-C to HDMI adapter). Plug the laptop into power.</li>
-        <li><strong>Extend the display:</strong> on Windows press Windows + P and choose Extend; on a Mac use System Settings › Displays.</li>
-        <li><strong>Make a folder</strong> called something like “Lobby” and put your pictures, videos and PDFs in it.</li>
-        <li><strong>Open LoopCast</strong>, choose the folder, press Show on projector, then press play.</li>
-      </ol>
-      <h2>Keep it running all day</h2>
-      <ul>
-        <li>The LoopCast desktop app keeps the computer awake while it plays. In a browser, set the computer’s sleep to “never” while the sign is on.</li>
-        <li>Turn off notifications and automatic restarts for updates during opening hours.</li>
-        <li>If the TV has its own sleep or eco timer, turn that off too.</li>
-      </ul>
-      <h2>Update it without interrupting</h2>
-      <p>Drop new files into the folder, or delete old ones. LoopCast picks up the changes the next time the loop comes around, so the screen never goes blank while you edit.</p>
-      <h2>What to show</h2>
-      <ul>
-        <li>Today’s events and rooms, the Wi-Fi name and password, and a welcome message.</li>
-        <li>Upcoming dates, staff photos or a short video about your organization.</li>
-        <li>Your logo between messages. Name an image logo.png and press H to show it any time.</li>
-      </ul>
-      <p>More ideas for lobbies, offices and schools are on the <a href="/digital-signage/">digital signage page</a>.</p>""")
-
-    # ---------- guide: church announcement loop ----------
-    page('/guides/church-announcement-loop/', 'Church announcement loop',
-         'How to set up a church announcement loop (free) | LoopCast',
-         'A simple weekly routine for looping church announcements, welcome slides and countdown videos before the service, using free software any volunteer can run.',
-         'Set up a church announcement loop.',
-         'A weekly routine for pre-service announcements that takes ten minutes to prepare and one click on Sunday.',
-         f"""      <h2>During the week: make the slides</h2>
-      <ol>
-        <li>Design this week’s announcements in Canva, PowerPoint, Keynote or Google Slides at 16:9.</li>
-        <li>Export them as a <strong>PDF</strong>, or as images. Each page of a PDF becomes its own slide in LoopCast.</li>
-        <li>Put the file in a folder called <strong>Announcements</strong>. Add a countdown video too if you use one.</li>
-      </ol>
-      <h2>Organize by service</h2>
-      <p>Make one folder per moment, and each becomes a playlist you can switch between with a click:</p>
-      <ul>
-        <li><strong>Welcome</strong>: the loop people see as they walk in.</li>
-        <li><strong>Announcements</strong>: this week’s slides.</li>
-        <li><strong>Countdown</strong>: a countdown video, set to stop when it ends.</li>
-      </ul>
-      <p>Need a version for the second service without one announcement? Duplicate the playlist and hide that slide. The original stays the same.</p>
-      <h2>On Sunday: one click</h2>
-      <ol>
-        <li>Open LoopCast on the computer connected to the projector or lobby TV.</li>
-        <li>Press <strong>Show on projector</strong>, then play the Welcome playlist.</li>
-        <li>When the service starts, press <strong>Logo</strong> (or H) to cover the screen with your church logo, or <strong>Black</strong> (or B).</li>
-      </ol>
-      <h2>Next week</h2>
-      <p>Replace last week’s PDF with this week’s. LoopCast picks it up the next time the loop comes around, so there’s nothing to rebuild.</p>
-      <p>More about using LoopCast at church is on the <a href="/churches/">churches page</a>.</p>""")
-
-    # ---------- guide: free digital signage ----------
-    page('/guides/free-digital-signage-windows-mac/', 'Free digital signage',
-         'Free digital signage software for Windows and Mac | LoopCast',
-         'Four free ways to run looping digital signage on a TV from a Windows PC or Mac, from built-in slideshow features to a dedicated looping player, and when each fits.',
-         'Free digital signage for Windows and Mac.',
-         'You don’t need a subscription to put a looping sign on a TV. Here are four free options and when each one makes sense.',
-         f"""      <h2>1. Your computer’s photo slideshow</h2>
-      <p>Windows Photos and macOS Photos can both play a folder of pictures as a slideshow. It’s fine for a handful of photos at home, but it isn’t built for signs: no PDFs, limited control over timing, and it doesn’t keep a second screen separate from your controls.</p>
-      <h2>2. PowerPoint or Keynote on repeat</h2>
-      <p>Both can loop a presentation by itself. In PowerPoint, set slide timings, then Slide Show › Set Up Slide Show › Loop continuously until Esc. In Keynote, set the presentation to Self-Playing and turn on Loop slideshow. Good when the content already lives in one deck; harder when you want to mix in videos or swap content during the day. <a href="/guides/loop-powerpoint-pdf-on-projector/">Step-by-step guide</a>.</p>
-      <h2>3. Cloud signage services</h2>
-      <p>Hosted signage platforms manage many screens from a web dashboard, usually with a media player at each TV. They suit chains and campuses with dozens of screens; most charge per screen and need reliable internet.</p>
-      <h2>4. A dedicated looping player: LoopCast</h2>
-      <p>LoopCast is free and made for one or a few screens run from a computer:</p>
-      <ul>
-        <li>Plays pictures, videos and PDFs from a folder, on repeat, full screen on the TV.</li>
-        <li>Works offline. Nothing is uploaded.</li>
-        <li>Each folder is a playlist; switch between them with a click.</li>
-        <li>Drop in new files and they join the loop without stopping it.</li>
-        <li>Logo and black screens on one key.</li>
-      </ul>
-      <h2>Which should you use?</h2>
-      <ul>
-        <li><strong>A few photos at home:</strong> your computer’s photo slideshow.</li>
-        <li><strong>Everything is already in one deck:</strong> PowerPoint or Keynote on repeat.</li>
-        <li><strong>Dozens of screens across sites:</strong> a cloud signage service.</li>
-        <li><strong>One or a few screens, mixed media, no internet needed:</strong> <a href="/#download">LoopCast</a>.</li>
-      </ul>""")
-
+    # ---------- guides, comparisons and the churches page (tools/guides.py) ----------
+    guides.build(page, fig)
 
     # ---------- private links page (not linked, not in the sitemap, not indexed, not counted) ----------
     ADMIN_SLUG = 'hq-1b2312f2f8'
@@ -597,7 +454,7 @@ def build():
     open(os.path.join(ROOT, '404.html'), 'w').write(out)
 
     # ---------- sitemap, robots, manifest ----------
-    urls = ['/'] + [p for p, _ in PAGES_NAV] + [p for p, _, _ in GUIDES]
+    urls = ['/'] + [p for p, _ in PAGES_NAV] + [p for p, _, _, _ in GUIDES]
     open(os.path.join(ROOT, 'sitemap.xml'), 'w').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
         ''.join(f'  <url><loc>{SITE}{u}</loc><lastmod>{TODAY}</lastmod></url>\n' for u in urls) + '</urlset>\n')
     open(os.path.join(ROOT, 'robots.txt'), 'w').write(f'User-agent: *\nAllow: /\n# The in-browser app is a tool, not a page to index.\nDisallow: /app/\n\nSitemap: {SITE}/sitemap.xml\n')

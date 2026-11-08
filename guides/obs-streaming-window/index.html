@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>How to add looping slides to OBS, vMix or Ecamm (free) | LoopCast</title>
+<meta name="description" content="Send a looping slideshow, countdown, clock and messages into OBS, vMix or Ecamm with LoopCast’s streaming window. Step by step, with settings that look sharp.">
+<link rel="canonical" href="https://loopcast.space/guides/obs-streaming-window/">
+<meta property="og:site_name" content="LoopCast">
+<meta property="og:type" content="website">
+<meta property="og:title" content="How to add looping slides to OBS, vMix or Ecamm (free) | LoopCast">
+<meta property="og:description" content="Send a looping slideshow, countdown, clock and messages into OBS, vMix or Ecamm with LoopCast’s streaming window. Step by step, with settings that look sharp.">
+<meta property="og:url" content="https://loopcast.space/guides/obs-streaming-window/">
+<meta property="og:image" content="https://loopcast.space/assets/og-logo.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The LoopCast logo on a black background.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="How to add looping slides to OBS, vMix or Ecamm (free) | LoopCast">
+<meta name="twitter:description" content="Send a looping slideshow, countdown, clock and messages into OBS, vMix or Ecamm with LoopCast’s streaming window. Step by step, with settings that look sharp.">
+<meta name="twitter:image" content="https://loopcast.space/assets/og-logo.jpg">
+<meta name="theme-color" content="#0c0d10">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/icon-512.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="preload" href="/assets/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "@id": "https://loopcast.space/#org", "name": "Treetop Business Solutions", "email": "hello@loopcast.space", "address": {"@type": "PostalAddress", "addressLocality": "Oklahoma City", "addressRegion": "OK", "addressCountry": "US"}}, {"@type": "SoftwareApplication", "@id": "https://loopcast.space/#app", "name": "LoopCast", "url": "https://loopcast.space/", "image": "https://loopcast.space/assets/icon-512.png", "screenshot": "https://loopcast.space/assets/operator.webp", "applicationCategory": "MultimediaApplication", "applicationSubCategory": "Digital signage and presentation software", "operatingSystem": "Windows 10, Windows 11, macOS 12 or later, web browser", "description": "Offline looping media player for event screens. Plays a folder of images, PDFs and videos on a projector or TV, on repeat, without internet.", "featureList": ["Loops images, PDFs and video", "Folder-based playlists", "Projector output with live preview", "Logo screen and fade to black", "Loop, repeat or stop per playlist", "Manual mode for presentation clickers", "Countdown timer to a time or for minutes", "On-screen clock and message bar", "QR code overlay", "Picture in picture camera", "Streaming window for OBS, vMix and Ecamm", "Phone remote control over Wi-Fi", "Live web pages", "Send photos from a phone", "Live HDMI capture inputs", "Playlist schedule by time of day", "Starts automatically for unattended screens", "Works offline"], "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "publisher": {"@id": "https://loopcast.space/#org"}, "downloadUrl": "https://loopcast.space/#download"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "LoopCast", "item": "https://loopcast.space/"}, {"@type": "ListItem", "position": 2, "name": "Guides", "item": "https://loopcast.space/guides/"}, {"@type": "ListItem", "position": 3, "name": "Slides in OBS", "item": "https://loopcast.space/guides/obs-streaming-window/"}]}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Can I use LoopCast with OBS?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. In Settings › Projector, choose Streaming window (1920×1080 or 1280×720), press Open streaming window, and add it to OBS as a Window Capture source named LoopCast Stream."}}, {"@type": "Question", "name": "Does the browser version have a streaming window?", "acceptedAnswer": {"@type": "Answer", "text": "No. The streaming window is in the LoopCast desktop app for Windows and Mac. In a browser you could capture the browser tab, but the size and edges are harder to control."}}, {"@type": "Question", "name": "Will countdowns, messages and the clock show in the stream?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Everything that shows on the projector shows in the streaming window: Logo, Black, the countdown, the message bar, the clock, QR codes, picture in picture and live web pages."}}, {"@type": "Question", "name": "Why did my OBS source freeze?", "acceptedAnswer": {"@type": "Answer", "text": "The LoopCast Stream window was probably minimized. Restore it; it can sit behind other windows and keep playing, but minimized windows usually stop drawing."}}, {"@type": "Question", "name": "Which size should I pick?", "acceptedAnswer": {"@type": "Answer", "text": "Match your stream’s output resolution. Most streams are 1920×1080; pick 1280×720 if you stream at 720p and want to save processing power."}}, {"@type": "Question", "name": "Does it cost anything?", "acceptedAnswer": {"@type": "Answer", "text": "The streaming window is a Pro feature. It’s free for everyone while LoopCast is in its launch."}}]}, {"@type": "Article", "headline": "How to put looping slides into OBS, vMix or Ecamm", "description": "Send a looping slideshow, countdown, clock and messages into OBS, vMix or Ecamm with LoopCast’s streaming window. Step by step, with settings that look sharp.", "image": "https://loopcast.space/assets/shot-stream-window.webp", "dateModified": "2026-11-08", "mainEntityOfPage": "https://loopcast.space/guides/obs-streaming-window/", "author": {"@id": "https://loopcast.space/#org"}, "publisher": {"@id": "https://loopcast.space/#org"}}]}</script>
+</head>
+<body>
+<a class="promo" href="/#download"><span class="promo-t"><b><span class="dot pulse"></span>Free during our launch.</b> <span>Download LoopCast now while it’s free.</span></span><span class="promo-go">Get it →</span></a>
+<header class="wrap">
+  <nav class="top" aria-label="Main">
+    <a class="brand" href="/" aria-label="LoopCast home"><img src="/assets/mark.svg" width="32" height="27" alt=""><span>LoopCast</span></a>
+    <div class="nav-r"><div class="nav-links"><a href="/features/">Features</a><a href="/uses/">Uses</a><a href="/faq/">FAQ</a></div><a class="btn ghost sm kofi-nav" href="https://ko-fi.com/loopcast" target="_blank" rel="noopener"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V9z"/><path d="M17 10h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M8 3.5c0 1 1 1 1 2M12 3.5c0 1 1 1 1 2"/></svg><span>Support</span></a><a class="btn solid sm" href="/app/" target="_blank" rel="noopener">Open in your browser</a></div>
+  </nav>
+</header>
+<main>
+  <div class="wrap">
+    <p class="crumbs"><a href="/">LoopCast</a> › <a href="/guides/">Guides</a> › Slides in OBS</p>
+    <div class="page-hero">
+      <h1>How to put looping slides into OBS, vMix or Ecamm.</h1>
+      <p>Your livestream needs the same walk-in loop, countdown and announcements the room sees. LoopCast’s streaming window gives your streaming software a clean, fixed-size picture of the show to capture.</p>
+      <div class="ctas"><a class="btn solid" href="#download"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>Download free</a><a class="btn ghost" href="/app/" target="_blank" rel="noopener">Open in your browser</a></div>
+    </div>
+    <div class="prose">
+      <p>Most people run their pre-service or pre-event loop on the projector and then try to get the same slides onto the stream by screen-sharing a laptop, pointing a camera at the screen, or rebuilding the loop as a video file. All three are fiddly. A <strong>streaming window</strong> is simpler: LoopCast opens the show in its own window at exactly 1920×1080 or 1280×720, and your streaming software captures that window like any other source.</p>
+      <h2>What you need</h2>
+      <ul>
+        <li>The LoopCast desktop app for Windows or Mac. <a href="/#download">Download LoopCast</a> (free) for Windows or Mac. The browser version can’t open a streaming window.</li>
+        <li>Streaming software that can capture a window: OBS Studio (free), vMix, Ecamm Live, Streamlabs and most others can.</li>
+        <li>Your slides, videos and PDFs in a folder, one folder per playlist.</li>
+      </ul>
+      <h2>1. Choose the streaming window</h2>
+      <ol>
+        <li>Open LoopCast and choose your folder.</li>
+        <li>Open <strong>Settings</strong> (the sliders icon, top right) and find <strong>Projector</strong>.</li>
+        <li>In the menu, under <strong>For streaming</strong>, pick <strong>Streaming window, 1920×1080</strong> or <strong>Streaming window, 1280×720</strong>. Match your stream’s output resolution; 1080 is right for most.</li>
+        <li>Close Settings and press <strong>Open streaming window</strong> where Show on projector used to be.</li>
+      </ol>
+      <figure class="figure mid"><img src="/assets/shot-stream-settings.webp" width="720" height="660" loading="lazy" alt="LoopCast Settings with Projector set to Streaming window, 1920×1080, and a note explaining how to add it to OBS as a Window Capture source."><figcaption>Settings › Projector, with the streaming window chosen.</figcaption></figure>
+      <h2>2. Add it to OBS</h2>
+      <ol>
+        <li>In OBS, under <strong>Sources</strong>, press <strong>+</strong> and choose <strong>Window Capture</strong> (on a Mac, <strong>macOS Screen Capture</strong> with the method set to Window Capture also works).</li>
+        <li>Pick the window named <strong>LoopCast Stream</strong>.</li>
+        <li>If the source doesn’t fill the canvas, right-click it and choose <strong>Transform › Fit to screen</strong>. Because the window is exactly the size you picked, there’s nothing to crop.</li>
+      </ol>
+      <p><strong>vMix:</strong> Add Input › Desktop Capture, then pick the LoopCast Stream window. <strong>Ecamm Live:</strong> add a Window Capture source and choose LoopCast Stream. Other apps work the same way: look for window capture, not display capture.</p>
+      <figure class="figure"><img src="/assets/shot-stream-window.webp" width="1600" height="900" loading="lazy" alt="The LoopCast streaming window showing a welcome slide at 1920 by 1080, ready to capture."><figcaption>The streaming window: just the show, nothing else.</figcaption></figure>
+      <h2>3. Run the show as usual</h2>
+      <p>Everything you do in LoopCast’s controls shows up in the stream: switching playlists, Logo and Black, the countdown, the message bar, the clock, the QR code and picture in picture. Live web pages play in the stream too. You keep the control window on your screen and the stream sees only the show.</p>
+      <ul>
+        <li><strong>Walk-in:</strong> loop welcome slides and announcements before the stream goes live.</li>
+        <li><strong>Countdown:</strong> press T and type a time, like 10:00 AM, so online viewers see “Starting in…” counting down. <a href="/guides/free-countdown-timer-event-screen/">More about countdowns</a>.</li>
+        <li><strong>Lower-third style notes:</strong> press M for a one-line message along the bottom or top of the picture.</li>
+        <li><strong>Giving or sign-up link:</strong> press Q to put a QR code in a corner. <a href="/guides/qr-code-on-projector-screen/">More about QR codes</a>.</li>
+      </ul>
+      <h2>Tips for a clean capture</h2>
+      <ul>
+        <li><strong>Don’t minimize the window.</strong> It keeps playing behind other windows, so you can cover it, but most systems stop drawing a minimized window and the capture freezes.</li>
+        <li><strong>Pick the size before you go live.</strong> If you switch between 1920×1080 and 1280×720, re-check the source’s transform in your streaming software.</li>
+        <li><strong>Use window capture, not display capture.</strong> Display capture grabs the whole screen, menus and all.</li>
+        <li><strong>Audio:</strong> video sound plays through the computer as normal. Capture it in your streaming software as desktop or application audio, the same as any other app.</li>
+        <li><strong>One output at a time.</strong> The streaming window is one of the choices in the Projector menu, so LoopCast sends the show either to a display or to the streaming window. If the room and the stream need the same picture, feed the projector from your switcher or streaming software’s output.</li>
+      </ul>
+      <p>The streaming window is a Pro feature in the desktop app. It’s a Pro feature, free for everyone while LoopCast is in its launch.</p>
+      <h2>Questions</h2>
+      <div class="faq-list">
+        <details><summary>Can I use LoopCast with OBS?</summary><p>Yes. In Settings › Projector, choose Streaming window (1920×1080 or 1280×720), press Open streaming window, and add it to OBS as a Window Capture source named LoopCast Stream.</p></details>
+        <details><summary>Does the browser version have a streaming window?</summary><p>No. The streaming window is in the LoopCast desktop app for Windows and Mac. In a browser you could capture the browser tab, but the size and edges are harder to control.</p></details>
+        <details><summary>Will countdowns, messages and the clock show in the stream?</summary><p>Yes. Everything that shows on the projector shows in the streaming window: Logo, Black, the countdown, the message bar, the clock, QR codes, picture in picture and live web pages.</p></details>
+        <details><summary>Why did my OBS source freeze?</summary><p>The LoopCast Stream window was probably minimized. Restore it; it can sit behind other windows and keep playing, but minimized windows usually stop drawing.</p></details>
+        <details><summary>Which size should I pick?</summary><p>Match your stream’s output resolution. Most streams are 1920×1080; pick 1280×720 if you stream at 720p and want to save processing power.</p></details>
+        <details><summary>Does it cost anything?</summary><p>The streaming window is a Pro feature. It’s free for everyone while LoopCast is in its launch.</p></details>
+      </div>
+    </div>
+    <div class="more"><div class="eyebrow">Keep reading</div>
+    <div class="related"><a href="/guides/free-countdown-timer-event-screen/"><b>A free countdown timer for event screens</b><span>Count down to a time, show a clock or a quick message.</span></a><a href="/guides/picture-in-picture-slides-camera/"><b>Show a camera over your slides</b><span>Picture in picture with fixed corners, shapes and borders.</span></a><a href="/guides/phone-remote-for-slideshow/"><b>Run the slideshow from your phone</b><span>Next, logo, messages and countdowns from anywhere in the room.</span></a></div></div>
+  </div>
+  <section id="download" class="s wrap">
+  <div class="get">
+    <h2>Ready when the doors open.</h2>
+    <div class="grid3">
+      <a class="dl" href="https://github.com/MBurleson33/loopcast-site/releases/latest/download/LoopCast-Setup.exe"><b>Download for Windows</b><span>Windows 10 or 11</span></a>
+      <a class="dl" href="https://github.com/MBurleson33/loopcast-site/releases/latest/download/LoopCast-Mac.dmg"><b>Download for Mac</b><span>macOS 12 or later, Apple silicon or Intel</span></a>
+      <a class="dl alt" href="/app/" target="_blank" rel="noopener"><b>Open in your browser</b><span>Nothing to install</span></a>
+    </div>
+    <p>Your computer will show a security warning the first time you open it. That’s expected. <a href="/install/">Here’s why, and what to click</a>.</p>
+  </div>
+</section>
+
+</main>
+<footer>
+  <div class="wrap"><div>
+    <nav class="foot-links" aria-label="More about LoopCast"><a href="/features/">Features</a><a href="/uses/">Uses</a><a href="/conferences/">Conferences</a><a href="/churches/">Churches</a><a href="/trade-shows/">Trade shows</a><a href="/digital-signage/">Lobbies and schools</a><a href="/guides/">Guides</a><a href="/propresenter-alternative/">ProPresenter alternative</a><a href="/install/">Install help</a><a href="/faq/">FAQ</a></nav>
+    <div class="foot-row">
+      <span class="b"><img src="/assets/mark.svg" width="24" height="20" alt=""><span><b>LoopCast</b>, for every space with a screen.</span></span>
+      <span>Questions? <a href="mailto:hello@loopcast.space">hello@loopcast.space</a></span>
+      <span><a href="https://ko-fi.com/loopcast" target="_blank" rel="noopener">Support LoopCast on Ko-fi</a></span>
+      <span>Made by Treetop Business Solutions in Oklahoma City. © 2026</span>
+    </div>
+  </div></div>
+</footer>
+<script>window.LC_CFG={"gc": true, "form": {"action": "https://app.kit.com/forms/10131096/subscriptions", "field": "email_address"}}</script>
+<script src="/assets/track.js" defer></script>
+<script data-goatcounter="https://loopcast.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
