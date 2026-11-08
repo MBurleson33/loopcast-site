@@ -84,7 +84,7 @@ def header(home=False):
 <header class="wrap">
   <nav class="top" aria-label="Main">
     <a class="brand" href="/" aria-label="LoopCast home"><img src="/assets/mark.svg" width="32" height="27" alt=""><span>LoopCast</span></a>
-    <div class="nav-r"><div class="nav-links">{links}</div><a class="btn solid sm" href="/app/" target="_blank" rel="noopener">Open in your browser</a></div>
+    <div class="nav-r"><div class="nav-links">{links}</div><a class="btn ghost sm kofi-nav" href="https://ko-fi.com/loopcast" target="_blank" rel="noopener"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V9z"/><path d="M17 10h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M8 3.5c0 1 1 1 1 2M12 3.5c0 1 1 1 1 2"/></svg><span>Support</span></a><a class="btn solid sm" href="/app/" target="_blank" rel="noopener">Open in your browser</a></div>
   </nav>
 </header>
 '''
@@ -110,6 +110,7 @@ FOOTER = '''<footer>
     <div class="foot-row">
       <span class="b"><img src="/assets/mark.svg" width="24" height="20" alt=""><span><b>LoopCast</b>, for every space with a screen.</span></span>
       <span>Questions? <a href="mailto:hello@loopcast.space">hello@loopcast.space</a></span>
+      <span><a href="https://ko-fi.com/loopcast" target="_blank" rel="noopener">Support LoopCast on Ko-fi</a></span>
       <span>Made by Treetop Business Solutions in Oklahoma City. © 2026</span>
     </div>
   </div></div>
@@ -175,6 +176,7 @@ FAQS = [
     ("Is LoopCast free?", "Yes, LoopCast is free during our launch. You can download it for Windows and Mac, or open it in your browser, at no cost."),
     ("Does it need internet?", "No. LoopCast runs on your computer and plays files from a folder on it. You only need internet to download it."),
     ("Will it work with our projector or TV?", "Yes, if your computer sees it as a second display: a projector, a TV, or an LED wall processor over HDMI, DisplayPort or USB-C. LoopCast opens the output fullscreen on it at its own resolution."),
+    ("Can I send LoopCast to a livestream, like OBS?", "Yes. In Settings › Projector, choose a Streaming window (1920×1080 or 1280×720) and press Open streaming window. The show opens in its own window: add it to OBS, vMix or Ecamm as a Window Capture source and pick LoopCast Stream. Web pages, the clock and messages show up in the stream just like on the projector, and it keeps playing behind other windows (just don’t minimize it). This is a Pro feature, free while LoopCast is in its launch."),
     ("What if I only have one screen?", "Use Fullscreen here (the expand button, or the F key). LoopCast fills the screen it runs on, and Esc brings back the controls. If LoopCast only finds one display, Show on projector does this for you."),
     ("What kinds of files can I use?", "Images (JPG, PNG, GIF, WebP, SVG), PDFs, and video (MP4, WebM, MOV). Each page of a PDF becomes its own slide. MP4 with H.264 is the safest choice for video."),
     ("Can it play PowerPoint or Keynote files?", "Not directly. Save your deck as a PDF (in PowerPoint, File › Export › PDF; in Keynote, File › Export To › PDF) and put the PDF in the folder. If LoopCast finds a PowerPoint or Keynote file, it tells you how to export it."),
@@ -194,11 +196,18 @@ FAQS = [
 
 def build():
     # ---------- homepage ----------
-    home = open(os.path.join(ROOT, 'tools', 'home.html')).read().replace('{{GET}}', GET.strip())
+    KOFI_CARD = '''    <div class="kofi-card">
+      <span class="kofi-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V9z"/><path d="M17 10h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M8 3.5c0 1 1 1 1 2M12 3.5c0 1 1 1 1 2"/></svg></span>
+      <div><b>LoopCast is free during our launch.</b><span>If it helps your event, a coffee helps keep it growing.</span></div>
+      <a class="btn kofi-btn" href="https://ko-fi.com/loopcast" target="_blank" rel="noopener">Buy us a coffee</a>
+    </div>
+'''
+    get_home = GET.replace('  </div>\n</section>', KOFI_CARD + '  </div>\n</section>')
+    home = open(os.path.join(ROOT, 'tools', 'home.html')).read().replace('{{GET}}', get_home.strip())
     out = head('LoopCast: free app to loop pictures, videos and PDFs on a projector or TV',
                'LoopCast is a free app that plays your pictures, videos and PDFs on a projector or TV, on repeat. For conferences, churches, trade show booths and lobby TVs. Windows, Mac or browser.',
                '/', ld=[ORG, APP, {"@type": "WebSite", "@id": f"{SITE}/#site", "name": "LoopCast", "url": f"{SITE}/", "publisher": {"@id": f"{SITE}/#org"}}])
-    out += header(home=True) + '\n' + home + FOOTER + '''
+    out += header(home=True) + '\n' + home + FOOTER.replace('</footer>\n', '</footer>\n<script src="/assets/testimonials.js" defer></script>\n') + '''
 </body>
 </html>
 '''
