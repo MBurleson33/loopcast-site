@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PowerPoint kiosk mode: how to set it up, and when to use something else</title>
+<meta name="description" content="How to use PowerPoint’s Browsed at a kiosk mode to loop a slideshow unattended, why it sometimes won’t advance, and how it compares with a dedicated looping player.">
+<link rel="canonical" href="https://loopcast.space/guides/powerpoint-kiosk-mode/">
+<meta property="og:site_name" content="LoopCast">
+<meta property="og:type" content="website">
+<meta property="og:title" content="PowerPoint kiosk mode: how to set it up, and when to use something else">
+<meta property="og:description" content="How to use PowerPoint’s Browsed at a kiosk mode to loop a slideshow unattended, why it sometimes won’t advance, and how it compares with a dedicated looping player.">
+<meta property="og:url" content="https://loopcast.space/guides/powerpoint-kiosk-mode/">
+<meta property="og:image" content="https://loopcast.space/assets/og-logo.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The LoopCast logo on a black background.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PowerPoint kiosk mode: how to set it up, and when to use something else">
+<meta name="twitter:description" content="How to use PowerPoint’s Browsed at a kiosk mode to loop a slideshow unattended, why it sometimes won’t advance, and how it compares with a dedicated looping player.">
+<meta name="twitter:image" content="https://loopcast.space/assets/og-logo.jpg">
+<meta name="theme-color" content="#0c0d10">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/icon-512.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="preload" href="/assets/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "@id": "https://loopcast.space/#org", "name": "Treetop Business Solutions", "email": "hello@loopcast.space", "address": {"@type": "PostalAddress", "addressLocality": "Oklahoma City", "addressRegion": "OK", "addressCountry": "US"}}, {"@type": "SoftwareApplication", "@id": "https://loopcast.space/#app", "name": "LoopCast", "url": "https://loopcast.space/", "image": "https://loopcast.space/assets/icon-512.png", "screenshot": "https://loopcast.space/assets/operator.webp", "applicationCategory": "MultimediaApplication", "applicationSubCategory": "Digital signage and presentation software", "operatingSystem": "Windows 10, Windows 11, macOS 12 or later, web browser", "description": "Offline looping media player for event screens. Plays a folder of images, PDFs and videos on a projector or TV, on repeat, without internet.", "featureList": ["Loops images, PDFs and video", "Folder-based playlists", "Projector output with live preview", "Logo screen and fade to black", "Loop, repeat or stop per playlist", "Manual mode for presentation clickers", "Countdown timer to a time or for minutes", "On-screen clock and message bar", "QR code overlay", "Picture in picture camera", "Streaming window for OBS, vMix and Ecamm", "Phone remote control over Wi-Fi", "Live web pages", "Send photos from a phone", "Live HDMI capture inputs", "Playlist schedule by time of day", "Starts automatically for unattended screens", "Works offline"], "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "publisher": {"@id": "https://loopcast.space/#org"}, "downloadUrl": "https://loopcast.space/#download"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "LoopCast", "item": "https://loopcast.space/"}, {"@type": "ListItem", "position": 2, "name": "Guides", "item": "https://loopcast.space/guides/"}, {"@type": "ListItem", "position": 3, "name": "PowerPoint kiosk mode", "item": "https://loopcast.space/guides/powerpoint-kiosk-mode/"}]}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is PowerPoint kiosk mode?", "acceptedAnswer": {"@type": "Answer", "text": "It’s the Browsed at a kiosk (full screen) option in Set Up Slide Show. The presentation loops until someone presses Esc, and clicks don’t advance slides."}}, {"@type": "Question", "name": "Why won’t my kiosk-mode PowerPoint advance?", "acceptedAnswer": {"@type": "Answer", "text": "Kiosk mode ignores clicks, so every slide needs a timing. Set After on the Transitions tab and choose Using timings, if present in Set Up Slide Show."}}, {"@type": "Question", "name": "Can I update a PowerPoint kiosk without stopping it?", "acceptedAnswer": {"@type": "Answer", "text": "No, you need to stop the show, edit and restart. LoopCast plays a folder instead, so new files join the loop without stopping it."}}, {"@type": "Question", "name": "Does PowerPoint kiosk mode work on a Mac?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. PowerPoint for Mac has the same Browsed at a kiosk option in Set Up Slide Show."}}, {"@type": "Question", "name": "Will my PowerPoint animations work in LoopCast?", "acceptedAnswer": {"@type": "Answer", "text": "No. LoopCast plays PDFs, images and video. Export the deck as a PDF, which keeps each slide’s look but not its animations."}}]}, {"@type": "Article", "headline": "PowerPoint kiosk mode, and when to use something else", "description": "How to use PowerPoint’s Browsed at a kiosk mode to loop a slideshow unattended, why it sometimes won’t advance, and how it compares with a dedicated looping player.", "image": "https://loopcast.space/assets/operator.webp", "dateModified": "2026-11-08", "mainEntityOfPage": "https://loopcast.space/guides/powerpoint-kiosk-mode/", "author": {"@id": "https://loopcast.space/#org"}, "publisher": {"@id": "https://loopcast.space/#org"}}]}</script>
+</head>
+<body>
+<a class="promo" href="/#download"><span class="promo-t"><b><span class="dot pulse"></span>Free during our launch.</b> <span>Download LoopCast now while it’s free.</span></span><span class="promo-go">Get it →</span></a>
+<header class="wrap">
+  <nav class="top" aria-label="Main">
+    <a class="brand" href="/" aria-label="LoopCast home"><img src="/assets/mark.svg" width="32" height="27" alt=""><span>LoopCast</span></a>
+    <div class="nav-r"><div class="nav-links"><a href="/features/">Features</a><a href="/uses/">Uses</a><a href="/faq/">FAQ</a></div><a class="btn ghost sm kofi-nav" href="https://ko-fi.com/loopcast" target="_blank" rel="noopener"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V9z"/><path d="M17 10h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M8 3.5c0 1 1 1 1 2M12 3.5c0 1 1 1 1 2"/></svg><span>Support</span></a><a class="btn solid sm" href="/app/" target="_blank" rel="noopener">Open in your browser</a></div>
+  </nav>
+</header>
+<main>
+  <div class="wrap">
+    <p class="crumbs"><a href="/">LoopCast</a> › <a href="/guides/">Guides</a> › PowerPoint kiosk mode</p>
+    <div class="page-hero">
+      <h1>PowerPoint kiosk mode, and when to use something else.</h1>
+      <p>PowerPoint can loop a slideshow on its own for a booth or lobby screen. Here’s how to set it up properly, the problems people hit, and when a dedicated looping player is less hassle.</p>
+      <div class="ctas"><a class="btn solid" href="#download"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>Download free</a><a class="btn ghost" href="/app/" target="_blank" rel="noopener">Open in your browser</a></div>
+    </div>
+    <div class="prose">
+      <h2>Set up kiosk mode</h2>
+      <ol>
+        <li><strong>Give every slide a timing.</strong> On the <strong>Transitions</strong> tab, check <strong>After</strong>, set the seconds, and press <strong>Apply To All</strong>. (Or use <strong>Slide Show › Rehearse Timings</strong> to set each one as you go.)</li>
+        <li><strong>Open Slide Show › Set Up Slide Show.</strong></li>
+        <li>Under <strong>Show type</strong>, choose <strong>Browsed at a kiosk (full screen)</strong>. This turns on <strong>Loop continuously until ‘Esc’</strong> for you.</li>
+        <li>Under <strong>Advance slides</strong>, choose <strong>Using timings, if present</strong>.</li>
+        <li>If a second screen is connected, pick it under <strong>Multiple monitors</strong>.</li>
+        <li>Press <strong>OK</strong>, then start the slide show from the beginning.</li>
+      </ol>
+      <p>In kiosk mode, clicks don’t advance slides, which stops passers-by from skipping ahead. Press <strong>Esc</strong> to stop.</p>
+      <h2>Why kiosk mode won’t advance or loop</h2>
+      <ul>
+        <li><strong>A slide has no timing.</strong> Kiosk mode ignores clicks, so a slide without an After time waits forever. Check each slide on the Transitions tab.</li>
+        <li><strong>Advance slides is set to Manually.</strong> Change it to Using timings, if present.</li>
+        <li><strong>A video doesn’t play.</strong> Select the video and, on the Playback tab, set Start to Automatically. Make sure the slide’s timing is at least as long as the video.</li>
+        <li><strong>Linked media is missing.</strong> If the deck links to a video on another computer’s drive, it won’t play at the venue. Embed it, or keep the files with the deck.</li>
+        <li><strong>The screen sleeps.</strong> Set the computer’s sleep to never for the day, and turn off the TV’s eco timer.</li>
+      </ul>
+      <h2>Where kiosk mode gets awkward</h2>
+      <p>Kiosk mode is fine for one deck that doesn’t change all day. It gets harder when:</p>
+      <ul>
+        <li><strong>Content changes during the event.</strong> Editing means stopping the show, changing the deck and restarting it, in front of the room.</li>
+        <li><strong>You need several loops.</strong> Walk-in, sponsors, lunch and the afternoon all mean separate files and stopping and starting between them.</li>
+        <li><strong>You want to see what the room sees</strong> without the audience seeing your controls.</li>
+        <li><strong>You need a logo between sessions, a countdown or a quick message.</strong></li>
+        <li><strong>The deck came from someone else.</strong> Missing fonts and different PowerPoint versions change how slides look on the venue laptop.</li>
+      </ul>
+      <h2>The alternative: a looping player</h2>
+      <p>LoopCast plays a folder instead of a deck. Export your PowerPoint as a PDF (File › Export › PDF), put it in a folder with any videos and images, and LoopCast loops it, each PDF page as a slide.</p>
+      <ul>
+        <li>Drop new files into the folder and they join the loop without stopping it.</li>
+        <li>One folder per playlist; switch between them with a click, or by schedule.</li>
+        <li>A live preview on your laptop while the screen shows only the slides.</li>
+        <li>Logo (H) and black (B) on one key; countdown (T), message (M), clock (C) and QR code (Q).</li>
+        <li>A PDF looks the same on every computer, so fonts can’t go missing.</li>
+      </ul>
+      <figure class="figure"><img src="/assets/operator.webp" width="2880" height="1720" loading="lazy" alt="LoopCast’s control window with a live preview and a filmstrip of the playlist."><figcaption>LoopCast: a preview of the screen, with the playlist below.</figcaption></figure>
+      <h2>PowerPoint kiosk mode vs LoopCast</h2>
+      <div class="table-wrap"><table><thead><tr><th></th><th>PowerPoint kiosk mode</th><th>LoopCast</th></tr></thead><tbody><tr><td>Price</td><td>Included with PowerPoint</td><td>Free during launch</td></tr><tr><td>Loops unattended</td><td>Yes</td><td>Yes</td></tr><tr><td>Content</td><td>One deck</td><td>Folders of images, PDFs and video</td></tr><tr><td>Change content while it runs</td><td>Stop, edit, restart</td><td>Drop files in the folder</td></tr><tr><td>Several loops</td><td>Separate decks</td><td>One playlist per folder</td></tr><tr><td>Schedule by time of day</td><td>No</td><td>Yes</td></tr><tr><td>Preview without the room seeing</td><td>Presenter view (not in kiosk mode)</td><td>Yes</td></tr><tr><td>Logo, countdown, message, clock, QR</td><td>No</td><td>Yes</td></tr><tr><td>Animations and transitions</td><td>Yes</td><td>Fades between slides; no in-slide animation</td></tr><tr><td>Starts by itself after a restart</td><td>No</td><td>Yes, with two settings</td></tr></tbody></table></div>
+      <h2>Which should you use?</h2>
+      <ul>
+        <li><strong>One deck, set once, shown all day:</strong> PowerPoint kiosk mode is fine.</li>
+        <li><strong>Animations matter:</strong> stay with PowerPoint; a PDF won’t keep them.</li>
+        <li><strong>Several loops, changes during the day, a logo or countdown, or a screen that should run by itself:</strong> <a href="/#download">try LoopCast</a>.</li>
+      </ul>
+      <p class="sources">Source: <a href="https://support.microsoft.com/en-us/office/create-a-self-running-presentation-57fc41ae-f36a-4fb5-94a3-52d5bc466037" rel="nofollow noopener" target="_blank">Microsoft: Create a self-running presentation</a>. PowerPoint is a trademark of Microsoft. LoopCast is not affiliated with Microsoft.</p>
+      <h2>Questions</h2>
+      <div class="faq-list">
+        <details><summary>What is PowerPoint kiosk mode?</summary><p>It’s the Browsed at a kiosk (full screen) option in Set Up Slide Show. The presentation loops until someone presses Esc, and clicks don’t advance slides.</p></details>
+        <details><summary>Why won’t my kiosk-mode PowerPoint advance?</summary><p>Kiosk mode ignores clicks, so every slide needs a timing. Set After on the Transitions tab and choose Using timings, if present in Set Up Slide Show.</p></details>
+        <details><summary>Can I update a PowerPoint kiosk without stopping it?</summary><p>No, you need to stop the show, edit and restart. LoopCast plays a folder instead, so new files join the loop without stopping it.</p></details>
+        <details><summary>Does PowerPoint kiosk mode work on a Mac?</summary><p>Yes. PowerPoint for Mac has the same Browsed at a kiosk option in Set Up Slide Show.</p></details>
+        <details><summary>Will my PowerPoint animations work in LoopCast?</summary><p>No. LoopCast plays PDFs, images and video. Export the deck as a PDF, which keeps each slide’s look but not its animations.</p></details>
+      </div>
+    </div>
+    <div class="more"><div class="eyebrow">Keep reading</div>
+    <div class="related"><a href="/guides/loop-powerpoint-pdf-on-projector/"><b>How to loop a PowerPoint or PDF on a projector</b><span>Three ways, from PowerPoint’s own setting to a dedicated player.</span></a><a href="/trade-shows/"><b>Trade shows</b><span>All-day loops on the booth TV</span></a><a href="/guides/free-digital-signage-windows-mac/"><b>Free digital signage for Windows and Mac</b><span>Five free ways to run a looping sign, and when each one fits.</span></a></div></div>
+  </div>
+  <section id="download" class="s wrap">
+  <div class="get">
+    <h2>Ready when the doors open.</h2>
+    <div class="grid3">
+      <a class="dl" href="https://github.com/MBurleson33/loopcast-site/releases/latest/download/LoopCast-Setup.exe"><b>Download for Windows</b><span>Windows 10 or 11</span></a>
+      <a class="dl" href="https://github.com/MBurleson33/loopcast-site/releases/latest/download/LoopCast-Mac.dmg"><b>Download for Mac</b><span>macOS 12 or later, Apple silicon or Intel</span></a>
+      <a class="dl alt" href="/app/" target="_blank" rel="noopener"><b>Open in your browser</b><span>Nothing to install</span></a>
+    </div>
+    <p>Your computer will show a security warning the first time you open it. That’s expected. <a href="/install/">Here’s why, and what to click</a>.</p>
+  </div>
+</section>
+
+</main>
+<footer>
+  <div class="wrap"><div>
+    <nav class="foot-links" aria-label="More about LoopCast"><a href="/features/">Features</a><a href="/uses/">Uses</a><a href="/conferences/">Conferences</a><a href="/churches/">Churches</a><a href="/trade-shows/">Trade shows</a><a href="/digital-signage/">Lobbies and schools</a><a href="/guides/">Guides</a><a href="/propresenter-alternative/">ProPresenter alternative</a><a href="/install/">Install help</a><a href="/faq/">FAQ</a></nav>
+    <div class="foot-row">
+      <span class="b"><img src="/assets/mark.svg" width="24" height="20" alt=""><span><b>LoopCast</b>, for every space with a screen.</span></span>
+      <span>Questions? <a href="mailto:hello@loopcast.space">hello@loopcast.space</a></span>
+      <span><a href="https://ko-fi.com/loopcast" target="_blank" rel="noopener">Support LoopCast on Ko-fi</a></span>
+      <span>Made by Treetop Business Solutions in Oklahoma City. © 2026</span>
+    </div>
+  </div></div>
+</footer>
+<script>window.LC_CFG={"gc": true, "form": {"action": "https://app.kit.com/forms/10131096/subscriptions", "field": "email_address"}}</script>
+<script src="/assets/track.js" defer></script>
+<script data-goatcounter="https://loopcast.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

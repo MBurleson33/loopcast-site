@@ -372,3 +372,17 @@ footer .wrap>div{border-top:1px solid var(--line);padding-top:28px}
 /* "Coming soon" feature card */
 .stream-card{position:relative;border-color:rgba(232,65,44,.45)}
 .soon{display:inline-block;align-self:flex-start;width:max-content;font-size:12px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:#fff;background:var(--tally);border-radius:999px;padding:3px 10px;margin-bottom:6px}
+/* guides: narrow figures, comparison tables, FAQ in prose */
+.figure.narrow img{max-width:min(340px,100%)}
+.figure.mid img{max-width:min(560px,100%)}
+.table-wrap{overflow-x:auto;margin:24px 0 8px;border:1px solid var(--line);border-radius:16px}
+.prose table{border-collapse:collapse;width:100%;font-size:16px;min-width:560px}
+.prose th,.prose td{text-align:left;vertical-align:top;padding:12px 16px;border-bottom:1px solid var(--line)}
+.prose thead th{background:var(--surface);font-weight:700}
+.prose tbody tr:last-child td{border-bottom:0}
+.prose td:first-child{color:var(--muted);font-weight:600}
+.prose .faq-list{margin-top:20px}
+.prose .faq-list summary{font-size:17px}
+.updated{color:var(--faint);font-size:14.5px;margin:0 0 28px}
+.sources{color:var(--faint);font-size:14.5px}
+.sources a{color:inherit}
