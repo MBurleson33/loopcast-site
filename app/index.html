@@ -286,6 +286,12 @@ kbd{font:inherit;font-stretch:80%;font-weight:600;font-size:12.5px;color:var(--t
 .modal-scrim{position:fixed;inset:0;z-index:80;background:rgba(10,10,12,.62);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadein .15s ease}
 .modal{width:min(440px,100%);background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:26px 26px 22px;box-shadow:0 24px 60px rgba(0,0,0,.5)}
 .modal h2{margin:0 0 8px;font-size:19px;font-weight:700;line-height:1.3}
+/* Timer, Message, QR, PiP and Clock open their settings in the ask dialog before anything shows on screen. */
+#askForm.has-panel{width:min(560px,100%);max-height:calc(100vh - 48px);overflow:auto}
+#askPanel:empty{display:none}
+#askPanel{margin-top:14px}
+#askPanel .group{margin:0;padding:0;border:0;background:none}
+#askPanel .group > h3, #askPanel .in-settings-only{display:none}
 #modalBody{white-space:pre-line}
 .modal p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.5}
 .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:22px}
@@ -583,11 +589,11 @@ body.dropping .drophint{display:flex}
       <div class="fieldrow"><span>Text color</span><div class="ck-sw" role="radiogroup" aria-label="Message text color" id="msgColors"></div></div>
       <div class="fieldrow"><span>Background</span>
         <div class="seg mk" role="radiogroup" aria-label="Message background" data-mk="bg"><button role="radio" data-v="dark">Dark</button><button role="radio" data-v="light">Light</button><button role="radio" data-v="brand">Red</button><button role="radio" data-v="none">None</button></div></div>
-      <button class="key sm" id="msgTry" style="margin-top:6px">Show a sample message</button>
+      <button class="key sm in-settings-only" id="msgTry" style="margin-top:6px">Show a sample message</button>
     </div>
     <div class="group" id="qrSet">
       <h3>QR code</h3>
-      <p class="note">Press QR to show a code people can scan: a giving page, registration, a survey. LoopCast asks for the link each time, ready to reuse.</p>
+      <p class="note in-settings-only">Press QR to show a code people can scan: a giving page, registration, a survey. LoopCast asks for the link each time, ready to reuse.</p>
       <div class="fieldrow"><span>Corner</span>
         <div class="seg qk" role="radiogroup" aria-label="QR code corner" data-qk="corner"><button role="radio" data-v="tl" title="Top left">↖</button><button role="radio" data-v="tr" title="Top right">↗</button><button role="radio" data-v="bl" title="Bottom left">↙</button><button role="radio" data-v="br" title="Bottom right">↘</button></div></div>
       <div class="fieldrow"><span>Size</span>
@@ -596,7 +602,7 @@ body.dropping .drophint{display:flex}
     </div>
     <div class="group" id="pipSet">
       <h3><span class="pro">Pro</span> Picture in picture</h3>
-      <label class="toggle"><span>Show picture in picture<small>A camera or capture device in a corner, over the slides. The slides keep changing underneath. The PiP button does the same.</small></span><span class="sw"><input type="checkbox" id="pipOn"><i></i></span></label>
+      <label class="toggle in-settings-only"><span>Show picture in picture<small>A camera or capture device in a corner, over the slides. The slides keep changing underneath. The PiP button does the same.</small></span><span class="sw"><input type="checkbox" id="pipOn"><i></i></span></label>
       <div class="fieldrow"><span>Camera</span><select class="inp" id="pipDev" style="flex:1;min-width:0" aria-label="Camera for picture in picture"></select></div>
       <div class="fieldrow"><span>Corner</span>
         <div class="seg pk" role="radiogroup" aria-label="Picture in picture corner" data-pk="corner"><button role="radio" data-v="tl" title="Top left">↖</button><button role="radio" data-v="tr" title="Top right">↗</button><button role="radio" data-v="bl" title="Bottom left">↙</button><button role="radio" data-v="br" title="Bottom right">↘</button></div></div>
@@ -610,7 +616,7 @@ body.dropping .drophint{display:flex}
     </div>
     <div class="group" id="clockSet">
       <h3>Clock</h3>
-      <label class="toggle"><span>Show the clock<small>Puts the time in a corner of the screen, over everything that plays. The Clock button does the same.</small></span><span class="sw"><input type="checkbox" id="clockOn"><i></i></span></label>
+      <label class="toggle in-settings-only"><span>Show the clock<small>Puts the time in a corner of the screen, over everything that plays. The Clock button does the same.</small></span><span class="sw"><input type="checkbox" id="clockOn"><i></i></span></label>
       <div class="fieldrow"><span>Corner</span>
         <div class="seg ck" role="radiogroup" aria-label="Clock corner" data-ck="corner"><button role="radio" data-v="tl" title="Top left">↖</button><button role="radio" data-v="tr" title="Top right">↗</button><button role="radio" data-v="bl" title="Bottom left">↙</button><button role="radio" data-v="br" title="Bottom right">↘</button></div></div>
       <div class="fieldrow"><span>Size</span>
@@ -718,6 +724,7 @@ body.dropping .drophint{display:flex}
     <h2 id="askTitle"></h2>
     <p id="askBody"></p>
     <div id="askFields"></div>
+    <div id="askPanel"></div>
     <p class="err" id="askErr" hidden></p>
     <div class="modal-actions" id="askActions"></div>
   </form>
@@ -4432,7 +4439,7 @@ document.addEventListener('keydown', e => {
 document.addEventListener('pointerdown', e => { if (webState.typing && !e.target.closest('#pstage')) setWebTyping(false); }, true);
 
 /* ---------- small form dialog (custom; never the browser's prompt) ---------- */
-function ask({ title, body = '', fields = [], ok = 'OK', extra = null, validate = null }){
+function ask({ title, body = '', fields = [], ok = 'OK', extra = null, validate = null, panel = null }){
   return new Promise(resolve => {
     const m = $('#ask'), prev = document.activeElement;
     $('#askTitle').textContent = title; $('#askBody').textContent = body; $('#askBody').hidden = !body; $('#askErr').hidden = true;
@@ -4442,10 +4449,14 @@ function ask({ title, body = '', fields = [], ok = 'OK', extra = null, validate 
       (f.note ? `<p class="note" style="margin-top:6px">${esc(f.note)}</p>` : '')).join('');
     fields.forEach((f, i) => { const el = $('#ask' + i); if (f.type !== 'select') el.value = f.value ?? ''; });
     $('#askActions').innerHTML = (extra ? `<button type="button" class="key ghost" id="askExtra" style="margin-right:auto">${esc(extra)}</button>` : '') + `<button type="button" class="key" id="askCancel">Cancel</button><button type="submit" class="key solid">${esc(ok)}</button>`;
+    // A Settings group shown inside the dialog: moved in, and put back where it was when the dialog closes.
+    const home = panel && document.createComment('ask-panel');
+    if (panel) { panel.replaceWith(home); $('#askPanel').append(panel); panel.querySelectorAll('button:not([type])').forEach(b => b.type = 'button'); } // in a form, a plain button would submit it
+    $('#askForm').classList.toggle('has-panel', !!panel);
     m.hidden = false; modalBusy = true;
     setTimeout(() => ($('#ask0') || $('#askForm button[type=submit]')).focus(), 0);
     const keys = e => { if (e.key === 'Escape') { e.preventDefault(); done(null); } e.stopPropagation(); };
-    function done(v){ m.hidden = true; modalBusy = false; document.removeEventListener('keydown', keys, true); prev?.focus?.(); resolve(v); }
+    function done(v){ if (panel) home.replaceWith(panel); m.hidden = true; modalBusy = false; document.removeEventListener('keydown', keys, true); prev?.focus?.(); resolve(v); }
     document.addEventListener('keydown', keys, true);
     $('#askCancel').onclick = () => done(null);
     if (extra) $('#askExtra').onclick = () => done({ extra: true });
@@ -4516,10 +4527,11 @@ $('#cdBtn').onclick = () => S.cd ? stopCountdown() : askCountdown();
 S.msg = null;
 function setMessage(text){ S.msg = text || null; prevStage.setMessage(S.msg); outStage?.setMessage(S.msg); renderTransport(); webSync(); const t = document.getElementById('msgTry'); if (t) t.textContent = S.msg ? 'Clear the message' : 'Show a sample message'; }
 async function askMessage(){
-  const v = await ask({ title: 'Show a message', body: 'It appears in a bar at the bottom of the screen, over whatever is playing, until you clear it.',
+  const before = msgS();
+  const v = await ask({ title: 'Show a message', body: 'It shows in a bar over whatever is playing, until you clear it. Nothing changes on screen until you press Show message.',
     fields: [{ label: 'Message', value: settings.lastMsg || '', placeholder: 'Session 2 starts at 10:30 in Room B' }], ok: 'Show message',
-    validate: v => v[0] ? null : 'Type a message to show.' });
-  if (!v) return;
+    panel: $('#msgSet'), validate: v => v[0] ? null : 'Type a message to show.' });
+  if (!v) { settings.msgStyle = before; save(); setMsgOpt({}); return; }
   settings.lastMsg = v[0]; save(); setMessage(v[0]);
 }
 $('#msgBtn').onclick = () => S.msg ? setMessage(null) : askMessage();
@@ -4613,7 +4625,18 @@ function paintPipSettings(){
   if (sel.dataset.html !== opts) { sel.innerHTML = opts; sel.dataset.html = opts; }
   sel.value = p.device; if (!sel.value && sel.options.length) sel.selectedIndex = 0;
 }
-$('#pipBtn').onclick = () => setPipOpt({ on: !pipS().on });
+async function askPip(){
+  if (!native) { appOnly('Picture in picture'); return; }
+  const before = pipS();
+  if (!S.inputsAllowed) await refreshInputs(true);
+  paintPipSettings();
+  const v = await ask({ title: 'Show picture in picture', body: 'A camera in a corner, over the slides. The slides keep changing underneath. Nothing changes on screen until you press Show.',
+    panel: $('#pipSet'), ok: 'Show picture in picture' });
+  if (!v) { settings.pip = { ...before, on:false }; save(); paintPipSettings(); return; }
+  setPipOpt({ on:true });
+}
+const togglePip = () => pipS().on ? setPipOpt({ on:false }) : askPip();
+$('#pipBtn').onclick = togglePip;
 $('#pipOn').onchange = e => setPipOpt({ on: e.target.checked });
 $('#pipMirror').onchange = e => setPipOpt({ mirror: e.target.checked });
 $('#pipDev').onchange = e => setPipOpt({ device: e.target.value });
@@ -4629,10 +4652,11 @@ function setQrOpt(patch){
 }
 async function askQr(){
   const q = qrS();
-  const v = await ask({ title: 'Show a QR code', body: 'It sits in a corner, over whatever is playing, until you hide it. Change the corner and size in Settings.',
+  paintQrSettings();
+  const v = await ask({ title: 'Show a QR code', body: 'It sits in a corner, over whatever is playing, until you hide it. Nothing changes on screen until you press Show QR code.', panel: $('#qrSet'),
     fields: [{ label: 'Link', value: q.url, placeholder: 'https://example.org/give' }, { label: 'Words under it (optional)', value: q.caption, placeholder: 'Scan to give' }],
     ok: 'Show QR code', validate: v => /^\S{3,}$/.test(v[0]) && v[0].length <= 900 ? null : 'Paste the link people should open, like https://example.org/give' });
-  if (!v) return;
+  if (!v) { setQrOpt({ corner: q.corner, size: q.size }); return; }
   let url = v[0]; if (!/^[a-z][a-z0-9+.-]*:/i.test(url)) url = 'https://' + url; // "example.org/give" works too
   setQrOpt({ on:true, url, caption: v[1] });
 }
@@ -4644,7 +4668,15 @@ function paintQrSettings(){
 $('#qrBtn').onclick = () => qrS().on ? setQrOpt({ on:false }) : askQr();
 document.querySelectorAll('.seg.qk').forEach(seg => seg.addEventListener('click', e => { const b = e.target.closest('button'); if (b) setQrOpt({ [seg.dataset.qk]: b.dataset.v }); }));
 prevStage.setQr(qrS()); paintQrSettings();
-$('#clockBtn').onclick = () => setClockOpt({ on: !clk().on });
+async function askClock(){
+  const before = clk();
+  paintClockSettings();
+  const v = await ask({ title: 'Show the clock', body: 'The time, in a corner over everything that plays. Nothing changes on screen until you press Show the clock.',
+    panel: $('#clockSet'), ok: 'Show the clock' });
+  setClockOpt(v ? { on:true } : { ...before, on:false });
+}
+const toggleClock = () => clk().on ? setClockOpt({ on:false }) : askClock();
+$('#clockBtn').onclick = toggleClock;
 $('#clockOn').onchange = e => setClockOpt({ on: e.target.checked });
 $('#clockH24').onchange = e => setClockOpt({ h24: e.target.checked });
 $('#clockSecs').onchange = e => setClockOpt({ secs: e.target.checked });
@@ -5104,7 +5136,7 @@ native?.onPhoneFile?.(async f => {
 });
 
 /* ---------- About ---------- */
-const APP_VERSION = '1.17.1', PDFJS_VERSION = '6.5.438';
+const APP_VERSION = '1.17.2', PDFJS_VERSION = '6.5.438';
 async function openAbout(){
   const info = native?.appInfo ? await native.appInfo().catch(() => null) : null;
   const os = info ? ({ win32:'Windows', darwin:'macOS', linux:'Linux' }[info.platform] || info.platform) + ` (${info.arch})` : null;
@@ -5236,8 +5268,8 @@ function handleKey(key){
   else if (key === 'f' || key === 'F') goFullHere(false);
   else if (key === 't' || key === 'T') S.cd ? stopCountdown() : askCountdown();
   else if (key === 'm' || key === 'M') S.msg ? setMessage(null) : askMessage();
-  else if (key === 'c' || key === 'C') setClockOpt({ on: !clk().on });
-  else if (key === 'p' || key === 'P') setPipOpt({ on: !pipS().on });
+  else if (key === 'c' || key === 'C') toggleClock();
+  else if (key === 'p' || key === 'P') togglePip();
   else if (key === 'q' || key === 'Q') qrS().on ? setQrOpt({ on:false }) : askQr();
 }
 document.addEventListener('keydown', e => {
@@ -5468,7 +5500,12 @@ function openFolderMenu(){
   m.onclick = async e => {
     const t = e.target.closest('button'); if (!t) return;
     if (t.dataset.pin) { const r = settings.recent.find(x => x.key === t.dataset.pin); if (r) r.pinned = !r.pinned; save(); openFolderMenu(); return; }
-    if (t.dataset.forget) { settings.recent = settings.recent.filter(x => x.key !== t.dataset.forget); save(); if (recentList().length) openFolderMenu(); else closeCtx(); return; }
+    if (t.dataset.forget) {
+      const wasOpen = t.dataset.forget === cur;
+      settings.recent = settings.recent.filter(x => x.key !== t.dataset.forget); save();
+      if (wasOpen) { closeCtx(); unloadFolder(); return; } // removing the open folder closes it too
+      if (recentList().length) openFolderMenu(); else closeCtx(); return;
+    }
     closeCtx();
     if (t.dataset.a === 'pick') { pickFolder(); return; }
     if (t.dataset.a === 'refresh') { $('#rescanBtn').click(); return; }
@@ -5481,6 +5518,22 @@ function openFolderMenu(){
     toast(`Couldn’t reopen ${r.name}. Choose it again.`); pickFolder();
   };
   (m.querySelector('.ctxrow.cur .ctxmain') || m.querySelector('button')).focus();
+}
+// Close the open folder: no playlists, nothing on screen, and it doesn't come back when LoopCast reopens.
+// Its playlist settings are kept, in case it's chosen again.
+function unloadFolder(){
+  if (settings.curFolder) { settings.folders ||= {}; settings.folders[settings.curFolder] = Object.fromEntries(PER_FOLDER.map(k => [k, settings[k]])); }
+  Object.assign(settings, { plOpts: {}, copies: [], schedule: [], scheduleOn: false, playlist: null, curFolder: null }); save();
+  S.dir = null; S.dirPath = null; S.viewInput = null;
+  try { localStorage.removeItem('loopcast.dirPath'); } catch {}
+  idb.set('dir', null).catch(() => {});
+  if (S.cd) stopCountdown();
+  loadLibrary([], '');
+  prevStage.clearAll(); outStage?.clearAll(); webSync();
+  $('#wTitle').textContent = 'Choose your media folder';
+  $('#wText').textContent = 'LoopCast plays the images, PDFs and videos in a folder on repeat. Each folder inside it becomes a playlist you can switch to.';
+  $('#pickBtn').textContent = 'Choose folder';
+  toast('Folder closed. Choose a folder to start again.');
 }
 $('#dirInput').onchange = e => {
   const files = e.target.files; if (!files.length) return;
