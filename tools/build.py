@@ -15,7 +15,7 @@ TODAY = datetime.date.today().isoformat()
 REL = 'https://github.com/MBurleson33/loopcast-site/releases/latest/download/'
 DL_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>'
 
-ORG = {"@type": "Organization", "@id": f"{SITE}/#org", "name": "Treetop Business Solutions", "email": "hello@loopcast.space",
+ORG = {"@type": "Organization", "@id": f"{SITE}/#org", "name": "Treetop Business Solutions", "email": "hello@loopcast.space", "telephone": "+1-405-486-0215",
        "address": {"@type": "PostalAddress", "addressLocality": "Oklahoma City", "addressRegion": "OK", "addressCountry": "US"}}
 APP = {"@type": "SoftwareApplication", "@id": f"{SITE}/#app", "name": "LoopCast",
        "url": f"{SITE}/", "image": f"{SITE}/assets/icon-512.png", "screenshot": f"{SITE}/assets/operator.webp",
@@ -123,7 +123,7 @@ FOOTER = '''<footer>
     <nav class="foot-links" aria-label="More about LoopCast">''' + ''.join(f'<a href="{p}">{l}</a>' for p, l in PAGES_NAV) + '''</nav>
     <div class="foot-row">
       <span class="b"><img src="/assets/mark.svg" width="24" height="20" alt=""><span><b>LoopCast</b>, for every space with a screen.</span></span>
-      <span>Questions? <a href="mailto:hello@loopcast.space">hello@loopcast.space</a></span>
+      <span>Questions? <a href="mailto:hello@loopcast.space">hello@loopcast.space</a> · <a href="tel:+14054860215">405-486-0215</a></span>
       <span><a href="https://ko-fi.com/loopcast" target="_blank" rel="noopener">Support LoopCast on Ko-fi</a></span>
       <span>Made by Treetop Business Solutions in Oklahoma City. © 2026</span>
     </div>
@@ -213,7 +213,7 @@ FAQS = [
     ("Does it work on a Mac?", "Yes, on macOS 12 or later, on Apple silicon and Intel Macs. The first time you open it, go to System Settings › Privacy & Security and choose Open Anyway."),
     ("Can I use it without installing anything?", "Yes. Open in your browser runs the full player in any modern browser. The desktop app adds a few conveniences, like opening the projector window fullscreen on its own."),
     ("Why does my computer warn me when I install it?", "LoopCast isn’t signed with a paid developer certificate yet. Without one, Windows and macOS can’t confirm who made the app, so they ask you to confirm the first time. The warning is about an unverified publisher; it doesn’t mean the app was found to be harmful. Download it only from loopcast.space. The Installing LoopCast page explains each step. On Windows choose More info, then Run anyway. On a Mac, go to System Settings › Privacy & Security and choose Open Anyway."),
-    ("How do I get help or send feedback?", "Email hello@loopcast.space. Include your version number (click the LoopCast logo in the app to see it) and whether you use Windows, Mac or the browser version."),
+    ("How do I get help or send feedback?", "Email hello@loopcast.space or call 405-486-0215. When you email, include your version number (click the LoopCast logo in the app to see it) and whether you use Windows, Mac or the browser version."),
     ("How do I show a logo between sessions?", "Put an image named logo.png in the main media folder. Press Logo (or H) to cover the screen with it while the playlist keeps its place underneath. A playlist can also end on the logo by itself."),
 ]
 
@@ -330,8 +330,9 @@ def build():
             '''        <aside class="faq-aside">
           <div class="card">
             <h3>Still have a question?</h3>
-            <p>Email us and a real person will get back to you.</p>
+            <p>Email or call, and a real person will get back to you.</p>
             <a class="btn solid sm" href="mailto:hello@loopcast.space">hello@loopcast.space</a>
+            <a class="btn ghost sm" href="tel:+14054860215" style="margin-top:8px">Call 405-486-0215</a>
           </div>
           <div class="card">
             <h3>Helpful pages</h3>
