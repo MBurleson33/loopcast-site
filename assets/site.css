@@ -386,3 +386,4 @@ footer .wrap>div{border-top:1px solid var(--line);padding-top:28px}
 .updated{color:var(--faint);font-size:14.5px;margin:0 0 28px}
 .sources{color:var(--faint);font-size:14.5px}
 .sources a{color:inherit}
+#questions .faq-list{margin-top:32px}
