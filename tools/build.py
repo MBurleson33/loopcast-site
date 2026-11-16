@@ -226,10 +226,22 @@ def build():
     </div>
 '''
     get_home = GET.replace('  </div>\n</section>', KOFI_CARD + '  </div>\n</section>')
-    home = open(os.path.join(ROOT, 'tools', 'home.html')).read().replace('{{GET}}', get_home.strip())
+    HOME_FAQ = guides.faq([
+        ("Is LoopCast free?", "Yes. LoopCast is free during our launch, including the Pro features: the phone remote, picture in picture and the streaming window for OBS. There’s no account and no subscription."),
+        ("Does it work without internet?", "Yes. LoopCast plays pictures, videos and PDFs from your computer, so it keeps running when the venue Wi-Fi doesn’t. Only live web pages need a connection."),
+        ("Can it loop videos?", "Yes. MP4, WebM and MOV videos play to the end and then the loop moves on, mixed with pictures and PDF pages in the same playlist."),
+        ("Does it work on Windows and Mac?", "Yes. There’s a desktop app for Windows 10 and 11 and for Macs on macOS 12 or later, and a browser version you can open without installing anything."),
+        ("Do I need two screens?", "No. With a projector or TV connected, the slides go there and the controls stay on your laptop. With one screen, Fullscreen here fills it, and Esc brings the controls back."),
+        ("Can I show a QR code, a countdown or a message?", "Yes. Press Q for a QR code in a corner, T for a full-screen countdown and M for a message bar, all over whatever is playing."),
+    ])
+    home_faq = ('  <section class="s wrap" id="questions">\n    <h2 class="big">Questions.</h2>\n' + HOME_FAQ[0].replace('      <h2>Questions</h2>\n', '') +
+                '\n    <p class="hint" style="margin-top:28px">Popular guides: <a href="/guides/qr-code-on-projector-screen/" style="color:var(--lit)">QR codes on screen</a> · '
+                '<a href="/guides/free-countdown-timer-event-screen/" style="color:var(--lit)">a free countdown timer</a> · <a href="/guides/loop-slideshow-on-tv/" style="color:var(--lit)">loop a slideshow on a TV</a> · '
+                '<a href="/faq/" style="color:var(--lit)">all questions</a></p>\n  </section>\n\n')
+    home = open(os.path.join(ROOT, 'tools', 'home.html')).read().replace('{{GET}}', home_faq + get_home.strip())
     out = head('LoopCast: free app to loop pictures, videos and PDFs on a projector or TV',
                'LoopCast is a free app that plays your pictures, videos and PDFs on a projector or TV, on repeat. For conferences, churches, trade show booths and lobby TVs. Windows, Mac or browser.',
-               '/', ld=[ORG, APP, {"@type": "WebSite", "@id": f"{SITE}/#site", "name": "LoopCast", "url": f"{SITE}/", "publisher": {"@id": f"{SITE}/#org"}}])
+               '/', ld=[ORG, APP, {"@type": "WebSite", "@id": f"{SITE}/#site", "name": "LoopCast", "url": f"{SITE}/", "publisher": {"@id": f"{SITE}/#org"}}, HOME_FAQ[1]])
     out += header(home=True) + '\n' + home + FOOTER.replace('</footer>\n', '</footer>\n<script src="/assets/testimonials.js" defer></script>\n') + '''
 </body>
 </html>
@@ -268,7 +280,7 @@ def build():
       <h2>On the day</h2>
       <ul>
         <li><strong>Break timers and start times:</strong> press T for a full-screen countdown, in minutes or to a time. <a href="/guides/free-countdown-timer-event-screen/">Countdowns, clocks and messages</a>.</li>
-        <li><strong>Session feedback and the event app:</strong> a QR code in the corner, over every slide. <a href="/guides/qr-code-on-projector-screen/">QR codes on screen</a>.</li>
+        <li><strong>Check-in, session feedback and the event app:</strong> a QR code in the corner, over every slide, so nobody has to type a link. <a href="/guides/qr-code-on-projector-screen/">How to show a QR code on a projector</a>.</li>
         <li><strong>Run it from the floor:</strong> next, logo, messages and timers from your phone. <a href="/guides/phone-remote-for-slideshow/">The phone remote</a>.</li>
         <li><strong>The speaker on the big screen:</strong> a camera in the corner while the slides keep going. <a href="/guides/picture-in-picture-slides-camera/">Picture in picture</a>.</li>
         <li><strong>Hybrid events:</strong> the same walk-in loop and countdowns on the livestream. <a href="/guides/obs-streaming-window/">Slides into OBS</a>.</li>
@@ -278,10 +290,18 @@ def build():
          image=f"{SITE}/assets/og.jpg")
 
     # ---------- trade shows ----------
+    TRADE_FAQ = guides.faq([
+        ("How do I loop a video on a TV at a trade show?", "Put the video file (MP4 works best) in a folder on a laptop, connect the laptop to the TV with HDMI, open LoopCast, choose the folder and press play. It repeats until you stop it."),
+        ("Do I need Wi-Fi at the booth?", "No. LoopCast plays from your laptop and works offline, so slow or crowded show-floor Wi-Fi doesn’t matter."),
+        ("Will the laptop go to sleep during the show?", "Not while the LoopCast desktop app is playing; it keeps the computer awake. Keep the laptop plugged in."),
+        ("Can I play a video and slides in the same loop?", "Yes. Put MP4 videos, JPG or PNG slides and PDFs in the same folder. Videos play to the end; slides stay up for the time you set."),
+        ("Can I show a QR code for leads?", "Yes. Press Q, paste the link for booking a demo or downloading a brochure, and add a few words. The code stays in the corner over every slide and video until you hide it."),
+        ("Is it free?", "Yes. LoopCast is free during our launch, for Windows, Mac and in the browser."),
+    ])
     page('/trade-shows/', 'Trade shows',
-         'Trade show booth TV loop software | LoopCast',
-         'Keep a product video and slides looping on your trade show booth TV all day, with no internet. Free for Windows and Mac. Plays images, PDFs and MP4 video.',
-         'A booth loop that runs all day.',
+         'Trade show video loop for your booth TV, free | LoopCast',
+         'Loop a product video and slides on your trade show booth TV all day from a laptop, with no internet. Free for Windows and Mac. Setup, video tips, QR codes for leads.',
+         'A trade show video loop that runs all day.',
          'Product videos, demo times and slides on the booth TV, looping from setup to teardown, even when the show-floor Wi-Fi doesn’t.',
          f'''      <h2>Set it up once, then work the booth</h2>
       <p>A booth TV should catch eyes from the aisle without anyone babysitting it. Put your product video, demo schedule and a couple of slides in a folder, and LoopCast loops them fullscreen on the TV for as long as the show runs.</p>
@@ -297,8 +317,34 @@ def build():
       <h2>Collect leads from the aisle</h2>
       <p>Press Q and paste your demo booking or brochure link, and a QR code sits in the corner of every slide. <a href="/guides/qr-code-on-projector-screen/">QR codes on screen</a>.</p>
       <h2>Already using PowerPoint?</h2>
-      <p>PowerPoint’s kiosk mode can loop one deck, but changing it means stopping the show in front of visitors. <a href="/guides/powerpoint-kiosk-mode/">PowerPoint kiosk mode vs a looping player</a>.</p>''',
-         image=f"{SITE}/assets/use-booth.webp", image_alt="A trade-show booth slide shown by LoopCast.")
+      <p>PowerPoint’s kiosk mode can loop one deck, but changing it means stopping the show in front of visitors. <a href="/guides/powerpoint-kiosk-mode/">PowerPoint kiosk mode vs a looping player</a>.</p>
+      <h2>Loop a product video all day</h2>
+      <p>Most booths run one sizzle reel or product video on repeat. Put the video file in a folder, choose the folder in LoopCast, and press play. When the video ends it starts again, all day, with no buffering and no “up next” screens like a streaming site would show.</p>
+      <ul>
+        <li><strong>Export MP4 (H.264) at 1920×1080.</strong> It plays smoothly on any laptop and fills a standard booth TV with no black bars.</li>
+        <li><strong>Several videos?</strong> Put them all in the folder. LoopCast plays them in order and loops back to the first. Name them 01, 02, 03 to set the order.</li>
+        <li><strong>Mix in slides between videos:</strong> a demo schedule, a special offer or your booth number. Each slide stays up for the time you set.</li>
+        <li><strong>Sound:</strong> video audio plays through the TV or laptop. Show floors are loud, so most booths turn the TV down or export a version without sound, with captions burned in.</li>
+        <li><strong>Make the first seconds count.</strong> People glance for two or three seconds as they walk by. Put your logo and what you do on screen right away, not after a long intro.</li>
+      </ul>
+      <h2>What to bring</h2>
+      <ul>
+        <li>A laptop (Windows 10 or 11, or a Mac on macOS 12 or later) with LoopCast installed and your folder copied onto it. Don’t rely on a cloud folder at the venue.</li>
+        <li>An HDMI cable long enough to reach the TV, plus a USB-C to HDMI adapter if your laptop needs one.</li>
+        <li>The laptop’s power cable and a power strip. A loop that runs eight hours will drain a battery.</li>
+        <li>A copy of the folder on a USB stick, in case you need to run it from another computer.</li>
+      </ul>
+      <h2>On the show floor</h2>
+      <ol>
+        <li>Connect the TV and set it as a second screen (Windows key + P, then Extend), or use it as the only screen.</li>
+        <li>Open LoopCast, choose the folder and press <strong>Show on projector</strong>, or <strong>Fullscreen here</strong> if the TV is the only display.</li>
+        <li>Press play. Keep the laptop lid open unless you know your laptop keeps running with the lid closed and a screen attached.</li>
+        <li>Between demos, press <strong>Logo</strong> (H) for a clean branded screen, or <strong>Black</strong> (B) during a talk.</li>
+      </ol>
+      <p>Step by step: <a href="/guides/loop-slideshow-on-tv/">how to loop a slideshow on a TV</a>.</p>
+{TRADE_FAQ[0]}''',
+         image=f"{SITE}/assets/use-booth.webp", image_alt="A trade-show booth slide shown by LoopCast.",
+         extra_ld=[TRADE_FAQ[1]], rel=['/guides/qr-code-on-projector-screen/', '/guides/powerpoint-kiosk-mode/', '/guides/loop-slideshow-on-tv/'])
 
     # ---------- digital signage ----------
     page('/digital-signage/', 'Lobbies and schools',

@@ -142,6 +142,8 @@ def build(page, fig):
               ("Can I change where the QR code shows?", "Yes. In Settings › QR code, pick any corner and Small, Medium or Large."),
               ("Does it work in the browser version?", "Yes. The QR code works in the browser version and the desktop app. Showing it over live web pages is in the desktop app, since web pages are."),
               ("Does LoopCast track who scans the code?", "No. LoopCast just turns your link into a code. If you want scan counts, use a link from a service that counts visits, or add tracking tags to your own page."),
+              ("Is it free to make a QR code for giving or registration?", "Yes. LoopCast makes the code from your link at no cost, and it doesn’t expire, because it points straight to your own page rather than through a paid QR service."),
+              ("Can I use a QR code for event check-in?", "Yes. Paste the check-in or registration page link. Put the code up on the welcome loop as people arrive, and use Large so it scans from a distance."),
               ("What happens if I have no internet?", "Making the code doesn’t need internet; LoopCast draws it on your computer. People who scan it need internet on their phones to open the link."),
           ], 'shot-qr.webp',
           ['/guides/free-countdown-timer-event-screen/', '/guides/church-announcement-loop/', '/guides/phone-remote-for-slideshow/'])
@@ -842,7 +844,7 @@ def build(page, fig):
       </ol>
       <h2>Built-in tools for Sunday</h2>
       <ul>
-        <li><strong>QR code for giving or sign-ups:</strong> Q puts a code in a corner over every slide. <a href="/guides/qr-code-on-projector-screen/">How it works</a>.</li>
+        <li><strong>QR code for giving or sign-ups:</strong> Q puts a code in a corner over every slide, so people can give or sign up from their seats. <a href="/guides/qr-code-on-projector-screen/">How to show a QR code on the screen</a>.</li>
         <li><strong>Message bar:</strong> M shows a line of text along the bottom for a nursery call or a parking note.</li>
         <li><strong>Clock:</strong> C puts the time in a corner for the band and speakers.</li>
         <li><strong>Phone remote:</strong> run the screens from your phone while you’re down front. <a href="/guides/phone-remote-for-slideshow/">Set it up</a>.</li>
