@@ -488,6 +488,47 @@ def build():
     os.makedirs(os.path.join(ROOT, ADMIN_SLUG), exist_ok=True)
     open(os.path.join(ROOT, ADMIN_SLUG, 'index.html'), 'w').write(out)
 
+    # ---------- buy and thanks (not in the sitemap or nav; the app and the site's Buy buttons link to /buy/) ----------
+    CHECKOUT = 'https://buy.polar.sh/polar_cl_mwF42SKkg6mV4oESViP4Pcns0kYIbEP0ji8t81LTLpE'
+    out = head('Buy LoopCast', 'Buy a LoopCast license.', '/buy/', noindex=True).replace('</head>', f'<meta http-equiv="refresh" content="0; url={CHECKOUT}">\n<script>location.replace({json.dumps(CHECKOUT)})</script>\n</head>') + header() + f'''<main>
+  <div class="wrap hero" style="padding-bottom:clamp(64px,8vw,120px)">
+    <span class="pill"><span class="dot"></span>Checkout</span>
+    <h1>Taking you to checkout.</h1>
+    <p class="lede">LoopCast is $49, one time, for one computer. Payments are handled securely by Polar.</p>
+    <div class="ctas"><a class="btn solid" href="{CHECKOUT}">Continue to checkout</a><a class="btn ghost" href="/faq/">Questions first?</a></div>
+  </div>
+</main>
+''' + FOOTER + '</body>\n</html>\n'
+    os.makedirs(os.path.join(ROOT, 'buy'), exist_ok=True)
+    open(os.path.join(ROOT, 'buy', 'index.html'), 'w').write(out)
+
+    out = head('Thank you for buying LoopCast', 'How to activate your LoopCast license.', '/thanks/', noindex=True) + header() + '''<main>
+  <div class="wrap hero" style="padding-bottom:24px">
+    <span class="pill"><span class="dot"></span>Thank you</span>
+    <h1>Thanks for buying LoopCast.</h1>
+    <p class="lede">Your license key is in your receipt email from Polar. Here’s how to use it.</p>
+  </div>
+  <section class="wrap prose" style="padding-bottom:clamp(64px,8vw,120px)">
+    <h2>Activate LoopCast</h2>
+    <ol>
+      <li><strong>Find your key.</strong> It’s in the order email from Polar and starts with <code>LOOPCAST-</code>. Can’t find the email? Check spam, or open the order from Polar’s customer portal using the same email address.</li>
+      <li><strong>Open LoopCast</strong> on the computer that runs your screens. Don’t have it yet? <a href="/#download">Download it for Windows or Mac</a>.</li>
+      <li><strong>Click the trial button</strong> in the top bar, or the LoopCast logo › License.</li>
+      <li><strong>Paste your key and click Activate.</strong> It needs the internet this once; after that LoopCast works offline.</li>
+    </ol>
+    <h2>Good to know</h2>
+    <ul>
+      <li><strong>One license, one computer.</strong> Moving to a new computer? On the old one, open About › License and choose <strong>Move license</strong>, then activate on the new one.</li>
+      <li><strong>Old computer gone?</strong> Free the license from Polar’s customer portal (the link is in your receipt), or email us.</li>
+      <li><strong>Every feature is included</strong>: playlists, countdowns, QR codes, the phone remote, picture in picture and the streaming window.</li>
+    </ul>
+    <p>Need help? Email <a href="mailto:hello@loopcast.space">hello@loopcast.space</a> or call <a href="tel:+14054860215">405-486-0215</a>.</p>
+  </section>
+</main>
+''' + FOOTER + '</body>\n</html>\n'
+    os.makedirs(os.path.join(ROOT, 'thanks'), exist_ok=True)
+    open(os.path.join(ROOT, 'thanks', 'index.html'), 'w').write(out)
+
     # ---------- 404 ----------
     out = head('Page not found | LoopCast', 'This page doesn’t exist.', '/404.html', noindex=True) + header() + '''<main>
   <div class="wrap hero" style="padding-bottom:clamp(64px,8vw,120px)">
